@@ -1,0 +1,36 @@
+{
+  "HomePage": {
+    "title": "Salam dünýä!",
+    "about": "Biz hakda sahypasyna geçiň",
+    "menu": "Menýu",
+    "orders": "Sargytlar",
+    "abouts": "Biz barada",
+    "contact": "Habarlaşyň"
+  },
+    "MenuFirst": {
+    "title": "Bagtyýarlyk dilimi",
+    "description": "Irden kofe ýa-da aýratyn dabaralar üçin sebäpli taýýarlanan tortlary we şekerli çörekleri hödürleýän butik çörek dükany.",
+    "aboutUs": "Biz barada"
+  },
+  "features": {
+    "heading": "Biz diňe tort bilen çäklenmeýäris",
+    "item1": {
+      "title": "Ynamdar, şol gün eltip bermek",
+      "description": "Tortlaryňyzy we süýjülikleriňizi täze görnüşde, üns bilen gaplanan we wagtynda eltip berýäris."
+    },
+    "item2": {
+      "title": "Söýgi eli bilen bişirilen",
+      "description": "Süýjüliklerimiz tejribeli çörekçileriň iň gowy önümlerden we däp bolan usullardan peýdalanmagy bilen taýýarlanylýar."
+    },
+    "item3": {
+      "title": "Sargyt boýunça ýörite tortlar",
+      "description": "Ýörite dabaralar üçin özüňize görä ýörite tortlary sargyt edip bilersiňiz."
+    }
+},
+  "menu": {
+    "title": "Menýu",
+    "description": "Ýumşak gatly tortlardan başlap inçe tortlara çenli — her bir tagam günüňizi ýagtylandyrmak üçin döredilýär."
+},
+ "testimonials":"Şahsy pikirler"
+
+}

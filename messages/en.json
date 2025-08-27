@@ -1,0 +1,35 @@
+{
+  "HomePage": {
+    "title": "Hello world!",
+    "about": "Go to the about page",
+    "menu": "Menu",
+    "orders": "Orders",
+    "abouts": "About Us",
+    "contact": "Contact Us"
+  },
+   "MenuFirst": {
+    "title": "A Little Slice of Joy",
+    "description": "A boutique bakery offering thoughtfully made cakes and pastries — for morning coffee or meaningful celebrations.",
+    "aboutUs": "About Us"
+  },
+  "features": {
+    "heading": "More Than Just Cakes",
+    "item1": {
+      "title": "Reliable, Same-Day Delivery",
+      "description": "Get your cakes and pastries delivered fresh to your door — carefully packed and always on time."
+    },
+    "item2": {
+      "title": "Handcrafted with Love",
+      "description": "Our pastries are made by skilled bakers using the finest ingredients and traditional techniques."
+    },
+    "item3": {
+      "title": "Custom Orders Available",
+      "description": "Have a special occasion? We offer custom cakes tailored to your needs and preferences."
+    }
+},
+  "menu": {
+    "title": "Menu",
+    "description": "From soft layered cakes to delicate tarts — each treat is made to brighten your day."
+  },
+  "testimonials":"Testimonials"
+}
