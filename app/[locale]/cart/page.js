@@ -1,6 +1,6 @@
 'use client'
 
-import { clearCart, decreaseQuantity, increaseQuantity, removeFromCart } from '@/features/cartSlice'
+import { decreaseQuantity, increaseQuantity, removeFromCart } from '@/features/cartSlice'
 import Image from 'next/image'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -52,7 +52,7 @@ const Page = () => {
     <div className="space-y-3">
       {item.map((item, index) => (
         <div key={index} className="flex font-main sm:flex-row items-center border border-gray-300 rounded-xl shadow-sm py-5  gap-1 sm:gap-10">
-            <img src={item.image} alt="item" className="w-15 sm:w-1/5 object-cover rounded-lg" />
+            <Image width={20} height={10} src={item.image} alt="item" className="w-15 sm:w-1/5 object-cover rounded-lg" />
             <div className="flex flex-col xl:flex-1 xl:w-1/5 space-y-3">
               <h3 className="sm:text-2xl font-thin hidden xl:block text-head">{item.title}</h3>
               <p className="text-sm text-brown hidden xl:block">{item.description}</p>

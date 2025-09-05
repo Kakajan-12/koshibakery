@@ -8,35 +8,13 @@ import CustomSnackbar from '../Helper/CustomSnackbar'
 import Link from 'next/link'
 import { RootState } from '@/store'
 import { useGetProductQuery } from '@/services/productApi'
+import { Product } from '@/index'
 
 const sora = Sora({
   subsets: ['latin'],
   weight: ['300'],
   variable: '--font-sora',
 })
-
-const cakes = [
-  {
-      id: 101,
-   title:'Peanut Brownie',
-   price:6.90,
-   img:'/fcake.png'
-
-  },
-  {
-     id: 102,
-   title:'Brownie with Ice-cream',
-   price:7.80,
-    img:'/fcake2.png'
-  },
-  {
-    id: 103,
-   title:'ChocoChip Brownie',
-   price:8 ,
-    img:'/fcake3.png'
-  },
-]
-
 
 const OrderFirst = () => {
   const dispatch = useDispatch()
@@ -48,8 +26,9 @@ const OrderFirst = () => {
   if (isLoading) return <div>Loading...</div>
   if (error) return <div>Error loading data</div>
 
+const beautyProducts: Product[] = data?.products
+  .filter(product => product.category === 'fragrances') ?? [];
 
-  const beautyProducts = data.products.filter(product => product.category === 'fragrances');
   
   const getQuantity = (id: number) => {
   const cartItem = item.find(i => i.id === id);
@@ -85,10 +64,10 @@ const OrderFirst = () => {
       {/* ✅ Заголовок */}
       <h1 className="text-center text-3xl sm:text-6xl font-main font-thin text-head relative z-10">Place an Order</h1>
       <p className="text-center text-brown font-main relative mx-auto z-10 sm:max-w-xl sm:text-xl ">
-        Whether you're planning a birthday, surprising a friend, or simply craving something sweet — we're here to make it special
+      Whether you&apos;re planning a birthday, surprising a friend, or simply craving something sweet — we&apos;re here to make it special
+
       </p>
 
-      {/* ✅ Most Loved */}
       <div className="my-20 relative z-20">
         <div className="py-10 space-y-5  xl:mx-20">
         <div className="flex flex-col 2xl:mb-10">

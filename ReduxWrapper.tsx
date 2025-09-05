@@ -1,12 +1,14 @@
 'use client'
-import React from 'react'
+import React, { ReactNode } from 'react'
 import { Provider } from 'react-redux'
 import { store } from './store'
 
-const ReduxWrapper = ({children}) => {
-  return (
-    <Provider store={store}>{children}</Provider>
-  )
+interface ReduxWrapperProps {
+  children: ReactNode
+}
+
+const ReduxWrapper: React.FC<ReduxWrapperProps> = ({ children }) => {
+  return <Provider store={store}>{children}</Provider>
 }
 
 export default ReduxWrapper

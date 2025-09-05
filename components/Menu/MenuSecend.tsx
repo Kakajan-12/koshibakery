@@ -25,19 +25,6 @@ const features = [
   },
 ];
 
-const containerVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { staggerChildren: 0.2, duration: 0.6, ease: "easeOut" },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
-};
 
 const MenuSecond = () => {
   return (
@@ -46,11 +33,10 @@ const MenuSecond = () => {
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.3 }}
-      variants={containerVariants}
+     
     >
       <motion.h2
         className="text-center text-2xl sm:text-5xl font-main text-[#3B3B3B] font-thin mb-5 sm:mb-30"
-        variants={itemVariants}
       >
         More Than Just Cakes
       </motion.h2>
@@ -59,7 +45,6 @@ const MenuSecond = () => {
         {features.map((feature, index) => (
           <motion.div
             key={index}
-            variants={itemVariants}
             className="group transition-all duration-300 hover:scale-105 sm:max-w-70 mx-auto"
           >
             <div className="flex items-center mb-4">

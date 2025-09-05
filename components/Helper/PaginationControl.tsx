@@ -2,7 +2,6 @@
 import React from 'react'
 import { Pagination as MuiPagination } from '@mui/material'
 import { makeStyles } from '@mui/styles'
-import { Theme } from '@mui/material/styles'
 import { Sora } from 'next/font/google'
 
 const sora = Sora({
@@ -11,7 +10,7 @@ const sora = Sora({
   variable: '--font-sora',
 })
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(() => ({
   root: {
     '& .MuiPaginationItem-root': {
       color: '#264D30',
@@ -45,13 +44,13 @@ const PaginationControl: React.FC<PaginationControlProps> = ({
   const classes = useStyles()
 
   return (
-    <div className={`py-20 ${sora.variable}`}> {/* ✅ применяем переменную */}
+    <div className={`py-20 ${sora.variable}`}> 
       <MuiPagination
         count={totalPages}
         page={currentPage + 1}
         onChange={(_, value) => {
           onChange(value - 1)
-          scrollToRef?.current?.scrollIntoView({ behavior: 'smooth' })
+          scrollToRef?.current?.scrollIntoView({ behavior: 'smooth' });
         }}
         variant="outlined"
         size="large"

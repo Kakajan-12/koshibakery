@@ -31,6 +31,7 @@
   description: string;
   images: string[];
   price: number;
+  category?:string;
 }
 
 export interface ProductResponse {

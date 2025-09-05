@@ -2,13 +2,13 @@
 
 import React from 'react';
 import { Sora } from 'next/font/google';
-import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
+import Image from 'next/image';
 
 const sora = Sora({
   subsets: ['latin'],
@@ -25,13 +25,9 @@ const containerVariants = {
   },
 };
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
-};
+
 
 const MenuThird = () => {
-  const t = useTranslations('menu');
 
   return (
     <motion.div
@@ -41,7 +37,7 @@ const MenuThird = () => {
       viewport={{ once: true, amount: 0.3 }}
       variants={containerVariants}
     >
-      <motion.div variants={itemVariants}>
+      <motion.div>
         <h1 className="text-center text-2xl md:text-5xl mb-5 font-thin text-[#3B3B3B] font-main">
           Menu
         </h1>
@@ -60,9 +56,9 @@ const MenuThird = () => {
           '/card5.png',
           '/card6.png',
         ].map((src, i) => (
-          <motion.div key={src} variants={itemVariants}>
+          <motion.div key={i}>
             <Link href="/order">
-              <img src={src} alt="img" className="w-full" />
+              <Image width={20} height={10}  src={src} alt="img" className="w-full" />
             </Link>
           </motion.div>
         ))}
@@ -95,9 +91,11 @@ const MenuThird = () => {
       '/card6b.png',
     ].map((src, i) => (
       <SwiperSlide key={i}>
-        <motion.div variants={itemVariants}>
+        <motion.div>
           <Link href="/order">
-            <img
+            <Image
+            width={300}
+            height={10}
               src={src}
               alt="img"
               className="transition-transform duration-300 w-full hover:scale-105 shadow-md"

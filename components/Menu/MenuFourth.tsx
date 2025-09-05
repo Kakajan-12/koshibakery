@@ -85,12 +85,16 @@ const MenuFourth = () => {
           <div className="sm:flex  hidden justify-center sm:gap-30 -mt-10 ">
             <div className="swiper-button-prev-custom">
               <span className="relative flex items-center rotate-180">
-                <img
+                <Image
+                width={20}
+                height={10}
                   src="/arrowRight.svg"
                   alt="Arrow right"
                   className="w-20 h-6 z-2"
                 />
-                <img
+                <Image
+                width={20}
+                height={10}
                   src="/ellipse.svg"
                   alt="Ellipse"
                   className="w-15 h-50 -ml-6 z-0"
@@ -99,12 +103,16 @@ const MenuFourth = () => {
             </div>
             <div className="swiper-button-next-custom">
               <span className="relative flex items-center">
-                <img
+                  <Image
+                width={20}
+                height={10}
                   src="/arrowRight.svg"
                   alt="Arrow right"
                   className="w-20 h-6 z-2"
                 />
-                <img
+                  <Image
+                width={20}
+                height={10}
                   src="/ellipse.svg"
                   alt="Ellipse"
                   className="w-15 h-50 -ml-6 z-0"
@@ -115,12 +123,16 @@ const MenuFourth = () => {
           <div className="flex sm:hidden justify-center sm:gap-30 -mt-10 sm:mt-6">
             <div className="swiper-button-prev-custom">
               <span className="relative flex items-center rotate-180">
-                <img
+                  <Image
+                width={20}
+                height={10}
                   src="/arrowRight.svg"
                   alt="Arrow right"
                   className="w-15 h-6 z-2"
                 />
-                <img
+                  <Image
+                width={20}
+                height={10}
                   src="/ellipse.svg"
                   alt="Ellipse"
                   className="w-10 h-50 -ml-6 z-0"
@@ -129,12 +141,16 @@ const MenuFourth = () => {
             </div>
             <div className="swiper-button-next-custom">
               <span className="relative flex items-center">
-                <img
+                 <Image
+                width={20}
+                height={10}
                   src="/arrowRight.svg"
                   alt="Arrow right"
                   className="w-15 h-6 z-2"
                 />
-                <img
+                 <Image
+                width={20}
+                height={10}
                   src="/ellipse.svg"
                   alt="Ellipse"
                   className="w-10 h-50 -ml-6 z-0"

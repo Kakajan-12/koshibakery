@@ -30,8 +30,6 @@ const Footer = () => {
     });
   }, []);
 
-  const now = new Date();
-  const year = now.getFullYear();
 
   return (
     <div  className={`${sora.variable} bg-no-repeat bg-cover lg:py-10 relative z-44`}
@@ -90,9 +88,9 @@ const Footer = () => {
 
       </div>
     </div>
-         <div className="flex lg:text-xl items-center justify-center text-white pb-5">
+         <div className="flex lg:text-xl items-center gap-2 justify-center text-white pb-5">
         <p>All rights reserved | Privacy Policy | Powered by </p>
-      <img src="/hebent.svg" alt="img" className="hebentLogo" />
+      <Image width={25} height={10} src="/hebent.svg" alt="img" className="hebentLogo" />
       </div>
     </div>
   );

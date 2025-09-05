@@ -1,21 +1,18 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@/store';
-import { setShowSearch, selectQuery } from '@/features/searchQuery';
+import { useDispatch} from 'react-redux';
+import { selectQuery } from '@/features/searchQuery';
+import Image from 'next/image';
+
 
 interface Page {
     setPage:(value: number) => void
 }
 
 const SearchBar = ({setPage}:Page) => {
-  const pathname = usePathname();
-  const [visible, setVisible] = useState(false);
   const [localInput, setLocalInput] = useState('');
   const dispatch = useDispatch();
-  const showSearch = useSelector((state: RootState) => state.search.showSearch);
 
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
@@ -24,17 +21,14 @@ const SearchBar = ({setPage}:Page) => {
     }, 500);
 
     return () => clearTimeout(delayDebounce);
-  }, [localInput, dispatch]);
+  }, [localInput, dispatch, setPage]);
 
-  useEffect(() => {
-    setVisible(pathname.includes('order'));
-  }, [pathname]);
 
 
   return (
     <div className="bg-white text-center">
       <div className="inline-flex items-center justify-center shadow-2xl px-5 py-2 my-5 w-full rounded ">
-      <img src="/search_icon.png" alt="search_icon" className="w-4" />
+      <Image width={20} height={10} src="/search_icon.png" alt="search_icon" className="w-4" />
         <input
           value={localInput}
           onChange={(e) => setLocalInput(e.target.value)}

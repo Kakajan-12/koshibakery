@@ -1,4 +1,5 @@
 'use client'
+import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
 
 const ScrollTop = () => {
@@ -32,7 +33,7 @@ const ScrollTop = () => {
         `}
         aria-label="Scroll to top"
       >
-        <img src="/up.svg" alt="Up" className="w-6 h-6" />
+        <Image width={20} height={10} src="/up.svg" alt="Up" className="w-6 h-6" />
       </button>
     </div>
   )

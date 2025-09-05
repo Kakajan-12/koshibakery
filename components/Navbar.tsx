@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useState } from 'react'
 import { Sora } from 'next/font/google'
 import CartIcon from './CartShop/CartIcon';
+import Image from 'next/image';
 
 const sora = Sora({
   subsets: ['latin'],
@@ -30,7 +31,7 @@ const Navbar = () => {
     >
       <div className="flex items-center justify-between">
        <Link href={`/`}>
-        <img src="/logo.svg" alt="Logo" className="w-20 h-auto" />
+        <Image width={20} height={10} src="/logo.svg" alt="Logo" className="w-20 h-auto" />
        </Link>
       </div>
 
@@ -52,7 +53,9 @@ const Navbar = () => {
 
       {/* Hamburger icon */}
       <div className="lg:hidden px-4">
-        <img
+        <Image
+        width={20}
+        height={10}
           onClick={() => setVisible(prev => !prev)}
           src="/menu.png"
           alt="menu_icon"

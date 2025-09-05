@@ -2,7 +2,8 @@
 import React from "react";
 import Link from "next/link";
 import { Sora } from "next/font/google";
-import { motion } from "framer-motion"; // ✅ импорт Framer Motion
+import { motion, Variants } from "framer-motion"; // ✅ добавил Variants
+import Image from "next/image";
 
 const sora = Sora({
   subsets: ["latin"],
@@ -10,15 +11,16 @@ const sora = Sora({
   variable: "--font-sora",
 });
 
-const fadeUp = {
+// 👇 типизируем правильно
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 40 },
-  visible: (delay: number = 0) => ({
+  visible: (custom: number = 0) => ({
     opacity: 1,
     y: 0,
     transition: {
       duration: 0.8,
-      delay,
-      ease: "easeOut",
+      delay: custom, // ✅ custom попадает сюда
+      ease: "easeOut" as const, // ✅ fix для TS (ждёт Easing)
     },
   }),
 };
@@ -28,12 +30,16 @@ const MenuFirst = () => {
     <section
       className={`${sora.variable} relative w-full bg-white sm:py-20 p-10 md:px-16`}
     >
-      <img
+      <Image
+        width={20}
+        height={10}
         src="/half.svg"
         alt="Background half"
         className="absolute top-10 sm:top-0 -left-6 w-25 sm:w-fit  z-0"
       />
-      <img
+      <Image
+        width={20}
+        height={10}
         src="/tasty.svg"
         alt="Tasty bakery"
         className="absolute top-20 right-5 sm:top-50 md:top-50 lg:top-0 sm:right-0 w-1/2 max-w-none z-0 opacity-20 md:opacity-40 lg:opacity-40 xl:opacity-100"
@@ -57,7 +63,8 @@ const MenuFirst = () => {
           animate="visible"
           custom={0.3}
         >
-          A boutique bakery offering thoughtfully made cakes and pastries — for morning coffee or meaningful celebrations.
+          A boutique bakery offering thoughtfully made cakes and pastries — for
+          morning coffee or meaningful celebrations.
         </motion.p>
 
         <motion.div
@@ -72,12 +79,16 @@ const MenuFirst = () => {
           >
             About Us
             <span className="relative flex items-center">
-              <img
+              <Image
+                width={20}
+                height={10}
                 src="/arrowRight.svg"
                 alt="Arrow right"
                 className="w-20 h-6 z-2"
               />
-              <img
+              <Image
+                width={20}
+                height={10}
                 src="/ellipse.svg"
                 alt="Ellipse"
                 className="w-15 h-50 -ml-6 z-0"
