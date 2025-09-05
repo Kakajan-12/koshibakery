@@ -6,6 +6,7 @@
   --font-main: var(--font-sora);
   --color-head:#3B3B3B;
   --color-brown:#6F5E53;
+  --color-darkGreen:#264D30;
 }
 
 @media (min-width: 768px) {
