@@ -12,7 +12,7 @@ type Product = {
 
 const categories: Product[] = [
     { title: "Chocolate Ganache", image: "/images/cakes.webp", text:"Rich chocolate cake with smooth dark ganache and a hint of espresso.", price:"15"},
-    { title: "Chocolate Ganache", image: "/images/tarts.webp", text:"Rich chocolate cake with smooth dark ganache and a hint of espresso.", price:"15"},
+    { title: "Chocolate Ganache", image: "/images/custom.webp", text:"Rich chocolate cake with smooth dark ganache and a hint of espresso.", price:"15"},
     { title: "Chocolate Ganache", image: "/images/mini_bakes.webp", text:"Rich chocolate cake with smooth dark ganache and a hint of espresso.", price:"15"},
     { title: "Chocolate Ganache", image: "/images/cookies.webp", text:"Rich chocolate cake with smooth dark ganache and a hint of espresso.", price:"15"},
     { title: "Chocolate Ganache", image: "/images/custom.webp", text:"Rich chocolate cake with smooth dark ganache and a hint of espresso.", price:"15"},
@@ -34,8 +34,8 @@ export default function Products() {
                             <Image
                                 src={item.image}
                                 alt={item.title}
-                                width={128}
-                                height={128}
+                                width={500}
+                                height={500}
                                 className="object-cover w-full h-full"
                             />
                         </div>
