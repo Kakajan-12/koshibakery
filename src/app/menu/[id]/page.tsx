@@ -2,9 +2,6 @@ import {quicksand, sora} from "@/app/fonts";
 import {FaRegHeart} from "react-icons/fa";
 import {FaShoppingBag} from "react-icons/fa";
 import Image from "next/image";
-import Categories from "@/components/menu/Categories";
-import Products from "@/components/menu/Products";
-import FilterBar from "@/components/menu/Filter";
 
 const Menu = () => {
     return (
@@ -107,9 +104,7 @@ const Menu = () => {
                 </div>
             </div>
             <div className="my-container relative z-20 bg-[#FDFBF8] mt-20">
-                <Categories/>
-                <FilterBar/>
-                <Products/>
+
             </div>
 
         </div>

@@ -3,8 +3,60 @@ import Image from "next/image";
 import {quicksand, sora} from "@/app/fonts";
 import {Swiper, SwiperSlide} from "swiper/react";
 import {Navigation} from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import {useEffect, useState} from "react";
+
+interface Testimonial {
+    id: number;
+    image: string;
+    text: string;
+    name: string;
+}
 
 export default function Testimonials() {
+    const [cards, setCards] = useState<Testimonial[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchTestimonials = async () => {
+            try {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/testimonials`, {
+                    cache: "no-store",
+                });
+                if (!res.ok) throw new Error("Ошибка загрузки отзывов");
+
+                const data = await res.json();
+
+                const formatted = data.map((item: any) => ({
+                    ...item,
+                    image: `${process.env.NEXT_PUBLIC_API_URL}/${item.image
+                        .replace(/\\/g, "/")
+                        .replace(/^\/+/, "")
+                    }`,
+                    text: item.text,
+                    name: item.name,
+                }));
+
+                setCards(formatted);
+            } catch (err: any) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchTestimonials();
+    }, []);
+
+    if (loading) {
+        return <p className="text-center py-10">Loading...</p>;
+    }
+
+    if (error) {
+        return <p className="text-center text-red-500 py-10">{error}</p>;
+    }
+
     return (
         <div className="container mx-auto px-4">
             <div className="w-full relative py-10">
@@ -41,31 +93,24 @@ export default function Testimonials() {
                 </div>
                 <div className="pb-24 relative md:mt-16 px-4 overflow-visible">
                     <Swiper
+                        key={cards.length}
                         modules={[Navigation]}
                         spaceBetween={10}
                         slidesPerView={1}
                         centeredSlides={true}
-                        loop={true}
+                        loop={cards.length >= 5}
                         navigation={{
                             nextEl: ".testimonials-next",
                             prevEl: ".testimonials-prev",
                         }}
                         breakpoints={{
                             768: {
-                                slidesPerView: 3,
+                                slidesPerView: Math.min(cards.length, 3),
                                 spaceBetween: 30,
-                            },
-                            1024: {
-                                slidesPerView: 3,
-                                spaceBetween: 40,
-                            },
-                            1280: {
-                                slidesPerView: 3,
-                                spaceBetween: 50,
-                            },
+                            }
                         }}
                     >
-                        {cardItems.map((item, i) => (
+                        {cards.map((item, i) => (
                             <SwiperSlide key={i}>
                                 <div className="flex justify-center">
                                     <TestomonialCard {...item} />
@@ -74,7 +119,7 @@ export default function Testimonials() {
                         ))}
 
                         <div
-                            className="absolute md:relative inset-0 flex items-center justify-between md:justify-center md:space-x-32 md:pt-8 md:pb-1 pointer-events-none z-20">
+                            className="inset-0 flex items-center justify-between md:justify-center md:space-x-32 md:pt-8 md:pb-1 pointer-events-none z-20">
                             <div
                                 className="testimonials-prev relative w-12 h-12 xl:w-15 xl:h-14 flex items-center justify-center bg-white rounded-full cursor-pointer pointer-events-auto group">
                                 <Image
@@ -121,36 +166,24 @@ export default function Testimonials() {
     );
 }
 
-const cardItems = [
-    {
-        title: "“Every bite feels like it was made with love. The pistachio tart is my absolute favorite!”",
-        name: " — Emily R.",
-        image: "/images/cakes.webp"
-    },
-    {title: "Tarts", name: "dsad", image: "/images/tarts.webp"},
-    {title: "Mini bakes", name: "dasd", image: "/images/mini_bakes.webp"},
-    {
-        title: "“Every bite feels like it was made with love. The pistachio tart is my absolute favorite!”",
-        name: " — Emily R.",
-        image: "/images/cakes.webp"
-    },
-    {title: "Tarts", name: "dsad", image: "/images/tarts.webp"},
-    {title: "Mini bakes", name: "dasd", image: "/images/mini_bakes.webp"},
-];
+function stripHtmlTags(html: string) {
+    if (!html) return "";
+    return html.replace(/<[^>]*>?/gm, "");
+}
 
-function TestomonialCard({title, name, image}: { title: string; name: string; image: string }) {
+function TestomonialCard({text, name, image}: { text: string; name: string; image: string }) {
     return (
         <div className="testimonials-active transition-all duration-300 my-4 ">
             <div
-                className="py-5 px-7 w-56 h-64 sm:h-72 xl:w-72 xl:h-96 border-[#3B3B3B] border rounded-xl bg-[#FDFBF8] space-y-6">
+                className="py-5 px-7 w-56 xl:w-72 border-[#3B3B3B] border rounded-xl bg-[#FDFBF8] space-y-6">
                 <div className="w-full flex justify-center items-center">
                     <Image src={image} alt={image}
                            width={75}
                            height={75}
                            className="rounded-full bg-gray-100 w-19 h-19"/>
                 </div>
-                <p className={`${quicksand.className} text-sm md:text-md text-black`}>
-                    {title}
+                <p className={`${quicksand.className} text-xs md:text-md text-black`}>
+                    {stripHtmlTags(text)}
                 </p>
                 <p className={`${quicksand.className} text-sm md:text-md text-black`}>
                     {name}

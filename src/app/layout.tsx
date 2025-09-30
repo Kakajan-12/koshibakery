@@ -2,8 +2,9 @@ import type {Metadata} from "next";
 import "./globals.css";
 import {Toaster} from "@/components/ui/sonner"
 import Header from "@/components/Header";
-import {sora, openSans, quicksand, playfair} from "./fonts";
+import {sora} from "./fonts";
 import Footer from "@/components/Footer";
+import {CategoryProvider} from "@/app/context/CategoryContext";
 
 export const metadata: Metadata = {
     title: "Koshi Bakery",
@@ -25,7 +26,9 @@ export default function RootLayout({
         <html lang="en">
         <body className={`${sora.className} bg-[#FDFBF8] text-gray-900`}>
         <Header/>
-        {children}
+        <CategoryProvider>
+            {children}
+        </CategoryProvider>
         <Toaster richColors position="top-right"/>
         <Footer/>
         </body>
