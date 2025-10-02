@@ -32,7 +32,7 @@ const Menu = () => {
     const resetFilters = () => {
         setSort("all");
         setAvailability("all");
-        setPriceRange([0, 100]);
+        setPriceRange([0, maxPrice]);
         setSelectedType(null);
     };
 

@@ -1,10 +1,17 @@
 "use client";
-import {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Image from "next/image";
 import { quicksand, sora } from "@/app/fonts";
 import { FaShoppingCart } from "react-icons/fa";
 import { FaPoundSign } from "react-icons/fa";
 import { SortOption } from "@/lib/sorts"
+import { useRouter } from "next/navigation";
+import { useCart } from "@/app/context/CartContext";
+
+interface Allergen {
+    id: number;
+    name: string;
+}
 
 type Product = {
     id: number;
@@ -15,6 +22,7 @@ type Product = {
     product_availability: number | string;
     product_types: number;
     product_category: number;
+    allergens: Allergen[];
 };
 
 function stripHtml(html: string) {
@@ -28,6 +36,8 @@ export default function Products({ sort, search, selectedType, availability, pri
     const [currentPage, setCurrentPage] = useState(1);
     const containerRef = useRef<HTMLDivElement>(null);
     const firstProductRef = useRef<HTMLDivElement>(null);
+    const router = useRouter();
+    const { addToCart } = useCart();
 
     const productsPerPage = 4;
 
@@ -125,42 +135,68 @@ export default function Products({ sort, search, selectedType, availability, pri
                     <div
                         key={item.id}
                         ref={i === 0 ? firstProductRef : null}
-                        className="flex flex-col items-center text-center cursor-pointer border border-2 rounded-lg p-2 w-full scroll-mt-24"
+                        className="flex flex-col justify-between items-center text-center cursor-pointer border-2 rounded-lg p-2 w-full scroll-mt-24"
                     >
-                        <div className="w-full h-40 sm:h-60 rounded-lg overflow-hidden">
-                            <Image
-                                src={item.main_image}
-                                alt={item.product_name}
-                                width={500}
-                                height={500}
-                                className="object-cover w-full h-full"
-                            />
-                        </div>
-                        <div className="space-y-1 w-full">
-                            <div
-                                className={`${quicksand.className} mt-2 font-bold text-md sm:text-lg lg:text-2xl text-[#3B3B3B] text-start`}
-                            >
-                                {item.product_name}
+                        <div className="w-full flex-1" onClick={() => router.push(`/menu/${item.id}`)}>
+                            <div className="w-full h-40 sm:h-60 rounded-lg overflow-hidden">
+                                <Image
+                                    src={item.main_image}
+                                    alt={item.product_name}
+                                    width={500}
+                                    height={500}
+                                    className="object-cover w-full h-full"
+                                />
                             </div>
-                            <p
-                                className={`${quicksand.className} mt-2 font-bold text-sm sm:text-md lg:text-lg text-[#6F5E53] text-start`}
-                            >
-                                {item.product_desc}
-                            </p>
-                            <div className="w-full">
-                                <button
-                                    className={`${sora.className} w-full flex items-center justify-center border-2 border-[#264D30] text-[#0E2D16] font-bold rounded-lg px-8 py-1 space-x-2`}
+                            <div className="space-y-1 w-full">
+                                <div
+                                    className={`${quicksand.className} mt-2 font-bold text-md sm:text-lg lg:text-xl text-[#3B3B3B] text-start`}
                                 >
-                                    <FaShoppingCart className="mb-1"/>
-                                    <div className="flex items-center"><div className="text-md">{item.price}</div><div className="flex items-center h-full pb-1"><FaPoundSign size={14}/></div> </div>
-                                </button>
+                                    {item.product_name}
+                                </div>
+                                <div className="flex space-x-2">
+                                    {item.allergens?.map((a) => (
+                                        <p
+                                            key={a.id}
+                                            className="bg-red-400 rounded-md px-2 text-white"
+                                        >
+                                            {a.name}
+                                        </p>
+                                    ))}
+                                </div>
+                                <p
+                                    className={`${quicksand.className} mt-2 font-bold text-sm sm:text-md lg:text-lg text-[#6F5E53] text-start`}
+                                >
+                                    {item.product_desc}
+                                </p>
                             </div>
+                        </div>
+
+                        <div className="w-full mt-4">
+                            <button
+                                onClick={() =>
+                                    addToCart({
+                                        id: item.id,
+                                        product_name: item.product_name,
+                                        price: item.price,
+                                        main_image: item.main_image,
+                                    })
+                                }
+                                className={`${sora.className} w-full flex items-center justify-center border-2 border-[#264D30] text-[#0E2D16] font-bold rounded-lg px-8 py-1 space-x-2 cursor-pointer`}
+                            >
+                                <FaShoppingCart className="mb-1" />
+                                <div className="flex items-center">
+                                    <div className="text-md">{item.price}</div>
+                                    <div className="flex items-center h-full pb-1">
+                                        <FaPoundSign size={14} />
+                                    </div>
+                                </div>
+                            </button>
                         </div>
                     </div>
                 ))}
+
             </div>
 
-            {/* Пагинация */}
             {totalPages > 1 && (
                 <div className="flex justify-center mt-8 space-x-2">
                     <button
@@ -171,7 +207,7 @@ export default function Products({ sort, search, selectedType, availability, pri
                         Prev
                     </button>
 
-                    {Array.from({ length: totalPages }, (_, i) => (
+                    {Array.from({length: totalPages}, (_, i) => (
                         <button
                             key={i}
                             onClick={() => goToPage(i + 1)}

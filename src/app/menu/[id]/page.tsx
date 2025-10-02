@@ -1,113 +1,154 @@
-import {quicksand, sora} from "@/app/fonts";
-import {FaRegHeart} from "react-icons/fa";
-import {FaShoppingBag} from "react-icons/fa";
-import Image from "next/image";
+"use client";
 
-const Menu = () => {
+import React, { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import Image from "next/image";
+import { sora } from "@/app/fonts";
+import {Button} from "@/components/ui/button";
+
+interface Allergen {
+    id: number;
+    name: string;
+}
+
+interface Product {
+    id: number;
+    main_image: string;
+    slice_image: string;
+    loved: number;
+    product_name: string;
+    product_desc: string;
+    price: number;
+    product_serves: string;
+    product_ingredient_desc: string;
+    product_ingredients: string;
+    product_category: number;
+    product_types: number;
+    product_availability: number;
+    allergens: Allergen[];
+}
+
+const MenuItem = () => {
+    const { id } = useParams(); // достаем id из URL
+    const [product, setProduct] = useState<Product | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (!id) return;
+
+        const fetchProduct = async () => {
+            try {
+                const res = await fetch(
+                    `${process.env.NEXT_PUBLIC_API_URL}/api/product/${id}`,
+                    { cache: "no-store" }
+                );
+                if (!res.ok) throw new Error("Failed to load product");
+                const data = await res.json();
+
+                setProduct({
+                    ...data,
+                    main_image: `${process.env.NEXT_PUBLIC_API_URL}/${data.main_image.replace(/\\/g, "/")}`,
+                    slice_image: `${process.env.NEXT_PUBLIC_API_URL}/${data.slice_image.replace(/\\/g, "/")}`,
+                });
+            } catch (err: any) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProduct();
+    }, [id]);
+
+    if (loading) return <p className="text-center py-10">Loading...</p>;
+    if (error) return <p className="text-center text-red-500 py-10">{error}</p>;
+    if (!product) return <p className="text-center py-10">No product found</p>;
+
     return (
         <div className="my-container mx-auto mt-[64px]">
             <div className="container mx-auto px-4">
-                <div className="mt-4 flex flex-col items-center justify-center h-50 lg:h-60" style={{
-                    backgroundImage: "url('/images/shopping-cart.svg')",
-                    backgroundSize: "contain",
-                    backgroundRepeat: "no-repeat",
-                    backgroundPosition: "bottom"
-                }}>
-                    <h6 className={`${sora.className} pt-6 lg:pt-0 text-center font-light text-lg mb-3 sm:text-xl lg:text-4xl xl:text-5xl`}>Place
-                        an Order</h6>
-                    <p className={`${quicksand.className} text-[#6F5E53] text-center text-sm max-w-lg lg:text-md`}>Whether you're
-                        planning a birthday, surprising a friend, or simply craving something sweet — we're here to make
-                        it special.</p>
-                </div>
-            </div>
-            <div className="relative">
-                <div className="absolute inset-x-0 lg:hidden">
-                    <Image src="/images/menu_bg_mobile.svg" alt="mobile menu bg"
-                           width={100}
-                           height={500}
-                           className="w-full"/>
-                </div>
-                <div className="absolute inset-x-0 hidden lg:block">
-                    <Image src="/images/menu_bg.webp" alt="menu bg"
-                           width={900}
-                           height={900}
-                           className="w-full h-[800px]"/>
-                </div>
-                <div className="container mx-auto px-4">
-                    <div className="relative pt-10">
-                        <div className="flex flex-col items-start space-y-3 lg:space-y-6">
-                            <div className="flex flex-col w-30 sm:w-44">
-                                <div className="flex flex-col justify-center items-center space-y-2">
-                                    <FaRegHeart className="w-5 h-5 sm:w-6 sm:h-6 lg:h-7" />
-                                    <div className={`${sora.className} text-black font-bold text-md sm:text-xl lg:text-2xl`}>Most Loved</div>
-                                </div>
-                            </div>
-                            <div className="flex flex-col items-center space-y-4 lg:space-y-7">
-                                <div className="flex items-center space-x-6">
-                                    <div className="relative">
-                                        <Image src="/images/menu_card.webp" alt="menu"
-                                               width={300}
-                                               height={300}
-                                               className="rounded-lg w-30 sm:w-44"/>
-                                        <div
-                                            className="absolute right-0 bottom-0 bg-[#7B3F3F80] opacity-50 rounded-lg p-2">
-                                            <FaShoppingBag color="#ffffff"/>
-                                        </div>
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <p className={`${quicksand.className} font-bold text-sm sm:text-lg lg:text-2xl`}>Peanut Brownie</p>
-                                        <p className={`${quicksand.className} font-bold text-sm sm:text:lg lg:text-2xl`}>$6.90</p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center space-x-6">
-                                    <div className="relative">
-                                        <Image src="/images/menu_card.webp" alt="menu"
-                                               width={300}
-                                               height={300}
-                                               className="rounded-lg w-30 sm:w-44"/>
-                                        <div
-                                            className="absolute right-0 bottom-0 bg-[#7B3F3F80] opacity-50 rounded-lg p-2">
-                                            <FaShoppingBag color="#ffffff"/>
-                                        </div>
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <p className={`${quicksand.className} font-bold text-sm sm:text-lg lg:text-2xl`}>Peanut Brownie</p>
-                                        <p className={`${quicksand.className} font-bold text-sm sm:text-lg lg:text-2xl`}>$6.90</p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center space-x-6">
-                                    <div className="relative">
-                                        <Image src="/images/menu_card.webp" alt="menu"
-                                               width={300}
-                                               height={300}
-                                               className="rounded-lg w-30 sm:w-44"/>
-                                        <div
-                                            className="absolute right-0 bottom-0 bg-[#7B3F3F80] opacity-50 rounded-lg p-2">
-                                            <FaShoppingBag color="#ffffff"/>
-                                        </div>
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <p className={`${quicksand.className} font-bold text-sm sm:text-lg lg:text-2xl`}>Peanut Brownie</p>
-                                        <p className={`${quicksand.className} font-bold text-sm sm:text-lg lg:text-2xl`}>$6.90</p>
-                                    </div>
-                                </div>
-                            </div>
+                <div className="lg:flex lg:space-x-4 lg:justify-between">
+                    <div>
+                        <div className="space-y-2 pt-4">
+                            <h1
+                                className={`${sora.className} text-2xl sm:text-3xl lg:text-4xl`}
+                                dangerouslySetInnerHTML={{__html: product.product_name}}
+                            />
+                            <div className="text-sm text" dangerouslySetInnerHTML={{__html: product.product_name}}/>
                         </div>
-                        <div className="absolute -right-4 sm:right-10 -top-2 sm:top-0 lg:-right-10 lg:bottom-10">
-                            <Image src="/images/menu_hero.webp" alt="menu_hero"
-                                   width={500}
-                                   height={500}
-                                   className="opacity-50 w-36 sm:w-56 lg:opacity-100 lg:w-full"/>
+                        <div className="flex items-center space-x-2">
+                            <p className="text-lg font-bold">£{product.price}</p>
+                            <p className="text-sm text-gray-600">
+                                Serves: {product.product_serves}
+                            </p>
+                        </div>
+                    </div>
+                    <div className="flex justify-center">
+                        <div className="w-fit">
+                            <Image
+                                src={product.main_image}
+                                alt={product.product_name}
+                                width={600}
+                                height={400}
+                                className="rounded-lg w-full"
+                            />
                         </div>
                     </div>
 
                 </div>
-            </div>
-            <div className="my-container relative z-20 bg-[#FDFBF8] mt-20">
+                <div className="lg:flex lg:space-x-8 lg:justify-between">
+                    <div className="flex justify-center">
+                        <div className="relative h-44 w-44 sm:h-56 sm:w-56 md:h-72 md:w-72 overflow-x-none">
+                            <div
+                                className="absolute bg-yellow-200 w-44 h-44 sm:h-56 sm:w-56 md:h-72 md:w-72 rounded-full"></div>
+                            <Image
+                                src={product.slice_image}
+                                alt={product.product_name}
+                                width={600}
+                                height={400}
+                                className="rounded-lg w-56 h-18 absolute -bottom-5 left-5"
+                            />
+                        </div>
+                    </div>
 
+                    <div>
+                        <div className="space-y-2 pt-8">
+                            <p className={`${sora.className} text-md`}>Ingredients <span className="text-green-500">& Flavors</span>
+                            </p>
+                            <div className="text-sm text"
+                                 dangerouslySetInnerHTML={{__html: product.product_ingredient_desc}}/>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <p className="text-lg font-bold">Ingredients:</p>
+                            <p className="text-sm text-gray-600"
+                               dangerouslySetInnerHTML={{__html: product.product_ingredients}}
+                            />
+                        </div>
+                        <div>
+                            <h3 className="font-semibold">Allergens:</h3>
+                            <ul className="list-disc pl-5">
+                                {product.allergens?.map((a) => (
+                                    <li key={a.id}>{a.name}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div className="h-20 bg-repeat-x bg-bottom md:h-35"
+                     style={{
+                         backgroundImage: "url('/images/cookie1.webp')",
+                         backgroundSize: "contain"
+                     }}>
+                </div>
+                <div className="flex items-center py-4 md:justify-center">
+                    <Button className="border-2 border-green-800 bg-transparent text-black w-full rounded-2xl font-bold py-3 text-md md:w-72 hover:bg-transparent cursor-pointer">
+                        Order Now
+                    </Button>
+                </div>
             </div>
-
         </div>
-    )
-}
-export default Menu
+    );
+};
+
+export default MenuItem;

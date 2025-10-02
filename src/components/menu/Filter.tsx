@@ -57,8 +57,6 @@ export default function FilterBar({
                                       maxPrice,
                                       resetFilters
                                   }: FilterBarProps) {
-    const [open, setOpen] = useState(false);
-    const [price, setPrice] = useState<[number, number]>([0, 100]);
     const [types, setTypes] = useState<ProductType[]>([]);
     const [loadingTypes, setLoadingTypes] = useState(false);
 
