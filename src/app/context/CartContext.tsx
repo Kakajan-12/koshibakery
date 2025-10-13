@@ -23,7 +23,6 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider = ({ children }: { children: ReactNode }) => {
     const [cart, setCart] = useState<CartItem[]>([]);
 
-    // ✅ Загружаем корзину из localStorage при первой загрузке
     useEffect(() => {
         const stored = localStorage.getItem("cart");
         if (stored) {

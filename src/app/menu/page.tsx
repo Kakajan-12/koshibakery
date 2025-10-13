@@ -1,21 +1,28 @@
 'use client'
 
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {quicksand, sora} from "@/app/fonts";
-import {FaRegHeart, FaShoppingBag} from "react-icons/fa";
+import {FaPoundSign, FaRegHeart, FaShoppingCart} from "react-icons/fa";
 import Image from "next/image";
 import Categories from "@/components/menu/Categories";
 import Products from "@/components/menu/Products";
 import FilterBar from "@/components/menu/Filter";
-import { SortOption } from "@/lib/sorts"
 import { useCategory } from "@/app/context/CategoryContext";
+import { useCart } from "@/app/context/CartContext";
+
+interface Variant {
+    id: number;
+    variant_name: string;
+    price: number;
+}
 
 interface Product {
     id: number;
     main_image: string;
     product_name: string;
-    price: number;
     loved: number;
+    variants?: Variant[];
+    price?: number; // первый вариант
 }
 
 const Menu = () => {
@@ -28,6 +35,7 @@ const Menu = () => {
     const [priceRange, setPriceRange] = useState<[number, number]>([0, 100]);
     const [maxPrice, setMaxPrice] = useState(100);
     const {selectedCategory, setSelectedCategory } = useCategory();
+    const { addToCart } = useCart();
 
     const resetFilters = () => {
         setSort("all");
@@ -40,17 +48,30 @@ const Menu = () => {
     useEffect(() => {
         const fetchLovedProducts = async () => {
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/product`, {cache: "no-store"});
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/product`, { cache: "no-store" });
                 if (!res.ok) throw new Error("Failed to load products");
+
                 const data: Product[] = await res.json();
-                const max = Math.max(...data.map((p) => p.price));
+
+                // ✅ Берем цену только из первого варианта
+                const productsWithPrice = data.map(p => ({
+                    ...p,
+                    price: p.variants?.[0]?.price ?? 0
+                }));
+
+                // ✅ Вычисляем максимальную цену
+                const prices = productsWithPrice.map(p => p.price);
+                const max = prices.length > 0 ? Math.max(...prices) : 0;
+
                 setMaxPrice(max);
                 setPriceRange([0, max]);
-                const loved = data
-                    .filter((item) => item.loved === 1)
-                    .sort((a, b) => b.id - a.id) // сортировка по id, последние добавленные первые
-                    .slice(0, 3)                 // берем последние 3
-                    .map((item) => ({
+
+                // ✅ Любимые продукты
+                const loved = productsWithPrice
+                    .filter(item => item.loved === 1)
+                    .sort((a, b) => b.id - a.id)
+                    .slice(0, 3)
+                    .map(item => ({
                         ...item,
                         main_image: `${process.env.NEXT_PUBLIC_API_URL}/${item.main_image.replace(/\\/g, "/")}`
                     }));
@@ -65,6 +86,8 @@ const Menu = () => {
 
         fetchLovedProducts();
     }, []);
+
+
 
     return (
         <div className="my-container mx-auto mt-[64px]">
@@ -117,35 +140,47 @@ const Menu = () => {
                                 </div>
                             </div>
 
-                            <div className="flex flex-col items-center space-y-4 lg:space-y-7">
+                            <div className="flex flex-col items-start space-y-4 lg:space-y-7">
                                 {loading && <p>Loading...</p>}
                                 {!loading && lovedProducts.length === 0 && (
                                     <p className={`${quicksand.className} text-gray-600`}>No loved products yet.</p>
                                 )}
                                 {lovedProducts.map((item) => (
-                                    <div key={item.id} className="flex items-center space-x-6">
-                                        <div className="relative">
+                                    <div key={item.id} className="flex justify-start items-center w-fit space-x-6">
+                                        <div className="relative min-w-30">
                                             <Image
                                                 src={item.main_image}
                                                 alt={item.product_name}
                                                 width={300}
                                                 height={300}
-                                                className="rounded-lg w-30 sm:w-44 object-cover"
+                                                className="rounded-lg  w-30 sm:w-44 object-cover"
                                             />
                                             <div
                                                 className="absolute right-0 bottom-0 bg-[#7B3F3F80] opacity-50 rounded-lg p-2">
-                                                <FaShoppingBag color="#ffffff"/>
+                                                <button
+                                                    onClick={() =>
+                                                        addToCart({
+                                                            id: item.id,
+                                                            product_name: item.product_name,
+                                                            price: item.price,
+                                                            main_image: item.main_image,
+                                                        })
+                                                    }
+                                                    className={`${sora.className} w-full flex items-center justify-center text-white font-bold rounded-lg px-2 py-1 cursor-pointer`}
+                                                >
+                                                    <FaShoppingCart className="mb-1"/>
+                                                </button>
                                             </div>
                                         </div>
                                         <div className="flex flex-col">
                                             <p
-                                                className={`${quicksand.className} font-bold text-sm sm:text-lg lg:text-2xl`}
-                                                dangerouslySetInnerHTML={{__html: item.product_name}}
-                                            />
+                                                className={`${quicksand.className} font-bold text-sm sm:text-lg lg:text-2xl`}>
+                                                {item.product_name}
+                                            </p>
                                             <p
-                                                className={`${quicksand.className} font-bold text-sm sm:text-lg lg:text-2xl`}
+                                                className={`${quicksand.className} font-bold text-sm sm:text-lg lg:text-2xl flex items-center`}
                                             >
-                                                ${item.price}
+                                                <FaPoundSign size={18} />{item.price}
                                             </p>
                                         </div>
                                     </div>
@@ -153,7 +188,7 @@ const Menu = () => {
                             </div>
                         </div>
 
-                        <div className="absolute -right-4 sm:right-10 -top-2 sm:top-0 lg:-right-10 lg:bottom-10">
+                        <div className="absolute right-0 xl:right-10 -top-2 sm:top-0 lg:bottom-10">
                             <Image
                                 src="/images/menu_hero.webp"
                                 alt="menu_hero"

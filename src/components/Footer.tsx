@@ -120,6 +120,7 @@ export default function Footer() {
                         All rights reserved | Powered by
                     </div>
                     <Image src="/hebent_logo.svg" alt="hebent_logo" width={50} height={50} className="w-5"/>
+                    <div className="text-white">Hebent Tech</div>
                 </div>
             </div>
         </div>

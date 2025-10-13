@@ -106,7 +106,7 @@ export default function FilterBar({
 
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                    <span className="text-gray-700 text-sm font-medium">Sort By:</span>
+                    <span className="text-gray-700 text-md sm:text-lg font-medium">Sort By:</span>
 
                     <DropdownMenu modal={false}>
                         <DropdownMenuTrigger asChild>
@@ -130,8 +130,8 @@ export default function FilterBar({
 
                 <Dialog>
                     <DialogTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                            <FiSliders className="w-6 h-6"/>
+                        <Button variant="ghost" size="icon" className="border cursor-pointer">
+                            <FiSliders/>
                         </Button>
                     </DialogTrigger>
 

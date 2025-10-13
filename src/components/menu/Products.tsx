@@ -1,35 +1,43 @@
 "use client";
 import React, {useEffect, useRef, useState} from "react";
 import Image from "next/image";
-import { quicksand, sora } from "@/app/fonts";
-import { FaShoppingCart } from "react-icons/fa";
-import { FaPoundSign } from "react-icons/fa";
-import { SortOption } from "@/lib/sorts"
-import { useRouter } from "next/navigation";
-import { useCart } from "@/app/context/CartContext";
+import {quicksand, sora} from "@/app/fonts";
+import {FaPoundSign} from "react-icons/fa";
+import {SortOption} from "@/lib/sorts"
+import {useRouter} from "next/navigation";
+import {useCart} from "@/app/context/CartContext";
 
 interface Allergen {
     id: number;
     name: string;
 }
+type Variant = { id: number; variant_name: string; price: number };
 
 type Product = {
     id: number;
     main_image: string;
     product_name: string;
     product_desc: string;
-    price: number;
     product_availability: number | string;
     product_types: number;
     product_category: number;
     allergens: Allergen[];
+    variants: Variant[];
+    price: number;
 };
 
 function stripHtml(html: string) {
     return html.replace(/<[^>]+>/g, "");
 }
 
-export default function Products({ sort, search, selectedType, availability, priceRange,selectedCategory }: { sort: SortOption; search: string; selectedType: number | null; availability: "all" | "in-stock" | "pre-order"; priceRange: [number, number]; selectedCategory: number | null}) {
+export default function Products({sort, search, selectedType, availability, priceRange, selectedCategory}: {
+    sort: SortOption;
+    search: string;
+    selectedType: number | null;
+    availability: "all" | "in-stock" | "pre-order";
+    priceRange: [number, number];
+    selectedCategory: number | null
+}) {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -37,7 +45,7 @@ export default function Products({ sort, search, selectedType, availability, pri
     const containerRef = useRef<HTMLDivElement>(null);
     const firstProductRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
-    const { addToCart } = useCart();
+    const { cart, addToCart, removeFromCart } = useCart();
 
     const productsPerPage = 4;
 
@@ -47,18 +55,30 @@ export default function Products({ sort, search, selectedType, availability, pri
                 const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/product`, {
                     cache: "no-store",
                 });
+                console.log("API response status:", res.status); // <-- Добавлено
                 if (!res.ok) throw new Error("Failed to load products");
                 const data: Product[] = await res.json();
+                console.log("API response data:", data); // <-- Добавлено
+                const formatted = data.map((p: any) => {
+                    const variants: Variant[] = p.variants || [];
+                    const mainVariantPrice = variants.length > 0 ? variants[0].price : 0;
 
-                const formatted = data.map((p) => ({
-                    ...p,
-                    main_image: `${process.env.NEXT_PUBLIC_API_URL}/${p.main_image.replace(/\\/g, "/")}`,
-                    product_name: stripHtml(p.product_name || ""),
-                    product_desc: stripHtml(p.product_desc || ""),
-                }));
+                    console.log("Product:", p.product_name, "Price:", mainVariantPrice);
 
+                    return {
+                        ...p,
+                        main_image: `${process.env.NEXT_PUBLIC_API_URL}/${p.main_image.replace(/\\/g, "/")}`,
+                        product_name: stripHtml(p.product_name || ""),
+                        product_desc: stripHtml(p.product_desc || ""),
+                        variants,
+                        price: mainVariantPrice,
+                    };
+                });
+
+                console.log("Formatted products:", formatted); // <-- Добавлено
                 setProducts(formatted);
             } catch (err: any) {
+                console.error("Fetch error:", err);
                 setError(err.message);
             } finally {
                 setLoading(false);
@@ -107,15 +127,16 @@ export default function Products({ sort, search, selectedType, availability, pri
         filteredProducts = filteredProducts.filter((p) => p.product_availability === 0);
     }
 
-    filteredProducts = filteredProducts.filter(
-        p => p.price >= priceRange[0] && p.price <= priceRange[1]
+    console.log("Price range filter:", priceRange);
+    filteredProducts = filteredProducts.filter(p =>
+        p.price >= (priceRange?.[0] || 0) && p.price <= (priceRange?.[1] || Infinity)
     );
+
+
 
     const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
     const startIndex = (currentPage - 1) * productsPerPage;
     const currentProducts = filteredProducts.slice(startIndex, startIndex + productsPerPage);
-
-
 
 
     const goToPage = (page: number) => {
@@ -123,77 +144,84 @@ export default function Products({ sort, search, selectedType, availability, pri
             setCurrentPage(page);
 
             if (firstProductRef.current) {
-                firstProductRef.current.scrollIntoView({ behavior: "smooth" });
+                firstProductRef.current.scrollIntoView({behavior: "smooth"});
             }
         }
     };
 
     return (
         <div ref={containerRef} className="container mx-auto px-4 py-14 min-h-[500px]">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 justify-items-center">
-                {currentProducts.map((item, i) => (
-                    <div
-                        key={item.id}
-                        ref={i === 0 ? firstProductRef : null}
-                        className="flex flex-col justify-between items-center text-center cursor-pointer border-2 rounded-lg p-2 w-full scroll-mt-24"
-                    >
-                        <div className="w-full flex-1" onClick={() => router.push(`/menu/${item.id}`)}>
-                            <div className="w-full h-40 sm:h-60 rounded-lg overflow-hidden">
-                                <Image
-                                    src={item.main_image}
-                                    alt={item.product_name}
-                                    width={500}
-                                    height={500}
-                                    className="object-cover w-full h-full"
-                                />
-                            </div>
-                            <div className="space-y-1 w-full">
-                                <div
-                                    className={`${quicksand.className} mt-2 font-bold text-md sm:text-lg lg:text-xl text-[#3B3B3B] text-start`}
-                                >
-                                    {item.product_name}
-                                </div>
-                                <div className="flex space-x-2">
-                                    {item.allergens?.map((a) => (
-                                        <p
-                                            key={a.id}
-                                            className="bg-red-400 rounded-md px-2 text-white"
-                                        >
-                                            {a.name}
-                                        </p>
-                                    ))}
-                                </div>
-                                <p
-                                    className={`${quicksand.className} mt-2 font-bold text-sm sm:text-md lg:text-lg text-[#6F5E53] text-start`}
-                                >
-                                    {item.product_desc}
-                                </p>
-                            </div>
-                        </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 justify-items-center">
+                {currentProducts.map((item, i) => {
+                    const isInCart = cart.some((p) => p.id === item.id);
 
-                        <div className="w-full mt-4">
-                            <button
-                                onClick={() =>
-                                    addToCart({
-                                        id: item.id,
-                                        product_name: item.product_name,
-                                        price: item.price,
-                                        main_image: item.main_image,
-                                    })
-                                }
-                                className={`${sora.className} w-full flex items-center justify-center border-2 border-[#264D30] text-[#0E2D16] font-bold rounded-lg px-8 py-1 space-x-2 cursor-pointer`}
-                            >
-                                <FaShoppingCart className="mb-1" />
-                                <div className="flex items-center">
-                                    <div className="text-md">{item.price}</div>
-                                    <div className="flex items-center h-full pb-1">
-                                        <FaPoundSign size={14} />
+                    return (
+                        <div
+                            key={item.id}
+                            ref={i === 0 ? firstProductRef : null}
+                            className="flex flex-col justify-between items-center text-center cursor-pointer border-2 rounded-lg w-full scroll-mt-24"
+                        >
+                            <div className="w-full flex-1" onClick={() => router.push(`/menu/${item.id}`)}>
+                                <div className="w-full aspect-square relative">
+                                    <Image
+                                        src={item.main_image}
+                                        alt={item.product_name}
+                                        fill
+                                        className="object-cover"
+                                    />
+                                </div>
+                                <div className="space-y-3 w-full px-2 py-4">
+                                    <div className="flex items-center justify-center">
+                                        <div className="flex items-center">
+                                            <FaPoundSign size={14} style={{marginBottom: "2px"}}/>
+                                            <div className="text-md md:text-lg font-bold">{item.price}</div>
+                                        </div>
+                                    </div>
+                                    <div
+                                        className={`${quicksand.className} text-md sm:text-lg lg:text-xl text-center`}
+                                    >
+                                        {item.product_name}
+                                    </div>
+                                    <div className="flex justify-center space-x-2">
+                                        {item.allergens?.map((a) => (
+                                            <p
+                                                key={a.id}
+                                                className="bg-red-400 rounded-md px-2 text-white"
+                                            >
+                                                {a.name}
+                                            </p>
+                                        ))}
                                     </div>
                                 </div>
-                            </button>
+                            </div>
+
+                            <div className="w-full mb-4 flex items-center justify-center">
+                                <button
+                                    onClick={() => {
+                                        if (isInCart) {
+                                            removeFromCart(item.id);
+                                        } else {
+                                            addToCart({
+                                                id: item.id,
+                                                product_name: item.product_name,
+                                                price: item.price,
+                                                main_image: item.main_image,
+                                            });
+                                        }
+                                    }}
+                                    className={`${sora.className} w-56 border-2 cursor-pointer ${
+                                        isInCart
+                                            ? "border-red-500 text-red-600 hover:bg-red-100"
+                                            : "border-[#264D30] text-[#0E2D16] hover:bg-green-100"
+                                    } font-bold rounded-2xl px-8 py-1 transition-all`}
+                                >
+                                    {isInCart ? "REMOVE" : "PLACE AN ORDER"}
+                                </button>
+                            </div>
+
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
 
             </div>
 
