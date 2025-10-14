@@ -45,7 +45,7 @@ export default function Products({sort, search, selectedType, availability, pric
     const containerRef = useRef<HTMLDivElement>(null);
     const firstProductRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
-    const { cart, addToCart, removeFromCart } = useCart();
+    const { cart} = useCart();
 
     const productsPerPage = 4;
 
@@ -55,15 +55,11 @@ export default function Products({sort, search, selectedType, availability, pric
                 const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/product`, {
                     cache: "no-store",
                 });
-                console.log("API response status:", res.status); // <-- Добавлено
                 if (!res.ok) throw new Error("Failed to load products");
                 const data: Product[] = await res.json();
-                console.log("API response data:", data); // <-- Добавлено
                 const formatted = data.map((p: any) => {
                     const variants: Variant[] = p.variants || [];
                     const mainVariantPrice = variants.length > 0 ? variants[0].price : 0;
-
-                    console.log("Product:", p.product_name, "Price:", mainVariantPrice);
 
                     return {
                         ...p,
@@ -197,25 +193,10 @@ export default function Products({sort, search, selectedType, availability, pric
 
                             <div className="w-full mb-4 flex items-center justify-center">
                                 <button
-                                    onClick={() => {
-                                        if (isInCart) {
-                                            removeFromCart(item.id);
-                                        } else {
-                                            addToCart({
-                                                id: item.id,
-                                                product_name: item.product_name,
-                                                price: item.price,
-                                                main_image: item.main_image,
-                                            });
-                                        }
-                                    }}
-                                    className={`${sora.className} w-56 border-2 cursor-pointer ${
-                                        isInCart
-                                            ? "border-red-500 text-red-600 hover:bg-red-100"
-                                            : "border-[#264D30] text-[#0E2D16] hover:bg-green-100"
-                                    } font-bold rounded-2xl px-8 py-1 transition-all`}
+                                    onClick={() => router.push(`/menu/${item.id}`)}
+                                    className={`${sora.className} w-56 border-2 cursor-pointer border-[#264D30] text-[#0E2D16] hover:bg-green-100 font-bold rounded-2xl px-8 py-1 transition-all`}
                                 >
-                                    {isInCart ? "REMOVE" : "PLACE AN ORDER"}
+                                    PLACE AN ORDER
                                 </button>
                             </div>
 

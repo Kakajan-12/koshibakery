@@ -36,8 +36,8 @@ const About = ()=>{
             </div>
             <div className="container mx-auto px-4">
                 <div className="flex flex-col md:flex-row space-y-2 md:space-x-2 pb-28">
-                    <div className="w-full md:w-1/2">
-                        <Image src="/images/about_us.webp" alt="about_us"
+                    <div className="w-full md:w-1/2 flex-1">
+                        <Image src="/images/about.jpg" alt="about_us"
                                width={500}
                                height={500}
                         className="rounded-md w-full object-cover transform scale-x-[-1] h-96"/>
