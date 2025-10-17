@@ -122,7 +122,7 @@ const Menu = () => {
                 </div>
 
                 <div className="container mx-auto px-4">
-                    <div className="relative pt-10">
+                    <div className="relative pt-10 2xl:pt-20">
                         <div className="flex flex-col items-start space-y-3 lg:space-y-6">
                             <div className="flex flex-col w-30 sm:w-44">
                                 <div className="flex flex-col justify-center items-center space-y-2">
@@ -142,7 +142,7 @@ const Menu = () => {
                                 )}
                                 {lovedProducts.map((item) => (
                                     <div key={item.id} className="flex justify-start items-center w-fit space-x-6">
-                                            <div className="min-w-30" onClick={() => router.push(`/menu/${item.id}`)}>
+                                            <div className="min-w-30 cursor-pointer" onClick={() => router.push(`/menu/${item.id}`)}>
                                                 <Image
                                                     src={item.main_image}
                                                     alt={item.product_name}
@@ -168,13 +168,13 @@ const Menu = () => {
                             </div>
                         </div>
 
-                        <div className="absolute right-0 xl:right-10 -top-2 sm:top-0 lg:bottom-10">
+                        <div className="absolute right-0 -top-5 lg:top-30 xl:top-5 2xl:-top-15">
                             <Image
                                 src="/images/menu_hero.webp"
                                 alt="menu_hero"
                                 width={500}
                                 height={500}
-                                className="opacity-50 w-36 sm:w-56 lg:opacity-100 lg:w-full"
+                                className="opacity-50 w-46 sm:w-66 md:w-76 lg:opacity-100 lg:w-[450px] xl:w-[550px] 2xl:w-[650px]"
                             />
                         </div>
                     </div>

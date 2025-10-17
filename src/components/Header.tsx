@@ -28,13 +28,13 @@ export default function Header() {
             }`}
         >
             <div
-                className="container mx-auto px-4 py-4 flex items-center justify-between border-b border-black md:border-none">
+                className="container mx-auto px-4 py-2 flex items-center justify-between border-b border-black md:border-none">
                 <Link
                     href="/"
                     className="flex items-center gap-2 font-bold text-gray-900"
                 >
-                    <Image src="/icon.svg" alt="Logo" width={40} height={40}
-                           className="w-10 lg:w-20"/>
+                    <Image src="/icon.svg" alt="Logo" width={50} height={50}
+                           className="w-20 lg:w-30"/>
                 </Link>
 
                 <nav className="hidden md:flex space-x-6">
