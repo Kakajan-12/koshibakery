@@ -252,7 +252,7 @@ export default function FilterBar({
                             </div>
 
                             <DialogTrigger asChild>
-                                <Button variant="ghost" className="w-full bg-green-900 hover:bg-green-800 text-white">
+                                <Button variant="ghost" className="w-full bg-green-900 hover:bg-green-800 text-white hover:text-white cursor-pointer">
                                     Save
                                 </Button>
                             </DialogTrigger>

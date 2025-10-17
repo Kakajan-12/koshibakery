@@ -36,17 +36,32 @@ const About = ()=>{
             </div>
             <div className="container mx-auto px-4">
                 <div className="flex flex-col md:flex-row space-y-2 md:space-x-2 pb-28">
-                    <div className="w-full md:w-1/2">
-                        <Image src="/images/about_us.webp" alt="about_us"
-                               width={500}
-                               height={500}
-                        className="rounded-md w-full object-cover transform scale-x-[-1] h-96"/>
+                    <div className="w-full md:w-1/2 flex-1">
+                        <div className="relative w-full h-64 sm:h-80 md:h-full">
+                            <Image
+                                src="/images/about.jpg"
+                                alt="about_us"
+                                fill
+                                className="rounded-md object-cover transform scale-x-[-1]"
+                            />
+                        </div>
                     </div>
-                    <div className="rounded-md bg-[#FFEFAA] py-10 px-4 space-y-2 md:space-y-6 md:w-1/2">
+
+                    <div
+                        className="rounded-md bg-[#FFEFAA] py-10 px-4 space-y-2 md:space-y-6 md:w-1/2 flex flex-col justify-center">
                         <div className="space-y-2">
                             <h6 className={`${sora.className} text-xl font-bold md:text-4xl`}>Koşi bakery</h6>
-                            <p className={`${quicksand.className} text-md `}>At Koşi Bakery, we serve more than just pastries — we offer a story in every bite. From elegant patisserie items to rustic favourites and modern classics, our menu reflects both our Turkmen heritage and the multicultural spirit of London. Whether you’re visiting for a sweet treat, a custom cake, or something truly unique, Koşi Bakery is your home for heartfelt, handcrafted baking</p>
+                            <p className={`${quicksand.className} text-md`}>
+                                At Koşi Bakery, we serve more than just pastries — we offer a story in every bite. From
+                                elegant patisserie
+                                items to rustic favourites and modern classics, our menu reflects both our Turkmen
+                                heritage and the multicultural
+                                spirit of London. Whether you’re visiting for a sweet treat, a custom cake, or something
+                                truly unique, Koşi Bakery
+                                is your home for heartfelt, handcrafted baking.
+                            </p>
                         </div>
+
                         <div className="space-y-2">
                             <p className={`${quicksand.className} text-lg md:text-xl font-bold`}>Opening hours:</p>
                             <div className="flex flex-col">
@@ -62,6 +77,7 @@ const About = ()=>{
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
 

@@ -2,13 +2,13 @@
 
 import React, {useEffect, useState} from "react";
 import {quicksand, sora} from "@/app/fonts";
-import {FaPoundSign, FaRegHeart, FaShoppingCart} from "react-icons/fa";
+import {FaPoundSign, FaRegHeart} from "react-icons/fa";
 import Image from "next/image";
 import Categories from "@/components/menu/Categories";
 import Products from "@/components/menu/Products";
 import FilterBar from "@/components/menu/Filter";
-import { useCategory } from "@/app/context/CategoryContext";
-import { useCart } from "@/app/context/CartContext";
+import {useCategory} from "@/app/context/CategoryContext";
+import {useRouter} from "next/navigation";
 
 interface Variant {
     id: number;
@@ -22,7 +22,7 @@ interface Product {
     product_name: string;
     loved: number;
     variants?: Variant[];
-    price?: number; // первый вариант
+    price?: number;
 }
 
 const Menu = () => {
@@ -34,8 +34,8 @@ const Menu = () => {
     const [availability, setAvailability] = useState<"all" | "in-stock" | "pre-order">("all");
     const [priceRange, setPriceRange] = useState<[number, number]>([0, 100]);
     const [maxPrice, setMaxPrice] = useState(100);
-    const {selectedCategory, setSelectedCategory } = useCategory();
-    const { addToCart } = useCart();
+    const {selectedCategory, setSelectedCategory} = useCategory();
+    const router = useRouter();
 
     const resetFilters = () => {
         setSort("all");
@@ -48,25 +48,21 @@ const Menu = () => {
     useEffect(() => {
         const fetchLovedProducts = async () => {
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/product`, { cache: "no-store" });
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/product`, {cache: "no-store"});
                 if (!res.ok) throw new Error("Failed to load products");
 
                 const data: Product[] = await res.json();
 
-                // ✅ Берем цену только из первого варианта
                 const productsWithPrice = data.map(p => ({
                     ...p,
                     price: p.variants?.[0]?.price ?? 0
                 }));
 
-                // ✅ Вычисляем максимальную цену
                 const prices = productsWithPrice.map(p => p.price);
                 const max = prices.length > 0 ? Math.max(...prices) : 0;
 
                 setMaxPrice(max);
                 setPriceRange([0, max]);
-
-                // ✅ Любимые продукты
                 const loved = productsWithPrice
                     .filter(item => item.loved === 1)
                     .sort((a, b) => b.id - a.id)
@@ -86,7 +82,6 @@ const Menu = () => {
 
         fetchLovedProducts();
     }, []);
-
 
 
     return (
@@ -127,7 +122,7 @@ const Menu = () => {
                 </div>
 
                 <div className="container mx-auto px-4">
-                    <div className="relative pt-10">
+                    <div className="relative pt-10 2xl:pt-20">
                         <div className="flex flex-col items-start space-y-3 lg:space-y-6">
                             <div className="flex flex-col w-30 sm:w-44">
                                 <div className="flex flex-col justify-center items-center space-y-2">
@@ -147,31 +142,16 @@ const Menu = () => {
                                 )}
                                 {lovedProducts.map((item) => (
                                     <div key={item.id} className="flex justify-start items-center w-fit space-x-6">
-                                        <div className="relative min-w-30">
-                                            <Image
-                                                src={item.main_image}
-                                                alt={item.product_name}
-                                                width={300}
-                                                height={300}
-                                                className="rounded-lg  w-30 sm:w-44 object-cover"
-                                            />
-                                            <div
-                                                className="absolute right-0 bottom-0 bg-[#7B3F3F80] opacity-50 rounded-lg p-2">
-                                                <button
-                                                    onClick={() =>
-                                                        addToCart({
-                                                            id: item.id,
-                                                            product_name: item.product_name,
-                                                            price: item.price,
-                                                            main_image: item.main_image,
-                                                        })
-                                                    }
-                                                    className={`${sora.className} w-full flex items-center justify-center text-white font-bold rounded-lg px-2 py-1 cursor-pointer`}
-                                                >
-                                                    <FaShoppingCart className="mb-1"/>
-                                                </button>
+                                            <div className="min-w-30 cursor-pointer" onClick={() => router.push(`/menu/${item.id}`)}>
+                                                <Image
+                                                    src={item.main_image}
+                                                    alt={item.product_name}
+                                                    width={300}
+                                                    height={300}
+                                                    className="rounded-lg  w-30 sm:w-44 object-cover"
+                                                />
                                             </div>
-                                        </div>
+
                                         <div className="flex flex-col">
                                             <p
                                                 className={`${quicksand.className} font-bold text-sm sm:text-lg lg:text-2xl`}>
@@ -180,7 +160,7 @@ const Menu = () => {
                                             <p
                                                 className={`${quicksand.className} font-bold text-sm sm:text-lg lg:text-2xl flex items-center`}
                                             >
-                                                <FaPoundSign size={18} />{item.price}
+                                                <FaPoundSign size={18}/>{item.price}
                                             </p>
                                         </div>
                                     </div>
@@ -188,13 +168,13 @@ const Menu = () => {
                             </div>
                         </div>
 
-                        <div className="absolute right-0 xl:right-10 -top-2 sm:top-0 lg:bottom-10">
+                        <div className="absolute right-0 -top-5 lg:top-30 xl:top-5 2xl:-top-15">
                             <Image
                                 src="/images/menu_hero.webp"
                                 alt="menu_hero"
                                 width={500}
                                 height={500}
-                                className="opacity-50 w-36 sm:w-56 lg:opacity-100 lg:w-full"
+                                className="opacity-50 w-46 sm:w-66 md:w-76 lg:opacity-100 lg:w-[450px] xl:w-[550px] 2xl:w-[650px]"
                             />
                         </div>
                     </div>
@@ -203,14 +183,17 @@ const Menu = () => {
 
             <div className="my-container relative z-20 bg-[#FDFBF8] mt-20">
                 <Categories/>
-                <FilterBar sort={sort} setSort={setSort} search={search} setSearch={setSearch} selectedType={selectedType}
+                <FilterBar sort={sort} setSort={setSort} search={search} setSearch={setSearch}
+                           selectedType={selectedType}
                            setSelectedType={setSelectedType} availability={availability}
                            setAvailability={setAvailability} priceRange={priceRange}
                            setPriceRange={setPriceRange} maxPrice={maxPrice} resetFilters={resetFilters}/>
-                <Products sort={sort} search={search} selectedType={selectedType} availability={availability} priceRange={priceRange} selectedCategory={selectedCategory} />
+                <Products sort={sort} search={search} selectedType={selectedType} availability={availability}
+                          priceRange={priceRange} selectedCategory={selectedCategory}/>
             </div>
         </div>
-    );
+    )
+        ;
 };
 
 export default Menu;

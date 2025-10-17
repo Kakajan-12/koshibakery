@@ -1,17 +1,13 @@
 import Image from "next/image";
 import {quicksand, sora} from "@/app/fonts";
 import Link from "next/link";
+import {ArrowRight} from "lucide-react";
 
 export default function Hero() {
     return (
         <div className="my-container mx-auto">
             <div className="relative pt-[64px] mb-20 lg:mb-40">
-                <div className="absolute top-10 -left-6 lg:left-0">
-                    <Image src="/images/kakao.webp" alt="kakao" className="w-24 h-72 md:w-36 md:h-96"
-                           width={500}
-                           height={500}/>
-                </div>
-                <div className="absolute top-28 right-6 opacity-25 lg:top-16 lg:right-0 lg:opacity-100">
+                <div className="absolute top-34 right-6 opacity-25 lg:top-24 lg:right-0 lg:opacity-100">
                     <Image
                         src="/images/main_hero.webp"
                         alt="cake"
@@ -23,7 +19,7 @@ export default function Hero() {
 
                 <div className="container mx-auto px-4">
                     <div className="flex flex-col h-[280px] lg:h-[380px]">
-                        <div className="h-full space-y-2 px-8 lg:max-w-[580px] lg:space-y-4 lg:pl-20 xl:max-w-[900px]">
+                        <div className="h-full space-y-2 lg:max-w-[580px] lg:space-y-4 xl:max-w-[900px]">
                             <h1 className={`${sora.className} text-2xl font-thin pt-6 sm:text-4xl lg:pt-16 xl:text-6xl`}>A Little
                                 Slice of Joy</h1>
                             <p className={`${quicksand.className} text-sm text-[#6F5E53] font-medium sm:text-md xl:text-lg`}>A
@@ -31,31 +27,18 @@ export default function Hero() {
                                 offering thoughtfully made cakes and pastries — for morning coffee or meaningful
                                 celebrations.</p>
                         </div>
-                        <div className="w-full">
-                            <div
-                                className="flex justify-center items-center space-x-10 xl:space-x-14 group lg:justify-start lg:pl-20 w-fit">
-                                <Link href="/about" className={`${sora.className} text-lg font-thin md:text-2xl`}>
-                                    About Us
-                                </Link>
-                                <div className="relative w-max">
-                                    <Image
-                                        src="/images/arrow-right.svg"
-                                        alt="about-arrow"
-                                        width={190}
-                                        height={28}
-                                        className="absolute z-20 top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 -translate-x-14 xl:-translate-x-20 group-hover:-translate-x-16 transition-transform duration-300 max-w-[75px] xl:max-w-[100px]"
-                                    />
+                        <div className="w-full flex justify-center sm:justify-start">
+                            <Link
+                                href="/menu"
+                                className="group relative inline-flex items-center gap-3 px-8 py-4 rounded-full bg-[#f1c90d] text-white text-lg font-medium shadow-lg hover:shadow-yellow-400/60 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+                            >
+                                <span className="relative z-10">Order now</span>
+                                <ArrowRight
+                                    className="relative z-10 w-5 h-5 transition-transform duration-300 group-hover:translate-x-1"/>
+                                <div
+                                    className="absolute inset-0 bg-gradient-to-r from-[#ffe55b] to-[#f1c90d] opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full"></div>
+                            </Link>
 
-                                    <div className="w-13 h-13 xl:w-16 xl:h-16 rounded-full relative overflow-hidden">
-                                        <div
-                                            className="absolute inset-0 bg-gradient-to-l from-[#7DDF9A] to-transparent rounded-full flex justify-center items-center">
-                                            <div
-                                                className="w-11 h-11 xl:w-13 xl:h-13 absolute bg-[#FDFBF8] rounded-full"></div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
                         </div>
 
                     </div>
