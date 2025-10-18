@@ -14,8 +14,8 @@ const Terms = () => {
         {
             title: "1. Information About Us",
             content: `
-        <p>1.1 This site is owned and operated by Koshibakery. Trading is carried out under the registered company name of Koshibakery limited. Registered Office: 185 Edgware Road W2 1ET. Registered in England and Wales. Company Registration Number: <span class="font-bold">need number</span>.</p>
-        <p>1.2 All rights, including copyright are owned by and licensed to Koshibakery Limited.</p>
+        <p>1.1 This site is owned and operated by CAKESJANDK. Trading is carried out under the registered company name of CAKESJANDK limited. Registered Office: 185 Edgware Road W2 1ET. Registered in England and Wales. Company Registration Number: <span class="font-bold">15369008</span>.</p>
+        <p>1.2 All rights, including copyright are owned by and licensed to CAKESJANDK Limited.</p>
       `,
         },
         {
@@ -27,8 +27,8 @@ const Terms = () => {
             title: "3. How The Contract Is Formed Between You and Us",
             content: `
         <p>3.1 After placing an order, you will receive an e-mail from us acknowledging that we have received your order. Please note that this does not mean that your order has been accepted. Your order constitutes an offer to us to buy a Product. All orders are subject to acceptance by us, and we will confirm such acceptance to you by sending you an e-mail that confirms that the Product is available (Availability Confirmation) The contract between us (Contract) will only be formed when we send you the Availability Confirmation. </p>
-        <p> 3.2 The Contract will relate only to those Products ("Products") whose availabilty we have confirmed in the Availability Confirmation.</p>
-        <p>  3.3 Koshibakery Limited is entitled to withdraw from any Contract in the case of obvious errors or inaccuracies or for unavailability. Koshibakery Limited reserves the right to place restrictions on the volume of Products ordered. </p>
+        <p>3.2 The Contract will relate only to those Products ("Products") whose availabilty we have confirmed in the Availability Confirmation.</p>
+        <p>3.3 CAKESJANDK Limited is entitled to withdraw from any Contract in the case of obvious errors or inaccuracies or for unavailability. CAKESJANDK Limited reserves the right to place restrictions on the volume of Products ordered. </p>
       `,
         },
         {
@@ -60,9 +60,9 @@ const Terms = () => {
         {
             title: "8. Process of Payments",
             content: `
-        <p>8.1 Payment for a Koshibakery limited Product is made through Stripe, a registered and secure electronic payment system, and through Paypal, a registered and secure electronic payment system </p>
-        <p>8.2 All payments are subject to validation by the card issuer. Koshibakery Limited does not accept responsibility for the refusal of a card payment and will not be held liable for any delay or non-delivery that results from this. </p>
-        <p>8.3 Koshibakery limited does not store any of your card details. </p>
+        <p>8.1 Payment for a CAKESJANDK limited Product is made through Stripe, a registered and secure electronic payment system, and through Paypal, a registered and secure electronic payment system </p>
+        <p>8.2 All payments are subject to validation by the card issuer. CAKESJANDK Limited does not accept responsibility for the refusal of a card payment and will not be held liable for any delay or non-delivery that results from this. </p>
+        <p>8.3 CAKESJANDK limited does not store any of your card details. </p>
       `,
         },
         {
@@ -82,26 +82,26 @@ const Terms = () => {
         {
             title: "11. Exchanges and Returns",
             content: `
-        <p>11.1. Koshibakery limited are not required to offer money back guarantee's on purchases as food is exempt from this. </p>
-        <p>11.2. Should the Product you have purchased need to be returned due to a fault or an error of Product, please contact Koshibakery Limited directly for a Return Reference Number. Upon receiving a return reference number, please package the Product securely with padding and return to the address below by a registered form of post. You will also need to include a copy of your receipt, which you will receive by email upon the acceptance of you order. Koshibakery limited, 185 Edgware Road W2 1ET</p>
-        <p>11.3. Should the Product you have purchased need to be returned due to a fault or an error of Product, Koshibakery Limited will refund the full cost including any delivery charges. This return of delivery charge will not apply if there is not a fault or error made. </p>
-        <p>11.4. You are responsible for the safe carriage of Products to Koshibakery Limited. For your own protection, we recommend that you send the parcel using a delivery service that insures you for the value of the Products. We cannot be held responsible for returns that are lost in transit. You have a legal obligation to take reasonable care of the Products while they are in your possession. If you fail to comply with this obligation, we may have a right of action against you for compensation. </p>
+        <p>11.1. CAKESJANDK limited are not required to offer money back guarantee's on purchases as food is exempt from this. </p>
+        <p>11.2. Should the Product you have purchased need to be returned due to a fault or an error of Product, please contact CAKESJANDK Limited directly for a Return Reference Number. Upon receiving a return reference number, please package the Product securely with padding and return to the address below by a registered form of post. You will also need to include a copy of your receipt, which you will receive by email upon the acceptance of you order. CAKESJANDK limited, 185 Edgware Road W2 1ET</p>
+        <p>11.3. Should the Product you have purchased need to be returned due to a fault or an error of Product, CAKESJANDK Limited will refund the full cost including any delivery charges. This return of delivery charge will not apply if there is not a fault or error made. </p>
+        <p>11.4. You are responsible for the safe carriage of Products to CAKESJANDK Limited. For your own protection, we recommend that you send the parcel using a delivery service that insures you for the value of the Products. We cannot be held responsible for returns that are lost in transit. You have a legal obligation to take reasonable care of the Products while they are in your possession. If you fail to comply with this obligation, we may have a right of action against you for compensation. </p>
         <p>11.5. Refund payments will be made within 30 business days of receipt of the returned product. Refunds will only be made to the original card the Products were purchased with. This is to protect our customers from card fraud. </p>
-        <p>11.6. Your statutory rights are not affected by the Koshibakery Limited return policy. </p>
-        <p> 11.7. In the event that your refund is rejected Koshibakery Limited may have the ability to offer an exchange or credit note. </p>
+        <p>11.6. Your statutory rights are not affected by the CAKESJANDK Limited return policy. </p>
+        <p> 11.7. In the event that your refund is rejected CAKESJANDK Limited may have the ability to offer an exchange or credit note. </p>
       `,
         },
         {
             title: "12. Safety of Products",
             content: `
-        <p>12.1 Koshibakery Limited makes every effort to ensure that its Products are safe. Should you experience any problems, please do not hesitate to email </p>
+        <p>12.1 CAKESJANDK Limited makes every effort to ensure that its Products are safe. Should you experience any problems, please do not hesitate to email </p>
       `,
         },
         {
             title: "13. Copyright",
             content: `
-        <p>13.1 Koshibakery Limited retains copyright of all designs, photography, text and other content on this website All such rights are reserved. No responsibility can be taken for content on external websites which this site may link to or for any loss or damage that may arise from your use of them.</p>
-        <p> 13.2 Any use of the site or its content, including copying or storing any part other than for your own personal, non-commercial use, is prohibited without the permission of Koshibakery Limited. You must not modify the paper or digital copies of any materials you have printed off or downloaded in any way, and you must not use any illustrations, photographs, video or audio sequences or any graphics separately from any accompanying text. Koshibakery Limited's status (and that of any identified contributors) as the authors of material on our site must always be acknowledged. If you print off, copy or download any part of our site in breach of these Terms and Conditions, your right to use our site will cease immediately and you must, at our option, return or destroy any copies of the materials you have made. </p>
+        <p>13.1 CAKESJANDK Limited retains copyright of all designs, photography, text and other content on this website All such rights are reserved. No responsibility can be taken for content on external websites which this site may link to or for any loss or damage that may arise from your use of them.</p>
+        <p> 13.2 Any use of the site or its content, including copying or storing any part other than for your own personal, non-commercial use, is prohibited without the permission of CAKESJANDK Limited. You must not modify the paper or digital copies of any materials you have printed off or downloaded in any way, and you must not use any illustrations, photographs, video or audio sequences or any graphics separately from any accompanying text. CAKESJANDK Limited's status (and that of any identified contributors) as the authors of material on our site must always be acknowledged. If you print off, copy or download any part of our site in breach of these Terms and Conditions, your right to use our site will cease immediately and you must, at our option, return or destroy any copies of the materials you have made. </p>
       `,
         },
         {
@@ -121,7 +121,7 @@ const Terms = () => {
             content: `
         <p>16.1 The material displayed on our site is provided without any guarantees, conditions or warranties as to its accuracy. To the extent permitted by law, we, other members of our group of companies and third parties connected to us hereby expressly exclude: </p>
         <p>16.2 All conditions, warranties and other terms, which might otherwise be implied by statute, common law or the law of equity.  </p>
-        <p>16.3 Any liability for any direct, indirect or consequential loss or damage incurred by any user in connection with the supply of goods from Koshibakery Limited, the use our site or in connection with the use, inability to use, or results of the use of our site, any websites linked to it and any materials posted on it, including: </p>
+        <p>16.3 Any liability for any direct, indirect or consequential loss or damage incurred by any user in connection with the supply of goods from CAKESJANDK Limited, the use our site or in connection with the use, inability to use, or results of the use of our site, any websites linked to it and any materials posted on it, including: </p>
         <p>(a) loss of income or revenue;</p>
         <p>(b) loss of business;</p>
         <p>(c) loss of profits or contracts;</p>
@@ -131,7 +131,7 @@ const Terms = () => {
         <p>(g) wasted management or office time; and </p>
         <p>whether caused by tort (including negligence), breach of contract or otherwise, even if foreseeable, provided that this condition shall not prevent claims for loss of or damage to your tangible property or any other claims for direct financial loss that are not excluded by any of the categories set out above. </p>
         <p>16.4 This does not affect our liability for death or personal injury arising from our negligence, nor our liability for fraudulent misrepresentation or misrepresentation as to a fundamental matter, nor any other liability which cannot be excluded or limited under applicable law. </p>
-        <p>16.5 Koshibakery Limited's total liability to you in respect of all other losses arising under or in connection with any Contract with you, whether in contract, tort (including negligence), breach of statutory duty, or otherwise, shall in no circumstances exceed 100% of the price of the Product ordered under that Contract. </p>
+        <p>16.5 CAKESJANDK Limited's total liability to you in respect of all other losses arising under or in connection with any Contract with you, whether in contract, tort (including negligence), breach of statutory duty, or otherwise, shall in no circumstances exceed 100% of the price of the Product ordered under that Contract. </p>
       `,
         },
         {
@@ -143,7 +143,7 @@ const Terms = () => {
         {
             title: "18. Notices",
             content: `
-        <p>18.1 All notices given by you to us must be given in writing to Koshibakery Limited, 185 Edgware Road W2 1ET, London or at <span class="font-bold">hello@koshibakery.com</span>. We may give notice to you at either the e-mail or postal address you provide to us when placing an order, or in any of the ways specified in clause 17 above. Notice will be deemed received and properly served immediately when posted on our website, 24 hours after an e-mail is sent, or three days after the date of posting of any letter. In proving the service of any notice, it will be sufficient to prove, in the case of a letter, that such letter was properly addressed, stamped and placed in the post and, in the case of an e-mail that such e-mail was sent to the specified e-mail address of the addressee. </p>      
+        <p>18.1 All notices given by you to us must be given in writing to CAKESJANDK Limited, 185 Edgware Road W2 1ET, London or at <span class="font-bold">hello@koshibakery.com</span>. We may give notice to you at either the e-mail or postal address you provide to us when placing an order, or in any of the ways specified in clause 17 above. Notice will be deemed received and properly served immediately when posted on our website, 24 hours after an e-mail is sent, or three days after the date of posting of any letter. In proving the service of any notice, it will be sufficient to prove, in the case of a letter, that such letter was properly addressed, stamped and placed in the post and, in the case of an e-mail that such e-mail was sent to the specified e-mail address of the addressee. </p>      
       `,
         },
         {
@@ -205,8 +205,8 @@ const Terms = () => {
         {
             title: "26. DATA PROTECTION",
             content: `
-        <p>26.1 Please refer to our Privacy Policy for the general privacy terms of the Koshibakery Limited Website. </p>      
-        <p>26.2 Personal details you provide when placing an order will only be held by Koshibakery Limited for the purpose of completing your order. Information will not be shared with any other party except for the purposes outlined in our Privacy Notice. You can unsubscribe to this service at any time by emailing <span class="font-bold">hello@koshibakery.com</span>  with 'unsubscribe' in the subject line. </p>      
+        <p>26.1 Please refer to our Privacy Policy for the general privacy terms of the CAKESJANDK Limited Website. </p>      
+        <p>26.2 Personal details you provide when placing an order will only be held by CAKESJANDK Limited for the purpose of completing your order. Information will not be shared with any other party except for the purposes outlined in our Privacy Notice. You can unsubscribe to this service at any time by emailing <span class="font-bold">hello@koshibakery.com</span>  with 'unsubscribe' in the subject line. </p>      
         <p>26.3 Financial data will be encrypted by up-to-date encryption technology that will be sent directly to the payment service provider where it will be processed securely. For your own protection you must not divulge credit card information via email. </p>      
       `,
         },
@@ -250,7 +250,7 @@ const Terms = () => {
                         be bound by the Terms and Conditions set out below. Please ensure you have also read the Privacy
                         Policy. Any questions or complaints regarding our service or terms and conditions, please
                         contact us at: <span className="font-bold">hello@koshibakery.com</span> or on <span
-                        className="font-bold">number</span>
+                        className="font-bold">15369008</span>
                     </p>
                     <p>
                         Please note that all card transactions processed on our shop page are handled securely by Stripe
@@ -275,7 +275,7 @@ const Terms = () => {
                             <div
                                 className={`overflow-hidden transition-[max-height] duration-500 ease-in-out`}
                                 style={{
-                                    maxHeight: openIndex === index ? "500px" : "0px",
+                                    maxHeight: openIndex === index ? "900px" : "0px",
                                 }}
                             >
                                 <div
