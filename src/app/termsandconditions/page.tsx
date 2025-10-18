@@ -143,7 +143,7 @@ const Terms = () => {
         {
             title: "18. Notices",
             content: `
-        <p>18.1 All notices given by you to us must be given in writing to CAKESJANDK Limited, 185 Edgware Road W2 1ET, London or at <span class="font-bold">hello@koshibakery.com</span>. We may give notice to you at either the e-mail or postal address you provide to us when placing an order, or in any of the ways specified in clause 17 above. Notice will be deemed received and properly served immediately when posted on our website, 24 hours after an e-mail is sent, or three days after the date of posting of any letter. In proving the service of any notice, it will be sufficient to prove, in the case of a letter, that such letter was properly addressed, stamped and placed in the post and, in the case of an e-mail that such e-mail was sent to the specified e-mail address of the addressee. </p>      
+        <p>18.1 All notices given by you to us must be given in writing to CAKESJANDK Limited, 185 Edgware Road W2 1ET, London or at <span class="font-bold">cakesjandk@gmail.com</span>. We may give notice to you at either the e-mail or postal address you provide to us when placing an order, or in any of the ways specified in clause 17 above. Notice will be deemed received and properly served immediately when posted on our website, 24 hours after an e-mail is sent, or three days after the date of posting of any letter. In proving the service of any notice, it will be sufficient to prove, in the case of a letter, that such letter was properly addressed, stamped and placed in the post and, in the case of an e-mail that such e-mail was sent to the specified e-mail address of the addressee. </p>      
       `,
         },
         {
@@ -206,7 +206,7 @@ const Terms = () => {
             title: "26. DATA PROTECTION",
             content: `
         <p>26.1 Please refer to our Privacy Policy for the general privacy terms of the CAKESJANDK Limited Website. </p>      
-        <p>26.2 Personal details you provide when placing an order will only be held by CAKESJANDK Limited for the purpose of completing your order. Information will not be shared with any other party except for the purposes outlined in our Privacy Notice. You can unsubscribe to this service at any time by emailing <span class="font-bold">hello@koshibakery.com</span>  with 'unsubscribe' in the subject line. </p>      
+        <p>26.2 Personal details you provide when placing an order will only be held by CAKESJANDK Limited for the purpose of completing your order. Information will not be shared with any other party except for the purposes outlined in our Privacy Notice. You can unsubscribe to this service at any time by emailing <span class="font-bold">cakesjandk@gmail.com</span>  with 'unsubscribe' in the subject line. </p>      
         <p>26.3 Financial data will be encrypted by up-to-date encryption technology that will be sent directly to the payment service provider where it will be processed securely. For your own protection you must not divulge credit card information via email. </p>      
       `,
         },
@@ -231,7 +231,7 @@ const Terms = () => {
         {
             title: "30. YOUR CONCERNS",
             content: `
-        <p>30.1 At Zemallow Limited, we strive to offer an excellent level of customer service. We maintain a high level of care and attention as expected by law. Should you have any issues with our goods, services, prices or any other matter, please contact us by email to <span class="font-bold">hello@koshibakery.com</span></p>      
+        <p>30.1 At Zemallow Limited, we strive to offer an excellent level of customer service. We maintain a high level of care and attention as expected by law. Should you have any issues with our goods, services, prices or any other matter, please contact us by email to <span class="font-bold">cakesjandk@gmail.com</span></p>      
       `,
         },
     ];
@@ -249,7 +249,7 @@ const Terms = () => {
                         website. By using this website/placing an order you (as website user and / or customer) agree to
                         be bound by the Terms and Conditions set out below. Please ensure you have also read the Privacy
                         Policy. Any questions or complaints regarding our service or terms and conditions, please
-                        contact us at: <span className="font-bold">hello@koshibakery.com</span> or on <span
+                        contact us at: <span className="font-bold">cakesjandk@gmail.com</span> or on <span
                         className="font-bold">15369008</span>
                     </p>
                     <p>
