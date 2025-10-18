@@ -115,12 +115,19 @@ export default function Footer() {
                     </div>
                 </div>
 
-                <div className="flex justify-center items-center space-x-1 pb-2">
-                    <div className={`${sora.className} text-white text-xs`}>
-                        All rights reserved | Powered by
+                <div className="flex flex-col sm:flex-row justify-center items-center space-x-1 pb-2 space-x-4">
+                    <div className={`${sora.className} text-white`}>
+                        All rights reserved
                     </div>
-                    <Image src="/hebent_logo.svg" alt="hebent_logo" width={50} height={50} className="w-5"/>
-                    <div className="text-white">Hebent Tech</div>
+                    <div>
+                        <Link className="text-white" href="/termsandconditions">Terms and Conditions</Link>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                        <p className="text-white">Powered by</p>
+                        <Image src="/hebent_logo.svg" alt="hebent_logo" width={50} height={50} className="w-5"/>
+                        <div className="text-white">Hebent Tech</div>
+                    </div>
+
                 </div>
             </div>
         </div>
