@@ -18,6 +18,7 @@ type Product = {
     main_image: string;
     product_name: string;
     product_desc: string;
+    notice: string;
     product_availability: number | string;
     product_types: number;
     product_category: number;
@@ -167,6 +168,9 @@ export default function Products({sort, search, selectedType, availability, pric
                                     />
                                 </div>
                                 <div className="space-y-3 w-full px-2 py-4">
+                                    <div className="font-semibold text-md text-red-500">
+                                        {item.notice}
+                                    </div>
                                     <div className="flex items-center justify-center">
                                         <div className="flex items-center">
                                             <FaPoundSign size={14} style={{marginBottom: "2px"}}/>

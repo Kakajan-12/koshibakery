@@ -2,7 +2,10 @@
 import {useEffect, useState} from "react";
 import Image from "next/image";
 import {quicksand} from "@/app/fonts";
-import { useCategory } from "@/app/context/CategoryContext";
+import {useCategory} from "@/app/context/CategoryContext";
+import {Navigation} from "swiper/modules";
+import {Swiper, SwiperSlide} from "swiper/react";
+import {IoIosArrowBack, IoIosArrowForward} from "react-icons/io";
 
 type Category = {
     id: number;
@@ -11,7 +14,7 @@ type Category = {
 };
 
 export default function Categories() {
-    const { selectedCategory, setSelectedCategory } = useCategory()
+    const {selectedCategory, setSelectedCategory} = useCategory()
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -51,51 +54,87 @@ export default function Categories() {
     }
 
     return (
-        <div className="container mx-auto px-4 py-14">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-8 justify-items-center">
-                <div
-                    onClick={() => setSelectedCategory(null)} // при клике сбрасываем фильтр
-                    className={`flex flex-col items-center text-center cursor-pointer ${
-                        selectedCategory === null ? "scale-105" : ""
-                    }`}
-                >
+        <div className="container mx-auto px-4 pt-14 pb-14 lg:pb-24 relative">
+            <Swiper
+                modules={[Navigation]}
+                spaceBetween={20}
+                slidesPerView={2}
+                navigation={{
+                    nextEl: ".category-next",
+                    prevEl: ".category-prev",
+                }}
+                loop={false}
+                breakpoints={{
+                    420: { slidesPerView: 3, spaceBetween: 30 },
+                    567: { slidesPerView: 4, spaceBetween: 30 },
+                    1024: { slidesPerView: 5, spaceBetween: 40 },
+                    1540: { slidesPerView: 6, spaceBetween: 50 },
+                }}
+                className="!overflow-hidden"
+            >
+                {/* Один слайд для "All" */}
+                <SwiperSlide>
                     <div
-                        className={`w-24 h-24 sm:w-28 sm:h-28 lg:w-36 lg:h-36 rounded-full overflow-hidden flex items-center justify-center border-4 bg-gray-200
-                        ${selectedCategory === null ? "border-green-700" : "border-transparent"}`}>
-                        <span className="text-gray-600 font-bold">All</span>
-                    </div>
-                    <p
-                        className={`${quicksand.className} mt-2 font-bold text-md sm:text-lg lg:text-xl text-[#6F5E53]`}
-                    >
-                        All
-                    </p>
-                </div>
-                {categories.map((item) => (
-                    <div
-                        key={item.id}
-                        onClick={() => setSelectedCategory(selectedCategory === item.id ? null : item.id)}
-                        className={`flex flex-col items-center text-center cursor-pointer transition-transform 
-              ${selectedCategory === item.id ? "scale-105" : ""}`}
+                        onClick={() => setSelectedCategory(null)}
+                        className={`flex flex-col items-center text-center cursor-pointer transition-transform pt-1 ${
+                            selectedCategory === null ? "scale-105" : ""
+                        }`}
                     >
                         <div
-                            className={`w-24 h-24 sm:w-28 sm:h-28 lg:w-36 lg:h-36 rounded-full overflow-hidden border-4 transition-colors 
-                ${selectedCategory === item.id ? "border-green-700" : "border-transparent"}`}
+                            className={`w-24 h-24 sm:w-28 sm:h-28 lg:w-36 lg:h-36 rounded-full overflow-hidden flex items-center justify-center border-4 bg-gray-200 ${
+                                selectedCategory === null ? "border-green-700" : "border-transparent"
+                            }`}
                         >
-                            <Image
-                                src={item.image}
-                                alt={item.name}
-                                width={128}
-                                height={128}
-                                className="object-cover w-full h-full"
-                            />
+                            <span className="text-gray-600 font-bold">All</span>
                         </div>
                         <p
                             className={`${quicksand.className} mt-2 font-bold text-md sm:text-lg lg:text-xl text-[#6F5E53]`}
                         >
-                            {item.name}
+                            All
                         </p>
                     </div>
+                </SwiperSlide>
+
+                {/* Остальные категории */}
+                {categories.map((item) => (
+                    <SwiperSlide key={item.id}>
+                        <div
+                            onClick={() =>
+                                setSelectedCategory(selectedCategory === item.id ? null : item.id)
+                            }
+                            className={`flex flex-col items-center text-center cursor-pointer transition-transform pt-1 ${
+                                selectedCategory === item.id ? "scale-105" : ""
+                            }`}
+                        >
+                            <div
+                                className={`w-24 h-24 sm:w-28 sm:h-28 lg:w-36 lg:h-36 rounded-full overflow-hidden border-4 transition-colors ${
+                                    selectedCategory === item.id ? "border-green-700" : "border-transparent"
+                                }`}
+                            >
+                                <Image
+                                    src={item.image}
+                                    alt={item.name}
+                                    width={128}
+                                    height={128}
+                                    className="object-cover w-full h-full"
+                                />
+                            </div>
+                            <p
+                                className={`${quicksand.className} mt-2 font-bold text-md sm:text-lg lg:text-xl text-[#6F5E53]`}
+                            >
+                                {item.name}
+                            </p>
+                        </div>
+                    </SwiperSlide>
                 ))}
+            </Swiper>
+
+            {/* Кнопки навигации */}
+            <div className="category-prev hidden xl:flex absolute bottom-0 right-20 z-30 w-12 h-12 bg-[#165225] text-white rounded-full items-center justify-center cursor-pointer transition">
+                <IoIosArrowBack />
+            </div>
+            <div className="category-next hidden xl:flex absolute bottom-0 right-0 z-30 w-12 h-12 bg-[#165225] text-white rounded-full items-center justify-center cursor-pointer transition">
+                <IoIosArrowForward />
             </div>
         </div>
     );
