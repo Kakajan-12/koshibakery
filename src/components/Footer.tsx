@@ -60,7 +60,7 @@ export default function Footer() {
     return (
         <div className="footer py-10">
             <div className="container mx-auto px-4">
-                <div className="pt-20 pb-10">
+                <div className="pt-28 pb-10">
                     <div className={`${sora.className} text-white text-lg font-bold mb-3 lg:text-2xl xl:text-5xl`}>
                         Koşi bakery
                     </div>
@@ -115,12 +115,15 @@ export default function Footer() {
                     </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row justify-center items-center space-x-1 pb-2 space-x-4">
+                <div className="flex flex-col md:flex-row justify-center items-center space-x-1 pb-2 space-x-4">
                     <div className={`${sora.className} text-white`}>
                         All rights reserved
                     </div>
                     <div>
                         <Link className="text-white" href="/termsandconditions">Terms and Conditions</Link>
+                    </div>
+                    <div>
+                        <Link className="text-white" href="/privacypolicy">Privacy Policy</Link>
                     </div>
                     <div className="flex items-center space-x-1">
                         <p className="text-white">Powered by</p>

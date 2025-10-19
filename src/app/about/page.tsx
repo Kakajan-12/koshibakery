@@ -4,7 +4,7 @@ import Image from "next/image";
 const About = ()=>{
     return(
         <div className="flex flex-col space-y-2">
-            <div className="my-container mx-auto mt-[64px] relative"
+            <div className="my-container mx-auto mt-[70px] md:mt-[90px] relative"
                  style={{
                      backgroundImage: `url('/images/about_bg.webp')`,
                      backgroundRepeat: 'no-repeat',
@@ -13,7 +13,7 @@ const About = ()=>{
                  }}>
                 <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/70 to-transparent z-10"/>
                 <div className="container mx-auto px-4">
-                    <div className="pt-9 lg:pt-18 pb-10 lg:pb-38 relative z-20 md:max-w-[500px] mx-auto">
+                    <div className="pt-9 lg:pt-18 pb-10 lg:pb-38 relative z-20 md:max-w-[900px] mx-auto">
                         <h6 className={`${sora.className} text-white text-xl md:text-4xl text-center md:text-left mb-2`}>About
                             Us</h6>
                         <p className={`${quicksand.className} text-white text-[#6F5E53] md:text-lg`}>We are a patisserie
@@ -34,10 +34,10 @@ const About = ()=>{
 
                 </div>
             </div>
-            <div className="container mx-auto px-4">
+            <div className="my-container mx-auto">
                 <div className="flex flex-col md:flex-row space-y-2 md:space-x-2 pb-28">
-                    <div className="w-full md:w-1/2 flex-1">
-                        <div className="relative w-full h-64 sm:h-80 md:h-full">
+                    <div className="w-full flex-1 mb-0">
+                        <div className="relative w-full h-96 md:h-full">
                             <Image
                                 src="/images/about.jpg"
                                 alt="about_us"
@@ -48,7 +48,7 @@ const About = ()=>{
                     </div>
 
                     <div
-                        className="rounded-md bg-[#FFEFAA] py-10 px-4 space-y-2 md:space-y-6 md:w-1/2 flex flex-col justify-center">
+                        className="rounded-md bg-[#FFEFAA] py-10 px-4 lg:px-10 space-y-2 md:space-y-6 md:w-1/2 flex flex-col justify-center h-[500px]">
                         <div className="space-y-2">
                             <h6 className={`${sora.className} text-xl font-bold md:text-4xl`}>Koşi bakery</h6>
                             <p className={`${quicksand.className} text-md`}>

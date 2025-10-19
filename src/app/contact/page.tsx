@@ -20,7 +20,6 @@ const Contact: React.FC = () => {
     const [contact, setContact] = useState<ContactData | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
 
-    // поля формы
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
@@ -48,7 +47,6 @@ const Contact: React.FC = () => {
         fetchContact();
     }, []);
 
-    // 🔥 Обработчик отправки письма
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setStatus('loading');
@@ -91,7 +89,6 @@ const Contact: React.FC = () => {
                 </div>
             </div>
 
-            {/* Фон с печеньками */}
             <div
                 key={pathname}
                 className="h-20 bg-repeat-x bg-bottom md:h-35"
@@ -106,7 +103,6 @@ const Contact: React.FC = () => {
                     <p className="text-center text-gray-500 py-8">Loading...</p>
                 ) : (
                     <div className="flex flex-col xl:flex-row xl:space-x-6 space-y-4 py-8">
-                        {/* Левая часть: контакты + карта */}
                         <div className="flex flex-col justify-center space-y-3 xl:w-1/2">
                             <div className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-2">
                                 {/* Email */}
@@ -126,7 +122,6 @@ const Contact: React.FC = () => {
                                     </div>
                                 </div>
 
-                                {/* Phone */}
                                 <div className="flex bg-[#FFF2BB] py-2 px-3 rounded-md space-x-2 xl:h-full w-full items-center">
                                     <FiPhone className="w-10 h-10 md:w-14 md:h-14 flex-shrink-0" />
                                     <div className="flex flex-col justify-center">
@@ -144,7 +139,6 @@ const Contact: React.FC = () => {
                                 </div>
                             </div>
 
-                            {/* Карта */}
                             <div className="w-full h-[250px] mt-4 overflow-hidden rounded-lg">
                                 {contact?.map ? (
                                     <div className="w-full h-[250px] mt-4 overflow-hidden rounded-lg">
@@ -156,7 +150,6 @@ const Contact: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* Правая часть: форма */}
                         <div className="space-y-2 xl:w-1/2">
                             <h6
                                 className={`${sora.className} font-bold text-lg md:text-2xl`}
@@ -166,9 +159,7 @@ const Contact: React.FC = () => {
                             <p
                                 className={`${quicksand.className} text-[#6F5E53] text-sm md:text-md leading-4`}
                             >
-                                Duis euismod, magna a cursus bibendum, ligula eros suscipit
-                                nisl, nec tempus est velit nec nibh. Quisque at velit vitae
-                                nulla pretium hendrerit in eget augue.
+                                Put in your details below and how we can help and we will try to get back to you within a couple of hours.
                             </p>
 
                             <form

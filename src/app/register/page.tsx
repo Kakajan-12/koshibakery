@@ -6,20 +6,32 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export default function RegisterPage() {
+    const [isSelecting, setIsSelecting] = useState(false);
     const [fname, setfName] = useState("");
     const [lname, setlName] = useState("");
-    const [address, setAddress] = useState("");
+
+    const [latitude, setLatitude] = useState<number | null>(null);
+    const [longitude, setLongitude] = useState<number | null>(null);
+
+    const [street, setStreet] = useState("");
+    const [housenumber, setHouseNumber] = useState("");
+    const [postcode, setPostcode] = useState("");
+    const [city, setCity] = useState("");
+    const [fullAddress, setFullAddress] = useState("");
+
     const [phone, setPhone] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
     const [showModal, setShowModal] = useState(false);
     const [suggestions, setSuggestions] = useState<any[]>([]);
+
     const router = useRouter();
 
     // ======== AUTOCOMPLETE ========
     useEffect(() => {
-        if (address.length < 3) {
+        if (isSelecting) return; // если только что выбрали — не fetch
+        if (fullAddress.length < 3) {
             setSuggestions([]);
             return;
         }
@@ -27,16 +39,15 @@ export default function RegisterPage() {
         const fetchSuggestions = async () => {
             try {
                 const res = await fetch(
-                    `https://photon.komoot.io/api/?q=${encodeURIComponent(address + ", London")}&bbox=-0.5103,51.2868,0.3340,51.6919&limit=10`
+                    `https://photon.komoot.io/api/?q=${encodeURIComponent(fullAddress + ", London")}&bbox=-0.5103,51.2868,0.3340,51.6919&limit=10&lang=en`
                 );
                 const data = await res.json();
-
                 if (!data.features) return;
 
                 const unique = Array.from(
                     new Map(
                         data.features.map((f: any) => [
-                            `${f.properties.name}-${f.properties.city || f.properties.state || ""}`,
+                            `${f.properties.housenumber}-${f.properties.street}-${f.properties.city || f.properties.state || ""}`,
                             f,
                         ])
                     ).values()
@@ -50,28 +61,39 @@ export default function RegisterPage() {
 
         const timeout = setTimeout(fetchSuggestions, 400);
         return () => clearTimeout(timeout);
-    }, [address]);
+    }, [fullAddress, isSelecting]);
 
-    // ======== REGISTER WITH ADDRESS VALIDATION ========
+    // ======== REGISTER ========
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        const addressString = `${housenumber ? housenumber + " " : ""}${street}, ${city}${postcode ? ", " + postcode : ""}`;
+
         try {
-            // 1️⃣ Проверяем адрес перед регистрацией
+            // Проверка адреса перед регистрацией
             const checkRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/check-address`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ address }),
+                body: JSON.stringify({ address: addressString }),
             });
 
             const checkData = await checkRes.json();
             if (!checkRes.ok) throw new Error(checkData.error || "Address validation failed");
 
-            // 2️⃣ Если ок — продолжаем регистрацию
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ fname, lname, address, phone, email, password }),
+                body: JSON.stringify({
+                    fname,
+                    lname,
+                    address: `${housenumber} ${street}, ${city}${postcode ? ", " + postcode : ""}`,
+                    phone,
+                    email,
+                    password,
+                    latitude,
+                    longitude
+                })
+
             });
 
             const data = await res.json();
@@ -85,6 +107,7 @@ export default function RegisterPage() {
         }
     };
 
+    // ======== UI ========
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-50">
             <form
@@ -96,30 +119,48 @@ export default function RegisterPage() {
                 <Input type="text" placeholder="First name" value={fname} onChange={(e) => setfName(e.target.value)} required />
                 <Input type="text" placeholder="Last name" value={lname} onChange={(e) => setlName(e.target.value)} required />
 
-                {/* Address field with autocomplete */}
+                {/* Address autocomplete */}
                 <div className="relative">
                     <Input
                         type="text"
-                        placeholder="Address (London only)"
-                        value={address}
-                        onChange={(e) => setAddress(e.target.value)}
+                        placeholder="Start typing your address (London)"
+                        value={fullAddress}
+                        onChange={(e) => setFullAddress(e.target.value)}
                         required
                     />
                     {suggestions.length > 0 && (
                         <ul className="absolute z-10 w-full bg-white border rounded mt-1 max-h-48 overflow-auto">
-                            {suggestions.map((s, i) => (
-                                <li
-                                    key={i}
-                                    onClick={() => {
-                                        setAddress(`${s.properties.name}${s.properties.city ? ", " + s.properties.city : ""}`);
-                                        setSuggestions([]);
-                                    }}
-                                    className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                                >
-                                    {s.properties.name}
-                                    {s.properties.city && `, ${s.properties.city}`}
-                                </li>
-                            ))}
+                            {suggestions.map((s, i) => {
+                                const p = s.properties;
+                                const full = [
+                                    p.housenumber,
+                                    p.street || p.name,
+                                    p.city,
+                                    p.postcode,
+                                ]
+                                    .filter(Boolean)
+                                    .join(", ");
+
+                                return (
+                                    <li
+                                        key={i}
+                                        onClick={() => {
+                                            setStreet(p.street || p.name || "");
+                                            setHouseNumber(p.housenumber || "");
+                                            setPostcode(p.postcode || "");
+                                            setCity(p.city || "");
+                                            setFullAddress(full);
+                                            setLatitude(s.geometry.coordinates[1]);
+                                            setLongitude(s.geometry.coordinates[0]);
+                                            setSuggestions([]);  // закрываем список
+                                        }}
+
+                                        className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                                    >
+                                        {full}
+                                    </li>
+                                );
+                            })}
                         </ul>
                     )}
                 </div>

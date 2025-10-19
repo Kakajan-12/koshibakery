@@ -262,7 +262,7 @@ const MenuItem = () => {
                                     className="w-full flex justify-between items-center px-4 py-3 border-b border-[#264D30] cursor-pointer"
                                 >
                                     <div className="text-left text-lg md:text-2xl">
-                                        Ingredients & <span className="text-green-500">Flavors</span>
+                                        Ingredients and Allergens
                                     </div>
 
                                     <GoPlus
@@ -334,13 +334,13 @@ const MenuItem = () => {
                         </div>
                     </div>
 
-                    <div className="pt-6 text-center md:text-2xl">Perfect for special occasions or as a luxurious treat for
+                    <div className="mt-10 mb-6 text-center md:text-2xl">Perfect for special occasions or as a luxurious treat for
                         yourself.
                     </div>
                 </div>
             </div>
             <div
-                className="h-20 bg-repeat-x bg-bottom md:h-35 pt-6"
+                className="h-20 bg-repeat-x bg-bottom md:h-40 mt-6 mb-10"
                 style={{
                     backgroundImage: "url('/images/cookie1.webp')",
                     backgroundSize: "contain",

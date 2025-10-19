@@ -21,14 +21,18 @@ const Terms = () => {
         {
             title: "2. Your Status",
             content: `
-        <p>2.1 By placing an order through our site, you warrant that you are legally capable of entering into binding contracts.</p>      `,
+        <p>2.1 Eligibility to Purchase.</p>
+        <p>By placing an order through our website, you warrant that:</p>
+        <p>-You are legally capable of entering into binding contracts; and</p>
+        <p>-You are at least 18 years of age.</p>
+`,
         },
         {
-            title: "3. How The Contract Is Formed Between You and Us",
+            title: "3. Orders and Contract Formation",
             content: `
-        <p>3.1 After placing an order, you will receive an e-mail from us acknowledging that we have received your order. Please note that this does not mean that your order has been accepted. Your order constitutes an offer to us to buy a Product. All orders are subject to acceptance by us, and we will confirm such acceptance to you by sending you an e-mail that confirms that the Product is available (Availability Confirmation) The contract between us (Contract) will only be formed when we send you the Availability Confirmation. </p>
-        <p>3.2 The Contract will relate only to those Products ("Products") whose availabilty we have confirmed in the Availability Confirmation.</p>
-        <p>3.3 CAKESJANDK Limited is entitled to withdraw from any Contract in the case of obvious errors or inaccuracies or for unavailability. CAKESJANDK Limited reserves the right to place restrictions on the volume of Products ordered. </p>
+        <p>3.1 After placing an order, you will receive an email from us acknowledging that we have received your order. Please note that this acknowledgement does not mean that your order has been accepted. Your order constitutes an offer to purchase a Product from us. All orders are subject to acceptance by CAKESJANDK Limited, and we will confirm such acceptance by sending you an email confirming that the Product is available (the “Availability Confirmation”). The contract between us (the “Contract”) will be formed only when we send you the Availability Confirmation.</p>
+        <p>3.2 The Contract will relate only to those products (the “Products”) whose availability we have confirmed in the Availability Confirmation.</p>
+        <p>3.3 CAKESJANDK Limited reserves the right to withdraw from any Contract in the event of obvious errors, inaccuracies, or product unavailability. We also reserve the right to place reasonable restrictions on the quantity of Products ordered.</p>
       `,
         },
         {
@@ -60,7 +64,7 @@ const Terms = () => {
         {
             title: "8. Process of Payments",
             content: `
-        <p>8.1 Payment for a CAKESJANDK limited Product is made through Stripe, a registered and secure electronic payment system, and through Paypal, a registered and secure electronic payment system </p>
+        <p>8.1 Payment for a CAKESJANDK limited Product is made through Stripe, a registered and secure electronic payment system, a registered and secure electronic payment system </p>
         <p>8.2 All payments are subject to validation by the card issuer. CAKESJANDK Limited does not accept responsibility for the refusal of a card payment and will not be held liable for any delay or non-delivery that results from this. </p>
         <p>8.3 CAKESJANDK limited does not store any of your card details. </p>
       `,
@@ -213,7 +217,7 @@ const Terms = () => {
         {
             title: "27. DISPUTES",
             content: `
-        <p>27.1 To resolve any disputes please contact Evgeny Ksenzenko on evgeny@zemallow.com, placing disputes in the subject box.</p>      
+        <p>27.1 To resolve any disputes please contact on cakesjandk@gmail.com, placing disputes in the subject box.</p>      
       `,
         },
         {
@@ -231,7 +235,7 @@ const Terms = () => {
         {
             title: "30. YOUR CONCERNS",
             content: `
-        <p>30.1 At Zemallow Limited, we strive to offer an excellent level of customer service. We maintain a high level of care and attention as expected by law. Should you have any issues with our goods, services, prices or any other matter, please contact us by email to <span class="font-bold">cakesjandk@gmail.com</span></p>      
+        <p>30.1 At CAKESJANDK Limited, we strive to offer an excellent level of customer service. We maintain a high level of care and attention as expected by law. Should you have any issues with our goods, services, prices or any other matter, please contact us by email to <span class="font-bold">cakesjandk@gmail.com</span></p>      
       `,
         },
     ];
