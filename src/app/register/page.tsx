@@ -10,7 +10,9 @@ export default function RegisterPage() {
     const [fname, setfName] = useState("");
     const [lname, setlName] = useState("");
 
-    // ---- раздельные поля адреса ----
+    const [latitude, setLatitude] = useState<number | null>(null);
+    const [longitude, setLongitude] = useState<number | null>(null);
+
     const [street, setStreet] = useState("");
     const [housenumber, setHouseNumber] = useState("");
     const [postcode, setPostcode] = useState("");
@@ -28,9 +30,9 @@ export default function RegisterPage() {
 
     // ======== AUTOCOMPLETE ========
     useEffect(() => {
-        // Если пользователь выбрал подсказку — не запускаем автопоиск
-        if (isSelecting || fullAddress.length < 3) {
-            if (fullAddress.length < 3) setSuggestions([]);
+        if (isSelecting) return; // если только что выбрали — не fetch
+        if (fullAddress.length < 3) {
+            setSuggestions([]);
             return;
         }
 
@@ -61,8 +63,6 @@ export default function RegisterPage() {
         return () => clearTimeout(timeout);
     }, [fullAddress, isSelecting]);
 
-
-
     // ======== REGISTER ========
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -80,21 +80,20 @@ export default function RegisterPage() {
             const checkData = await checkRes.json();
             if (!checkRes.ok) throw new Error(checkData.error || "Address validation failed");
 
-            // Регистрация
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     fname,
                     lname,
-                    street,
-                    housenumber,
-                    postcode,
-                    city,
+                    address: `${housenumber} ${street}, ${city}${postcode ? ", " + postcode : ""}`,
                     phone,
                     email,
                     password,
-                }),
+                    latitude,
+                    longitude
+                })
+
             });
 
             const data = await res.json();
@@ -146,15 +145,16 @@ export default function RegisterPage() {
                                     <li
                                         key={i}
                                         onClick={() => {
-                                            setIsSelecting(true);
                                             setStreet(p.street || p.name || "");
                                             setHouseNumber(p.housenumber || "");
                                             setPostcode(p.postcode || "");
                                             setCity(p.city || "");
                                             setFullAddress(full);
-                                            setSuggestions([]);
-                                            setTimeout(() => setIsSelecting(false), 300);
+                                            setLatitude(s.geometry.coordinates[1]);
+                                            setLongitude(s.geometry.coordinates[0]);
+                                            setSuggestions([]);  // закрываем список
                                         }}
+
                                         className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
                                     >
                                         {full}
