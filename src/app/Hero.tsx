@@ -7,11 +7,11 @@ export default function Hero() {
     return (
         <div className="my-container mx-auto">
             <div className="relative pt-[64px] mb-20 lg:mb-40">
-                <div className="absolute top-34 right-6 opacity-25 lg:top-24 lg:right-0 lg:opacity-100">
+                <div className="absolute top-0 right-6 opacity-25 lg:-top-10 lg:right-0 lg:opacity-100">
                     <Image
                         src="/images/main_hero.webp"
                         alt="cake"
-                        className="w-56 md:w-72 lg:w-[590px]"
+                        className="w-56 md:w-72 lg:w-[450px]"
                         width={900}
                         height={600}
                     />

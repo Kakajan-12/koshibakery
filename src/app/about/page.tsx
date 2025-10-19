@@ -34,7 +34,7 @@ const About = ()=>{
 
                 </div>
             </div>
-            <div className="container mx-auto px-4">
+            <div className="">
                 <div className="flex flex-col md:flex-row space-y-2 md:space-x-2 pb-28">
                     <div className="w-full md:w-1/2 flex-1">
                         <div className="relative w-full h-64 sm:h-80 md:h-full">
