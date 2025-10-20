@@ -9,7 +9,7 @@ import Link from "next/link";
 import { FaRegTrashCan } from "react-icons/fa6";
 
 const Cart = () => {
-    const { cart, removeFromCart, clearCart, updateQuantity } = useCart(); // добавили updateQuantity
+    const { cart, removeFromCart, clearCart, updateQuantity } = useCart();
 
     const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
@@ -58,7 +58,7 @@ const Cart = () => {
                     <div className="space-y-2 max-w-4xl w-full">
                         {cart.map((item) => (
                             <div
-                                key={item.id}
+                                key={`${item.id}-${item.variantName}`}
                                 className="flex flex-col md:flex-row items-center justify-between border-2 border-color p-2 rounded-md space-y-4 md:space-y-0"
                             >
                                 <div className="flex space-x-4 w-full">
@@ -81,23 +81,25 @@ const Cart = () => {
                                     <div className="flex items-center border rounded-lg overflow-hidden">
                                         <button
                                             className="px-3 py-1 bg-green-200"
-                                            onClick={() =>
-                                                updateQuantity(item.id, Math.max(item.quantity - 1, 1))
-                                            }
+                                            onClick={() => updateQuantity(item.id, item.variantName, Math.max(item.quantity - 1, 1))}
                                         >
                                             -
                                         </button>
                                         <span className="px-4">{item.quantity}</span>
                                         <button
                                             className="px-3 py-1 bg-green-200"
-                                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                            onClick={() => updateQuantity(item.id, item.variantName, item.quantity + 1)}
                                         >
                                             +
                                         </button>
                                     </div>
-                                    <Button variant="destructive" onClick={() => removeFromCart(item.id)}>
+                                    <Button
+                                        variant="destructive"
+                                        onClick={() => removeFromCart(item.id, item.variantName)}
+                                    >
                                         <FaRegTrashCan />
                                     </Button>
+
                                 </div>
                             </div>
                         ))}
