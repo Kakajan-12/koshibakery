@@ -182,16 +182,17 @@ export default function Products({sort, search, selectedType, availability, pric
                                     >
                                         {item.product_name}
                                     </div>
-                                    <div className="flex justify-center space-x-2">
+                                    <div className="flex flex-wrap justify-center gap-2 max-w-full">
                                         {item.allergens?.map((a) => (
                                             <p
                                                 key={a.id}
-                                                className="bg-red-400 rounded-md px-2 text-white"
+                                                className="bg-red-400 rounded-md px-2 py-1 text-white text-sm break-words max-w-[100px] text-center"
                                             >
                                                 {a.name}
                                             </p>
                                         ))}
                                     </div>
+
                                 </div>
                             </div>
 
