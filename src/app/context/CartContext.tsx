@@ -14,8 +14,8 @@ export interface CartItem {
 interface CartContextType {
     cart: CartItem[];
     addToCart: (item: Omit<CartItem, "quantity">) => void;
-    updateQuantity: (id: number, quantity: number) => void;
-    removeFromCart: (id: number, variantName?: string) => void;
+    updateQuantity: (id: number, variantName: string, quantity: number) => void;
+    removeFromCart: (id: number, variantName: string) => void;
     clearCart: () => void;
 }
 
@@ -23,46 +23,61 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
     const [cart, setCart] = useState<CartItem[]>([]);
+    const [initialized, setInitialized] = useState(false);
 
     useEffect(() => {
         const stored = localStorage.getItem("cart");
         if (stored) {
             setCart(JSON.parse(stored));
         }
+        setInitialized(true);
     }, []);
 
     useEffect(() => {
-        localStorage.setItem("cart", JSON.stringify(cart));
-    }, [cart]);
+        if (initialized) {
+            localStorage.setItem("cart", JSON.stringify(cart));
+        }
+    }, [cart, initialized]);
 
+
+    // ✅ Добавляем товар
     const addToCart = (item: Omit<CartItem, "quantity">) => {
         setCart((prev) => {
-            const existing = prev.find(
+            // Находим точно такой же вариант (id + variantName)
+            const existingIndex = prev.findIndex(
                 (p) => p.id === item.id && p.variantName === item.variantName
             );
-            if (existing) {
-                return prev.map((p) =>
-                    p.id === item.id && p.variantName === item.variantName
-                        ? { ...p, quantity: p.quantity + 1 }
-                        : p
-                );
+
+            // Если уже есть — увеличиваем количество
+            if (existingIndex !== -1) {
+                const updated = [...prev];
+                updated[existingIndex].quantity += 1;
+                return updated;
             }
+
+            // Иначе добавляем новый вариант
             return [...prev, { ...item, quantity: 1 }];
         });
     };
 
 
-    const updateQuantity = (id: number, quantity: number) => {
+    // ✅ Обновляем количество по id + variantName
+    const updateQuantity = (id: number, variantName: string, quantity: number) => {
         setCart((prev) =>
-            prev.map((item) => (item.id === id ? { ...item, quantity } : item))
+            prev.map((item) =>
+                item.id === id && item.variantName === variantName
+                    ? { ...item, quantity }
+                    : item
+            )
         );
     };
 
+    // ✅ Удаляем строго по id + variantName
     const removeFromCart = (id: number, variantName?: string) => {
         setCart((prev) =>
             prev.filter(
                 (item) =>
-                    !(item.id === id && (!variantName || item.variantName === variantName))
+                    !(item.id === id && item.variantName === (variantName ?? item.variantName))
             )
         );
     };
@@ -71,7 +86,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     const clearCart = () => setCart([]);
 
     return (
-        <CartContext.Provider value={{ cart, addToCart, updateQuantity, removeFromCart, clearCart }}>
+        <CartContext.Provider
+            value={{ cart, addToCart, updateQuantity, removeFromCart, clearCart }}
+        >
             {children}
         </CartContext.Provider>
     );

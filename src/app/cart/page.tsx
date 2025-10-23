@@ -2,16 +2,150 @@
 
 import { quicksand, sora } from "@/app/fonts";
 import { Button } from "@/components/ui/button";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useCart } from "@/app/context/CartContext";
 import Link from "next/link";
 import { FaRegTrashCan } from "react-icons/fa6";
+import { useRouter } from "next/navigation";
 
 const Cart = () => {
-    const { cart, removeFromCart, clearCart, updateQuantity } = useCart(); // добавили updateQuantity
+    const SHOP_COORDS = { lat: 51.518648926574, lng: -0.16809783068325745 };
+    const { cart, removeFromCart, clearCart, updateQuantity } = useCart();
+    const [customMessages, setCustomMessages] = useState<{ [key: string]: string }>({});
+    const [showInput, setShowInput] = useState<{ [key: string]: boolean }>({});
+    const [orderType, setOrderType] = useState<"delivery" | "collect">("delivery");
+    const [addresses, setAddresses] = useState<string[]>([]);
+    const [selectedAddress, setSelectedAddress] = useState<string | "">("");
+    const [deliveryFee, setDeliveryFee] = useState(0);
+    const router = useRouter();
 
     const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+    const toggleCustomMessage = (key: string) => {
+        setShowInput(prev => ({ ...prev, [key]: !prev[key] }));
+    };
+
+    const handleInputChange = (key: string, value: string) => {
+        setCustomMessages(prev => ({ ...prev, [key]: value }));
+    };
+
+    const getDistanceInMiles = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+        const R = 6371;
+        const dLat = (lat2 - lat1) * (Math.PI / 180);
+        const dLon = (lon2 - lon1) * (Math.PI / 180);
+        const a =
+            Math.sin(dLat / 2) ** 2 +
+            Math.cos(lat1 * (Math.PI / 180)) *
+            Math.cos(lat2 * (Math.PI / 180)) *
+            Math.sin(dLon / 2) ** 2;
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const distanceKm = R * c;
+        return distanceKm * 0.621371;
+    };
+
+    const getCoordinatesFromAddress = async (address: string) => {
+        try {
+            const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(address)}&limit=1`);
+            const data = await res.json();
+            if (data.features && data.features.length > 0) {
+                const [lon, lat] = data.features[0].geometry.coordinates;
+                return { lat, lon };
+            }
+        } catch (err) {
+            console.error("Photon error:", err);
+        }
+        return null;
+    };
+
+    // Загрузка адресов пользователя
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        let mainAddr: string | null = null;
+        let extraAddrs: string[] = [];
+
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/check/me`, {
+            headers: { Authorization: `Bearer ${token}` },
+        })
+            .then(res => res.json())
+            .then((data) => {
+                if (data.address) mainAddr = data.address;
+            })
+            .catch(console.error);
+
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user-addresses`, {
+            headers: { Authorization: `Bearer ${token}` },
+        })
+            .then(res => res.json())
+            .then((data: { address: string }[]) => (extraAddrs = data.map(a => a.address)))
+            .catch(console.error)
+            .finally(() => {
+                const allAddresses = mainAddr ? [mainAddr, ...extraAddrs] : extraAddrs;
+                setAddresses(allAddresses);
+                if (!selectedAddress && allAddresses.length > 0) setSelectedAddress(allAddresses[0]);
+            });
+    }, []);
+
+    // Расчёт deliveryFee
+    useEffect(() => {
+        if (!selectedAddress) {
+            setDeliveryFee(0);
+            return;
+        }
+
+        (async () => {
+            const coords = await getCoordinatesFromAddress(selectedAddress);
+            if (coords) {
+                const miles = getDistanceInMiles(SHOP_COORDS.lat, SHOP_COORDS.lng, coords.lat, coords.lon);
+                const roadMiles = miles * 1.3;
+                setDeliveryFee(Math.round(roadMiles * 2 * 100) / 100);
+            }
+        })();
+    }, [selectedAddress]);
+
+    const customMessageCount = Object.values(showInput).filter(Boolean).length;
+    const customMessageFee = customMessageCount * 10;
+    const grandTotal = total + (orderType === "delivery" ? deliveryFee : 0) + customMessageFee;
+
+    const handleCheckout = async () => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            router.push("/login");
+            return;
+        }
+
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/create-checkout-session`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    cart: cart.map(item => ({
+                        ...item,
+                        image: item.main_image.startsWith("http")
+                            ? item.main_image
+                            : `${process.env.NEXT_PUBLIC_API_URL}${item.main_image}`, // делаем абсолютный URL
+                    })),
+                    deliveryFee,
+                    customMessageFee,
+                    orderType,
+                    selectedAddress,
+                    total: grandTotal,
+                }),
+            });
+
+            const data = await res.json();
+            if (data.url) window.location.href = data.url;
+            else console.error("Stripe session creation failed:", data);
+        } catch (err) {
+            console.error(err);
+            router.push("/login");
+        }
+    };
 
     if (cart.length === 0) {
         return (
@@ -46,73 +180,131 @@ const Cart = () => {
     }
 
     return (
-        <div className="mt-[64px]">
-            <div className="container mx-auto px-4 py-10">
-                <h2
-                    className={`${sora.className} text-2xl lg:text-4xl font-bold mb-6 text-center`}
-                >
-                    Your Cart
-                </h2>
-
-                <div className="flex justify-center">
-                    <div className="space-y-2 max-w-4xl w-full">
-                        {cart.map((item) => (
-                            <div
-                                key={item.id}
-                                className="flex flex-col md:flex-row items-center justify-between border-2 border-color p-2 rounded-md space-y-4 md:space-y-0"
-                            >
-                                <div className="flex space-x-4 w-full">
-                                    <Image
-                                        src={item.main_image}
-                                        alt={item.product_name}
-                                        width={180}
-                                        height={80}
-                                        className="rounded-md w-28 h-28"
-                                    />
-                                    <div className="flex flex-col justify-between min-h-full">
-                                        <h3 className={`${quicksand.className} font-semibold text-lg`}>
-                                            {item.product_name}
-                                        </h3>
-                                        <p className="text-md font-bold">£{item.price}</p>
+        <div className="mt-[64px] container mx-auto px-4 py-10">
+            <h2 className={`${sora.className} text-2xl lg:text-4xl font-bold mb-6 text-center`}>Your Cart</h2>
+            {/* Товары */}
+            <div className="flex justify-center">
+                <div className="space-y-2 max-w-4xl w-full">
+                    {cart.map((item, index) => {
+                        const key = `${item.id}-${item.variantName}`;
+                        return (
+                            <div key={key} className="border-2 border-color p-2 rounded-md space-y-2">
+                                <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
+                                    <div className="flex space-x-4 w-full">
+                                        <Image src={item.main_image} alt={item.product_name} width={180} height={80} className="rounded-md w-28 h-28" />
+                                        <div className="flex flex-col justify-between min-h-full">
+                                            <h3 className={`${quicksand.className} font-semibold text-lg`}>{item.product_name}</h3>
+                                            <p className="text-sm text-gray-500 italic">Size: {item.variantName}</p>
+                                            <p className="text-md font-bold">£{item.price}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-between items-center space-x-4 w-full md:w-fit">
+                                        <div className="flex items-center border rounded-lg overflow-hidden">
+                                            <button
+                                                className="px-3 py-1 bg-green-200"
+                                                onClick={() => updateQuantity(item.id, item.variantName, Math.max(item.quantity - 1, 1))}
+                                            >
+                                                -
+                                            </button>
+                                            <span className="px-4">{item.quantity}</span>
+                                            <button
+                                                className="px-3 py-1 bg-green-200"
+                                                onClick={() => updateQuantity(item.id, item.variantName, item.quantity + 1)}
+                                            >
+                                                +
+                                            </button>
+                                        </div>
+                                        <Button variant="destructive" onClick={() => removeFromCart(item.id, item.variantName)}>
+                                            <FaRegTrashCan />
+                                        </Button>
                                     </div>
                                 </div>
 
-                                <div className="flex justify-between items-center space-x-4 w-full md:w-fit">
-                                    <div className="flex items-center border rounded-lg overflow-hidden">
-                                        <button
-                                            className="px-3 py-1 bg-green-200"
-                                            onClick={() =>
-                                                updateQuantity(item.id, Math.max(item.quantity - 1, 1))
-                                            }
-                                        >
-                                            -
-                                        </button>
-                                        <span className="px-4">{item.quantity}</span>
-                                        <button
-                                            className="px-3 py-1 bg-green-200"
-                                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                                        >
-                                            +
-                                        </button>
+                                {/* Custom message */}
+                                <div className="flex flex-col space-y-2">
+                                    <div className="flex items-center">
+                                        <input
+                                            id={`custom-message-${index}`}
+                                            type="checkbox"
+                                            checked={!!showInput[key]}
+                                            onChange={() => toggleCustomMessage(key)}
+                                            className="h-5 w-5 appearance-none rounded border-2 border-green-700 checked:bg-green-700 checked:border-green-700 transition-all duration-200 cursor-pointer"
+                                        />
+                                        <label htmlFor={`custom-message-${index}`} className="ml-2 text-sm text-gray-900 cursor-pointer">
+                                            Custom message
+                                        </label>
                                     </div>
-                                    <Button variant="destructive" onClick={() => removeFromCart(item.id)}>
-                                        <FaRegTrashCan />
-                                    </Button>
+                                    {showInput[key] && (
+                                        <input
+                                            type="text"
+                                            placeholder="Enter your message..."
+                                            value={customMessages[key] || ""}
+                                            onChange={e => handleInputChange(key, e.target.value)}
+                                            className="border border-green-700 rounded-lg p-2 w-full outline-none focus:ring-2 focus:ring-green-500"
+                                        />
+                                    )}
                                 </div>
                             </div>
-                        ))}
-                    </div>
-
+                        );
+                    })}
                 </div>
+            </div>
 
-                <div className="mt-10 flex flex-col items-end space-y-4">
-                    <p className="text-xl font-bold">Total: £{total.toFixed(2)}</p>
-                    <div className="flex space-x-4">
-                        <Button variant="outline" onClick={clearCart}>
-                            Clear Cart
-                        </Button>
-                        <Button className="bg-green-700 text-white">Checkout</Button>
+            {/* Order type selection */}
+            <div className="flex justify-center">
+                <div className="max-w-4xl w-full">
+                    <div className="mt-4 flex space-x-4">
+                        <button
+                            onClick={() => setOrderType("delivery")}
+                            className={`px-2 py-1 rounded-xl border-2 transition-all ${
+                                orderType === "delivery"
+                                    ? "bg-green-700 text-white border-green-700"
+                                    : "border-green-700 text-green-700 hover:bg-green-50"
+                            }`}
+                        >
+                            Delivery
+                        </button>
+                        <button
+                            onClick={() => setOrderType("collect")}
+                            className={`px-2 py-1 rounded-xl border-2 transition-all ${
+                                orderType === "collect"
+                                    ? "bg-green-700 text-white border-green-700"
+                                    : "border-green-700 text-green-700 hover:bg-green-50"
+                            }`}
+                        >
+                            Collect order
+                        </button>
                     </div>
+                    {orderType === "delivery" && (
+                        <div className="mt-2 flex flex-col items-start">
+                            <label className="text-sm font-semibold ml-1 mb-2">Choose delivery address:</label>
+                            <select
+                                value={selectedAddress}
+                                onChange={(e) => setSelectedAddress(e.target.value)}
+                                className="border-green-700 border-2 rounded-lg p-2 w-full max-w-md text-xs sm:text-sm"
+                            >
+                                {addresses.map((addr, i) => (
+                                    <option key={i} value={addr}>
+                                        {addr}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+
+            {/* Totals */}
+            <div className="mt-10 flex flex-col items-end space-y-2">
+                <p className="font-semibold lg:text-lg">Price: £{total}</p>
+                {orderType === "delivery" && <p className="font-semibold lg:text-lg">Delivery: £{deliveryFee}</p>}
+                {customMessageFee > 0 &&
+                    <p className="font-semibold lg:text-lg">Custom messages: £{customMessageFee}</p>}
+                <p className="text-md lg:text-2xl font-bold">Total: £{grandTotal.toFixed(2)}</p>
+                <div className="flex space-x-4">
+                    <Button variant="outline" onClick={clearCart}>Clear Cart</Button>
+                    <Button className="bg-green-700 text-white" onClick={handleCheckout}>Checkout</Button>
                 </div>
             </div>
         </div>

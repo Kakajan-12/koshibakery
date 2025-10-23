@@ -85,7 +85,13 @@ export default function Categories() {
                                 selectedCategory === null ? "border-green-700" : "border-transparent"
                             }`}
                         >
-                            <span className="text-gray-600 font-bold">All</span>
+                            <Image
+                                src="/images/all.webp"
+                                alt="All"
+                                width={128}
+                                height={128}
+                                className="object-cover w-full h-full"
+                            />
                         </div>
                         <p
                             className={`${quicksand.className} mt-2 font-bold text-md sm:text-lg lg:text-xl text-[#6F5E53]`}

@@ -29,7 +29,7 @@ const Privacy = () => {
         {
             title: "Policy Changes",
             content: `
-        <p>By using our website, you consent to the collection and use of the information you provide to us as outlined in this Privacy Notice. We may change this Privacy Notice from time to time, so make sure you check back occasionally. If we change our Privacy Notice, we will publish those changes on this page. If you have any questions or concerns about our collection, use or disclosure of your personal data, please get in touch at info@mallowandmarsh.com. </p>
+        <p>By using our website, you consent to the collection and use of the information you provide to us as outlined in this Privacy Notice. We may change this Privacy Notice from time to time, so make sure you check back occasionally. If we change our Privacy Notice, we will publish those changes on this page. If you have any questions or concerns about our collection, use or disclosure of your personal data, please get in touch at cakesjandk@gmail.com. </p>
         <p>This policy was last updated on 23 of January 2020 </p>
       `,
         }
