@@ -7,7 +7,7 @@ export default function Hero() {
     return (
         <div className="my-container mx-auto">
             <div className="relative pt-[64px] mb-20 lg:mb-40">
-                <div className="absolute top-0 right-6 opacity-25 lg:-top-10 lg:right-30 lg:opacity-100">
+                <div className="hidden sm:block absolute top-0 right-6 lg:-top-10 lg:right-30">
                     <Image
                         src="/images/main_hero.webp"
                         alt="cake"
@@ -18,14 +18,24 @@ export default function Hero() {
                 </div>
 
                 <div className="container mx-auto px-4">
-                    <div className="flex flex-col h-[280px] lg:h-[380px]">
+                    <div className="flex flex-col sm:h-[250px] lg:h-[450px]">
                         <div className="h-full space-y-2 lg:max-w-[500px] lg:space-y-4 xl:max-w-[900px]">
-                            <h1 className={`${sora.className} text-2xl font-thin pt-6 sm:text-4xl lg:pt-16 xl:text-6xl`}>A Little
+                            <h1 className={`${sora.className} text-2xl font-thin pt-6 sm:text-4xl lg:pt-16 xl:text-6xl`}>A
+                                Little
                                 Slice of Joy</h1>
-                            <p className={`${quicksand.className} text-sm text-[#6F5E53] font-medium sm:text-md xl:text-lg`}>A
+                            <p className={`${quicksand.className} text-sm text-[#6F5E53] font-medium sm:text-md xl:text-lg sm:w-96`}>A
                                 boutique bakery
                                 offering thoughtfully made cakes and pastries — for morning coffee or meaningful
                                 celebrations.</p>
+                        </div>
+                        <div className="-mt-12 flex justify-center sm:hidden">
+                            <Image
+                                src="/images/main_hero.webp"
+                                alt="cake"
+                                className="w-full"
+                                width={900}
+                                height={600}
+                            />
                         </div>
                         <div className="w-full flex justify-center sm:justify-start">
                             <Link

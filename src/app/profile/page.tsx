@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import {useEffect, useState} from "react";
+import {useRouter} from "next/navigation";
 import Image from "next/image";
 import {quicksand} from "@/app/fonts";
 
@@ -29,6 +29,8 @@ const Profile = () => {
     const [addressSuggestions, setAddressSuggestions] = useState<any[]>([]);
     const [isSelectingAddress, setIsSelectingAddress] = useState(false);
     const [selectedFeature, setSelectedFeature] = useState<any | null>(null);
+    const [orders, setOrders] = useState<any[]>([]);
+    const [ordersLoading, setOrdersLoading] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
@@ -65,7 +67,7 @@ const Profile = () => {
         if (!token) return;
 
         fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user-addresses`, {
-            headers: { Authorization: `Bearer ${token}` },
+            headers: {Authorization: `Bearer ${token}`},
         })
             .then((res) => res.json())
             .then((data) => setExtraAddresses(data))
@@ -130,7 +132,7 @@ const Profile = () => {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({ address: correctedAddress, latitude, longitude }),
+                body: JSON.stringify({address: correctedAddress, latitude, longitude}),
             });
 
             if (!res.ok) throw new Error("Failed to save address");
@@ -146,6 +148,20 @@ const Profile = () => {
         }
     };
 
+    useEffect(() => {
+        if (activeTab !== "orders") return;
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        setOrdersLoading(true);
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/order`, {
+            headers: {Authorization: `Bearer ${token}`},
+        })
+            .then((res) => res.json())
+            .then((data) => setOrders(data))
+            .catch((err) => console.error("Failed to load orders:", err))
+            .finally(() => setOrdersLoading(false));
+    }, [activeTab]);
 
     const handleDeleteAddress = async (id: number) => {
         const token = localStorage.getItem("token");
@@ -156,7 +172,7 @@ const Profile = () => {
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user-addresses/${id}`, {
                 method: "DELETE",
-                headers: { Authorization: `Bearer ${token}` },
+                headers: {Authorization: `Bearer ${token}`},
             });
 
             if (!res.ok) throw new Error("Failed to delete address");
@@ -309,24 +325,30 @@ const Profile = () => {
                     )}
 
                     {activeTab === "orders" && (
-                        <div className="space-y-2 animate-fadeIn w-full bg-white">
-                            <div className="rounded-lg shadow-md py-2 px-4 space-y-3 sm:space-y-0 ">
+                        <div className="space-y-4 animate-fadeIn w-full">
+                            {ordersLoading ? (
+                                <p>Loading orders...</p>
+                            ) : orders.length === 0 ? (
+                                <p>No orders yet.</p>
+                            ) : (
+                                orders.map((order) => (
+                            <div key={order.id} className="rounded-lg shadow-xl py-2 px-4 space-y-3 sm:space-y-0 bg-white">
                                 <div
                                     className="sm:flex sm:space-x-4 sm:justify-between">
                                     <div
-                                        className="flex justify-between items-center sm:flex-col sm:justify-start sm:space-y-2">
+                                        className="flex justify-between items-center mb-2 sm:flex-col sm:justify-start sm:space-y-2">
                                         <div
-                                            className="bg-[#264D30] text-white rounded-2xl text-xs py-2 px-3">Completed
+                                            className={`text-white rounded-2xl text-xs py-2 px-3 ${order.payment_status === "paid" ? "bg-[#264D30]" : "bg-yellow-500"}`}>{order.payment_status}
                                         </div>
-                                        <div className="text-sm">13.09.2025</div>
+                                        <div className="text-sm">{new Date(order.created_at).toLocaleDateString()}</div>
                                     </div>
                                     <div className="space-y-2 w-full">
                                         <p className={`${quicksand} hidden sm:block font-bold text-lg`}>List of
                                             products</p>
-                                        {[1, 2].map((i) => (
+                                        {order.order_data.cart.map((item: any, i: number) => (
                                             <div key={i} className="flex flex-col sm:flex-row space-y-2  sm:space-x-2">
                                                 <Image
-                                                    src="/images/about.jpg"
+                                                    src={item.main_image}
                                                     alt="cart"
                                                     width={300}
                                                     height={200}
@@ -334,10 +356,10 @@ const Profile = () => {
                                                 />
                                                 <div className="flex justify-between w-full">
                                                     <div className="space-y-1">
-                                                        <p className="text-sm sm:text-md md:text-lg">Chocolate Ganache</p>
-                                                        <p className="text-xs text-gray-400">[x1]</p>
+                                                        <p className="text-sm sm:text-md md:text-lg">{item.product_name}</p>
+                                                        <p className="text-xs text-gray-400">[x{item.quantity}]</p>
                                                     </div>
-                                                    <div className="text-sm sm:text-md">£24.00</div>
+                                                    <div className="text-sm sm:text-md">£{item.price.toFixed(2)}</div>
                                                 </div>
                                             </div>
                                         ))}
@@ -346,22 +368,21 @@ const Profile = () => {
                                 <div className="space-y-1 sm:pt-8 min-w-36 md:min-w-56">
                                     <div
                                         className="flex justify-start items-center space-x-2">
-                                        <p className="font-bold text-sm sm:text-md md:text-lg">Delivery</p>
-                                        <p className="text-xs sm:text-sm md:text-md">Delivery within the city</p>
+                                        <p className="font-bold text-sm sm:text-md md:text-lg">Order type</p>
+                                        <p className="text-xs sm:text-sm md:text-md">{order.order_data.orderType}</p>
                                     </div>
                                     <div
                                         className="flex justify-start items-center space-x-2">
                                         <p className="font-bold text-sm sm:text-md md:text-lg">Total payment:</p>
-                                        <p className="text-xs font-bold sm:text-sm md:text-lg">£68.00</p>
+                                        <p className="text-xs font-bold sm:text-sm md:text-lg">£{Number(order.total).toFixed(2)}</p>
                                     </div>
                                 </div>
                             </div>
-
+                                ))
+                            )}
                         </div>
                     )}
                 </div>
-
-
             </div>
         </div>
     );
