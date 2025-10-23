@@ -336,7 +336,7 @@ const Profile = () => {
                                 <div
                                     className="sm:flex sm:space-x-4 sm:justify-between">
                                     <div
-                                        className="flex justify-between items-center mb-2 sm:flex-col sm:justify-start sm:space-y-2">
+                                        className="flex justify-between items-start mb-2 sm:flex-col sm:justify-start sm:space-y-2">
                                         <div
                                             className={`text-white rounded-2xl text-xs py-2 px-3 ${order.payment_status === "paid" ? "bg-[#264D30]" : "bg-yellow-500"}`}>{order.payment_status}
                                         </div>
@@ -369,7 +369,7 @@ const Profile = () => {
                                     <div
                                         className="flex justify-start items-center space-x-2">
                                         <p className="font-bold text-sm sm:text-md md:text-lg">Order type</p>
-                                        <p className="text-xs sm:text-sm md:text-md">{order.order_data.orderType}</p>
+                                        <p className="text-xs sm:text-sm md:text-md">{order.order_data.orderType} {order.order_data.deliveryFee}</p>
                                     </div>
                                     <div
                                         className="flex justify-start items-center space-x-2">

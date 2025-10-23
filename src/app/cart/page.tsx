@@ -250,11 +250,57 @@ const Cart = () => {
                 </div>
             </div>
 
+            {/* Order type selection */}
+            <div className="flex justify-center">
+                <div className="max-w-4xl w-full">
+                    <div className="mt-4 flex space-x-4">
+                        <button
+                            onClick={() => setOrderType("delivery")}
+                            className={`px-2 py-1 rounded-xl border-2 transition-all ${
+                                orderType === "delivery"
+                                    ? "bg-green-700 text-white border-green-700"
+                                    : "border-green-700 text-green-700 hover:bg-green-50"
+                            }`}
+                        >
+                            Delivery
+                        </button>
+                        <button
+                            onClick={() => setOrderType("collect")}
+                            className={`px-2 py-1 rounded-xl border-2 transition-all ${
+                                orderType === "collect"
+                                    ? "bg-green-700 text-white border-green-700"
+                                    : "border-green-700 text-green-700 hover:bg-green-50"
+                            }`}
+                        >
+                            Collect order
+                        </button>
+                    </div>
+                    {orderType === "delivery" && (
+                        <div className="mt-2 flex flex-col items-start">
+                            <label className="text-sm font-semibold ml-1 mb-2">Choose delivery address:</label>
+                            <select
+                                value={selectedAddress}
+                                onChange={(e) => setSelectedAddress(e.target.value)}
+                                className="border-green-700 border-2 rounded-lg p-2 w-full max-w-md text-xs sm:text-sm"
+                            >
+                                {addresses.map((addr, i) => (
+                                    <option key={i} value={addr}>
+                                        {addr}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+
             {/* Totals */}
             <div className="mt-10 flex flex-col items-end space-y-2">
                 <p className="font-semibold lg:text-lg">Price: £{total}</p>
                 {orderType === "delivery" && <p className="font-semibold lg:text-lg">Delivery: £{deliveryFee}</p>}
-                {customMessageFee > 0 && <p className="font-semibold lg:text-lg">Custom messages: £{customMessageFee}</p>}
+                {customMessageFee > 0 &&
+                    <p className="font-semibold lg:text-lg">Custom messages: £{customMessageFee}</p>}
                 <p className="text-md lg:text-2xl font-bold">Total: £{grandTotal.toFixed(2)}</p>
                 <div className="flex space-x-4">
                     <Button variant="outline" onClick={clearCart}>Clear Cart</Button>
