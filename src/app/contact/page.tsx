@@ -139,15 +139,13 @@ const Contact: React.FC = () => {
                                 </div>
                             </div>
 
-                            <div className="w-full h-[250px] mt-4 overflow-hidden rounded-lg">
                                 {contact?.map ? (
-                                    <div className="w-full h-[250px] mt-4 overflow-hidden rounded-lg">
+                                    <div className="w-full h-[250px] overflow-hidden rounded-lg">
                                         {mapElement}
                                     </div>
                                 ) : (
                                     <p className="text-gray-500 text-center">Map not available</p>
                                 )}
-                            </div>
                         </div>
 
                         <div className="space-y-2 xl:w-1/2">
