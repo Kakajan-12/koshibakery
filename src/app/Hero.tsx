@@ -62,9 +62,7 @@ export default function Hero() {
                     </div>
                     <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-40 xl:gap-70 space-y-6">
                         <div className="w-full">
-                            <h6 className={`${sora.className} py-2 text-md font-extralight lg:text-2xl`}>Reliable,
-                                Same-Day
-                                Delivery</h6>
+                            <h6 className={`${sora.className} py-2 text-md font-extralight lg:text-2xl`}>Reliable Delivery</h6>
                             <p className={`${quicksand.className} text-[#6F5E53]`}>Get your cakes and pastries delivered
                                 fresh to your door — carefully packed and always on
                                 time.</p>

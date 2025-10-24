@@ -5,7 +5,7 @@ import {quicksand, sora} from "@/app/fonts";
 import {IoLocationOutline} from "react-icons/io5";
 import {FiPhone, FiFacebook, FiLinkedin} from "react-icons/fi";
 import {MdOutlineMail} from "react-icons/md";
-import {FaInstagram} from "react-icons/fa6";
+import {FaInstagram, FaTiktok } from "react-icons/fa6";
 import {RiTwitterXLine} from "react-icons/ri";
 import Link from "next/link";
 import Image from "next/image";
@@ -161,6 +161,7 @@ function SocialLinks({links}: { links: SocialLink[] }) {
         linkedin: <FiLinkedin color="#ffffff" size={20}/>,
         twitter: <RiTwitterXLine color="#ffffff" size={20}/>,
         x: <RiTwitterXLine color="#ffffff" size={20}/>,
+        tiktok: <FaTiktok color="#ffffff" size={20}/>,
     };
 
     return (
