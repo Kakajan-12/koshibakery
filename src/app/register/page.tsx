@@ -33,7 +33,7 @@ export default function RegisterPage() {
     const isSelectingRef = useRef(false);
 
     useEffect(() => {
-        if (isSelectingRef.current) return; // 🚫 блокируем при выборе адреса
+        if (isSelectingRef.current) return;
 
         if (fullAddress.length < 3) {
             setSuggestions([]);
@@ -151,7 +151,7 @@ export default function RegisterPage() {
                                     <li
                                         key={i}
                                         onClick={() => {
-                                            isSelectingRef.current = true; // 🧠 мгновенно блокируем запросы
+                                            isSelectingRef.current = true;
 
                                             const p = s.properties;
 

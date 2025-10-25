@@ -6,18 +6,19 @@ import {ArrowRight} from "lucide-react";
 export default function Hero() {
     return (
         <div className="my-container mx-auto">
-            <div className="relative pt-[64px] mb-20 lg:mb-40">
-                <div className="hidden sm:block absolute top-0 right-6 lg:-top-10 lg:right-30">
-                    <Image
-                        src="/images/main_hero.webp"
-                        alt="cake"
-                        className="w-56 md:w-72 lg:w-[450px]"
-                        width={900}
-                        height={600}
-                    />
-                </div>
+            <div className="pt-[64px] mb-20 lg:mb-40">
 
-                <div className="container mx-auto px-4">
+
+                <div className="container mx-auto px-4 relative">
+                    <div className="hidden sm:block absolute top-0 right-6 lg:-top-10 lg:right-30">
+                        <Image
+                            src="/images/main_hero.webp"
+                            alt="cake"
+                            className="w-56 md:w-72 lg:w-[450px]"
+                            width={900}
+                            height={600}
+                        />
+                    </div>
                     <div className="flex flex-col sm:h-[250px] lg:h-[450px]">
                         <div className="h-full space-y-2 lg:max-w-[500px] lg:space-y-4 xl:max-w-[900px]">
                             <h1 className={`${sora.className} text-2xl font-thin pt-6 sm:text-4xl lg:pt-16 xl:text-6xl`}>A
