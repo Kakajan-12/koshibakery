@@ -154,7 +154,7 @@ export default function CustomOrderPage() {
                                     className="w-full px-3 py-2 border rounded-lg cursor-pointer selection-none"
                                     onChangeRaw={(e) => e?.preventDefault()}
                                     placeholderText="Time of delivery"
-                                    required={}
+                                    required
                                 />
                             </div>
 
