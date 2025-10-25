@@ -48,7 +48,7 @@ export default function Products({sort, search, selectedType, availability, pric
     const router = useRouter();
     const { cart} = useCart();
 
-    const productsPerPage = 4;
+    const productsPerPage = 8;
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -166,7 +166,7 @@ export default function Products({sort, search, selectedType, availability, pric
                                     />
                                 </div>
                                 <div className="space-y-3 w-full px-2 py-4">
-                                    <div className="font-semibold text-md text-red-500">
+                                    <div className="font-semibold text-xs text-red-500">
                                         {item.notice}
                                     </div>
                                     <div className="flex items-center justify-center">
