@@ -82,8 +82,8 @@ export default function MainMenu() {
                         nextEl: ".category-next",
                         prevEl: ".category-prev",
                     }}
-                    loop={true}
                     pagination={{clickable: true}}
+                    centerInsufficientSlides={true}
                     breakpoints={{
                         768: {
                             slidesPerView: 3,
