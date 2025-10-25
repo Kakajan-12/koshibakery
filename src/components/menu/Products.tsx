@@ -86,7 +86,14 @@ export default function Products({sort, search, selectedType, availability, pric
 
     useEffect(() => {
         setCurrentPage(1);
-    }, [sort]);
+    }, [selectedCategory, selectedType, availability, priceRange, search]);
+
+    useEffect(() => {
+        if (containerRef.current) {
+            containerRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+    }, [currentPage, selectedCategory, selectedType, sort]);
+
 
 
     if (loading) return <p className="text-center py-10">Loading...</p>;
@@ -137,10 +144,6 @@ export default function Products({sort, search, selectedType, availability, pric
     const goToPage = (page: number) => {
         if (page >= 1 && page <= totalPages) {
             setCurrentPage(page);
-
-            if (firstProductRef.current) {
-                firstProductRef.current.scrollIntoView({behavior: "smooth"});
-            }
         }
     };
 
