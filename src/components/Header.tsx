@@ -40,6 +40,7 @@ export default function Header() {
                 <nav className="hidden md:flex space-x-6">
                     <Link href="/">Home</Link>
                     <Link href="/menu">Menu</Link>
+                    <Link href="/custom">Custom order</Link>
                     <Link href="/about">About Us</Link>
                     <Link href="/contact">Contact Us</Link>
                 </nav>

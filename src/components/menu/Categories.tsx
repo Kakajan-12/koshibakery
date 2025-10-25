@@ -63,7 +63,7 @@ export default function Categories() {
                     nextEl: ".category-next",
                     prevEl: ".category-prev",
                 }}
-                loop={false}
+                centerInsufficientSlides={true}
                 breakpoints={{
                     420: { slidesPerView: 3, spaceBetween: 30 },
                     567: { slidesPerView: 4, spaceBetween: 30 },

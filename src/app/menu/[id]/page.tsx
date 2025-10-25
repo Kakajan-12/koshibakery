@@ -208,7 +208,7 @@ const MenuItem = () => {
                                 <div className="text-md text-[#6F5E53]"
                                      dangerouslySetInnerHTML={{__html: product.product_desc}}/>
                                 <div className="text-md text-red-800">{product.notice}</div>
-                                <p className="text-sm text-gray-600">Serves: {product.product_serves}</p>
+                                {/*<p className="text-sm text-gray-600">Serves: {product.product_serves}</p>*/}
                             </div>
 
                             <div className="flex items-center space-x-2 pt-2">

@@ -66,12 +66,8 @@ const About = ()=>{
                             <p className={`${quicksand.className} text-lg md:text-xl font-bold`}>Opening hours:</p>
                             <div className="flex flex-col">
                                 <div className="flex justify-between">
-                                    <p className={`${quicksand.className} text-md`}>Monday - Friday</p>
-                                    <p className={`${quicksand.className} text-md`}>09/00 - 16/00</p>
-                                </div>
-                                <div className="flex justify-between">
-                                    <p className={`${quicksand.className} text-md`}>Saturday - Sunday</p>
-                                    <p className={`${quicksand.className} text-md`}>10/00 - 19/00</p>
+                                    <p className={`${quicksand.className} text-md`}>Monday - Sunday</p>
+                                    <p className={`${quicksand.className} text-md`}>09:00 - 18:00</p>
                                 </div>
                             </div>
                         </div>

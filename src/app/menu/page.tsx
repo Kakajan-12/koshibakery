@@ -168,13 +168,13 @@ const Menu = () => {
                             </div>
                         </div>
 
-                        <div className="absolute right-0 -top-5 lg:top-30 xl:top-5 2xl:-top-15">
+                        <div className="absolute right-0 -top-5 lg:top-30 xl:top-20 2xl:top-10">
                             <Image
                                 src="/images/menu_hero.webp"
                                 alt="menu_hero"
                                 width={500}
                                 height={500}
-                                className="opacity-50 w-46 sm:w-66 md:w-76 lg:opacity-100 lg:w-[450px] xl:w-[550px] 2xl:w-[650px]"
+                                className="opacity-50 w-46 sm:w-66 md:w-76 lg:opacity-100 lg:w-[400px] xl:w-[450px] 2xl:w-[550px]"
                             />
                         </div>
                     </div>

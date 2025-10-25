@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import {useState, useEffect, useRef} from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export default function RegisterPage() {
-    const [isSelecting, setIsSelecting] = useState(false);
     const [fname, setfName] = useState("");
     const [lname, setlName] = useState("");
 
@@ -25,12 +24,17 @@ export default function RegisterPage() {
     const [message, setMessage] = useState("");
     const [showModal, setShowModal] = useState(false);
     const [suggestions, setSuggestions] = useState<any[]>([]);
+    const houseInputRef = useRef<HTMLInputElement | null>(null);
+    const [houseNumberInputVisible, setHouseNumberInputVisible] = useState(false);
+
 
     const router = useRouter();
 
-    // ======== AUTOCOMPLETE ========
+    const isSelectingRef = useRef(false);
+
     useEffect(() => {
-        if (isSelecting) return; // если только что выбрали — не fetch
+        if (isSelectingRef.current) return; // 🚫 блокируем при выборе адреса
+
         if (fullAddress.length < 3) {
             setSuggestions([]);
             return;
@@ -61,7 +65,9 @@ export default function RegisterPage() {
 
         const timeout = setTimeout(fetchSuggestions, 400);
         return () => clearTimeout(timeout);
-    }, [fullAddress, isSelecting]);
+    }, [fullAddress]);
+
+
 
     // ======== REGISTER ========
     const handleRegister = async (e: React.FormEvent) => {
@@ -70,7 +76,6 @@ export default function RegisterPage() {
         const addressString = `${housenumber ? housenumber + " " : ""}${street}, ${city}${postcode ? ", " + postcode : ""}`;
 
         try {
-            // Проверка адреса перед регистрацией
             const checkRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/check-address`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -86,14 +91,13 @@ export default function RegisterPage() {
                 body: JSON.stringify({
                     fname,
                     lname,
-                    address: `${housenumber} ${street}, ${city}${postcode ? ", " + postcode : ""}`,
+                    address: addressString,
                     phone,
                     email,
                     password,
                     latitude,
                     longitude
                 })
-
             });
 
             const data = await res.json();
@@ -116,8 +120,10 @@ export default function RegisterPage() {
             >
                 <h1 className="text-2xl font-bold text-center">Register</h1>
 
-                <Input type="text" placeholder="First name" value={fname} onChange={(e) => setfName(e.target.value)} required />
-                <Input type="text" placeholder="Last name" value={lname} onChange={(e) => setlName(e.target.value)} required />
+                <Input type="text" placeholder="First name" value={fname} onChange={(e) => setfName(e.target.value)}
+                       required/>
+                <Input type="text" placeholder="Last name" value={lname} onChange={(e) => setlName(e.target.value)}
+                       required/>
 
                 {/* Address autocomplete */}
                 <div className="relative">
@@ -145,29 +151,65 @@ export default function RegisterPage() {
                                     <li
                                         key={i}
                                         onClick={() => {
+                                            isSelectingRef.current = true; // 🧠 мгновенно блокируем запросы
+
+                                            const p = s.properties;
+
                                             setStreet(p.street || p.name || "");
-                                            setHouseNumber(p.housenumber || "");
                                             setPostcode(p.postcode || "");
                                             setCity(p.city || "");
-                                            setFullAddress(full);
                                             setLatitude(s.geometry.coordinates[1]);
                                             setLongitude(s.geometry.coordinates[0]);
-                                            setSuggestions([]);  // закрываем список
+                                            setFullAddress([p.street || p.name, p.city, p.postcode].filter(Boolean).join(", "));
+
+                                            setSuggestions([]);
+
+                                            setTimeout(() => {
+                                                isSelectingRef.current = false;
+                                                if (!p.housenumber) {
+                                                    setHouseNumberInputVisible(true);
+                                                    setTimeout(() => houseInputRef.current?.focus(), 50);
+                                                } else {
+                                                    setHouseNumber(p.housenumber || "");
+                                                    setHouseNumberInputVisible(false); // можно оставить false
+                                                }
+
+                                            }, 100); // 100ms достаточно
+
+
                                         }}
 
                                         className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
                                     >
                                         {full}
                                     </li>
+
                                 );
                             })}
                         </ul>
                     )}
                 </div>
 
-                <Input type="text" placeholder="Phone" value={phone} onChange={(e) => setPhone(e.target.value)} required />
-                <Input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-                <Input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                <div className="mt-2">
+                    {houseNumberInputVisible && (
+                        <Input
+                            ref={houseInputRef}
+                            type="text"
+                            placeholder="House / Flat number"
+                            value={housenumber}
+                            onChange={(e) => setHouseNumber(e.target.value)}
+                            required
+                        />
+                    )}
+                </div>
+
+
+                <Input type="text" placeholder="Phone" value={phone} onChange={(e) => setPhone(e.target.value)}
+                       required/>
+                <Input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)}
+                       required/>
+                <Input type="password" placeholder="Password" value={password}
+                       onChange={(e) => setPassword(e.target.value)} required/>
 
                 <Button type="submit" className="w-full">
                     Register
