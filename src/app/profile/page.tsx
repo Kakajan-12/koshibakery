@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {useRouter} from "next/navigation";
 import Image from "next/image";
 import {quicksand} from "@/app/fonts";
@@ -31,7 +31,11 @@ const Profile = () => {
     const [selectedFeature, setSelectedFeature] = useState<any | null>(null);
     const [orders, setOrders] = useState<any[]>([]);
     const [ordersLoading, setOrdersLoading] = useState(false);
+    const [housenumber, setHouseNumber] = useState("");
+    const houseInputRef = useRef<HTMLInputElement | null>(null);
+    const [houseNumberInputVisible, setHouseNumberInputVisible] = useState(false);
     const router = useRouter();
+    const isSelectingRef = useRef(false);
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -75,6 +79,7 @@ const Profile = () => {
     }, []);
 
     useEffect(() => {
+        if (isSelectingRef.current) return;
         if (!isAddingAddress || isSelectingAddress) return;
         if (newAddress.length < 3) {
             setAddressSuggestions([]);
@@ -273,10 +278,14 @@ const Profile = () => {
                                             onChange={(e) => {
                                                 setNewAddress(e.target.value);
                                                 setIsSelectingAddress(false);
+                                                setHouseNumberInputVisible(false);
+                                                setHouseNumber(""); // сброс house number при ручном вводе
                                             }}
                                             placeholder="Enter new address"
                                             className="border rounded-lg px-3 py-2 w-full"
                                         />
+
+                                        {/* Автоподсказки */}
                                         {addressSuggestions.length > 0 && (
                                             <ul className="absolute z-10 w-full bg-white border rounded mt-1 max-h-48 overflow-auto top-10">
                                                 {addressSuggestions.map((s, i) => {
@@ -287,10 +296,24 @@ const Profile = () => {
                                                         <li
                                                             key={i}
                                                             onClick={() => {
-                                                                setNewAddress(full);
+                                                                isSelectingRef.current = true;
+
+                                                                setNewAddress([p.street || p.name, p.city, p.postcode].filter(Boolean).join(", "));
                                                                 setSelectedFeature(s);
                                                                 setIsSelectingAddress(true);
                                                                 setAddressSuggestions([]);
+
+                                                                setTimeout(() => {
+                                                                    isSelectingRef.current = false;
+
+                                                                    if (!p.housenumber) {
+                                                                        setHouseNumberInputVisible(true);
+                                                                        setTimeout(() => houseInputRef.current?.focus(), 50);
+                                                                    } else {
+                                                                        setHouseNumber(p.housenumber || "");
+                                                                        setHouseNumberInputVisible(false);
+                                                                    }
+                                                                }, 100);
                                                             }}
                                                             className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
                                                         >
@@ -300,6 +323,20 @@ const Profile = () => {
                                                 })}
                                             </ul>
                                         )}
+
+                                        {/* Поле для house number, если нужно */}
+                                        {houseNumberInputVisible && (
+                                            <input
+                                                ref={houseInputRef}
+                                                type="text"
+                                                value={housenumber}
+                                                onChange={(e) => setHouseNumber(e.target.value)}
+                                                placeholder="House / Flat number"
+                                                className="border rounded-lg px-3 py-2 w-full mt-2"
+                                                required
+                                            />
+                                        )}
+
                                         <div className="flex space-x-3">
                                             <button
                                                 onClick={handleSaveAddress}
@@ -311,6 +348,9 @@ const Profile = () => {
                                                 onClick={() => {
                                                     setIsAddingAddress(false);
                                                     setNewAddress("");
+                                                    setHouseNumber("");
+                                                    setHouseNumberInputVisible(false);
+                                                    setSelectedFeature(null);
                                                 }}
                                                 className="border border-[#264D30] text-[#264D30] rounded-4xl text-sm px-4 py-2"
                                             >
@@ -318,6 +358,7 @@ const Profile = () => {
                                             </button>
                                         </div>
                                     </div>
+
                                 )}
                             </div>
 
@@ -332,31 +373,34 @@ const Profile = () => {
                                 <p>No orders yet.</p>
                             ) : (
                                 orders.map((order) => (
-                            <div key={order.id} className="rounded-lg shadow-xl py-2 px-4 space-y-3 sm:space-y-0 bg-white">
-                                <div
-                                    className="sm:flex sm:space-x-4 sm:justify-between">
-                                    <div
-                                        className="flex justify-between items-start mb-2 sm:flex-col sm:justify-start sm:space-y-2">
+                                    <div key={order.id}
+                                         className="rounded-lg shadow-xl py-2 px-4 space-y-3 sm:space-y-0 bg-white">
                                         <div
-                                            className={`text-white rounded-2xl text-xs py-2 px-3 ${order.payment_status === "paid" ? "bg-[#264D30]" : "bg-yellow-500"}`}>{order.payment_status}
-                                        </div>
-                                        <div className="text-sm">{new Date(order.created_at).toLocaleDateString()}</div>
-                                    </div>
-                                    <div className="space-y-2 w-full">
-                                        <p className={`${quicksand} hidden sm:block font-bold text-lg`}>List of
-                                            products</p>
-                                        {order.order_data.cart.map((item: any, i: number) => (
-                                            <div key={i} className="flex flex-col sm:flex-row space-y-2  sm:space-x-2">
-                                                <Image
-                                                    src={item.main_image}
-                                                    alt="cart"
-                                                    width={300}
-                                                    height={200}
-                                                    className="border p-1 rounded-lg w-full sm:max-w-22 object-cover"
-                                                />
-                                                <div className="flex justify-between w-full">
-                                                    <div className="space-y-1">
-                                                        <p className="text-sm sm:text-md md:text-lg">{item.product_name}</p>
+                                            className="sm:flex sm:space-x-4 sm:justify-between">
+                                            <div
+                                                className="flex justify-between items-start mb-2 sm:flex-col sm:justify-start sm:space-y-2">
+                                                <div
+                                                    className={`text-white rounded-2xl text-xs py-2 px-3 ${order.payment_status === "paid" ? "bg-[#264D30]" : "bg-yellow-500"}`}>{order.payment_status}
+                                                </div>
+                                                <div
+                                                    className="text-sm">{new Date(order.created_at).toLocaleDateString()}</div>
+                                            </div>
+                                            <div className="space-y-2 w-full">
+                                                <p className={`${quicksand} hidden sm:block font-bold text-lg`}>List of
+                                                    products</p>
+                                                {order.order_data.cart.map((item: any, i: number) => (
+                                                    <div key={i}
+                                                         className="flex flex-col sm:flex-row space-y-2  sm:space-x-2">
+                                                        <Image
+                                                            src={item.main_image}
+                                                            alt="cart"
+                                                            width={300}
+                                                            height={200}
+                                                            className="border p-1 rounded-lg w-full sm:max-w-22 object-cover"
+                                                        />
+                                                        <div className="flex justify-between w-full">
+                                                            <div className="space-y-1">
+                                                                <p className="text-sm sm:text-md md:text-lg">{item.product_name}</p>
                                                         <p className="text-xs text-gray-400">[x{item.quantity}]</p>
                                                     </div>
                                                     <div className="text-sm sm:text-md">£{item.price.toFixed(2)}</div>
