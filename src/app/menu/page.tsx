@@ -168,7 +168,7 @@ const Menu = () => {
                             </div>
                         </div>
 
-                        <div className="absolute right-0 -top-5 lg:top-30 xl:top-20 2xl:top-10">
+                        <div className="hidden lg:block absolute right-0 -top-5 lg:top-30 xl:top-20 2xl:top-10">
                             <Image
                                 src="/images/menu_hero.webp"
                                 alt="menu_hero"

@@ -129,32 +129,36 @@ export default function CustomOrderPage() {
                 {/* Поля для кастомного заказа */}
                 {orderType === "custom" && (
                     <div className="space-y-3 mt-2">
-                        <div className="flex space-x-2">
-                            <DatePicker
-                                selected={date ? new Date(date) : null}
-                                onChange={(d: Date | null) => {
-                                    if (d) setDate(d.toISOString().split("T")[0]);
-                                }}
-                                dateFormat="yyyy-MM-dd"
-                                minDate={new Date()}
-                                className="w-full px-3 py-2 border rounded-lg cursor-pointer selection-none"
-                                onChangeRaw={(e) => e?.preventDefault()}
-                            />
+                        <div className="flex flex-col space-y-2">
+                            <label className="text-sm font-medium">Time of delivery (Date Required)</label>
+                            <div className="flex space-x-2">
+                                <DatePicker
+                                    selected={date ? new Date(date) : null}
+                                    onChange={(d: Date | null) => {
+                                        if (d) setDate(d.toISOString().split("T")[0]);
+                                    }}
+                                    dateFormat="yyyy-MM-dd"
+                                    minDate={new Date()}
+                                    className="w-full px-3 py-2 border rounded-lg cursor-pointer selection-none"
+                                    onChangeRaw={(e) => e?.preventDefault()}
+                                />
 
 
-                            <DatePicker
-                                selected={time ? new Date(`1970-01-01T${time}`) : null}
-                                onChange={(d: Date | null) => {
-                                    if (d) setTime(d.toTimeString().slice(0, 5));
-                                }}
-                                showTimeSelect
-                                showTimeSelectOnly
-                                timeIntervals={30}
-                                timeCaption="Time"
-                                dateFormat="HH:mm"
-                                className="w-full px-3 py-2 border rounded-lg cursor-pointer selection-none"
-                                onChangeRaw={(e) => e?.preventDefault()}
-                            />
+                                <DatePicker
+                                    selected={time ? new Date(`1970-01-01T${time}`) : null}
+                                    onChange={(d: Date | null) => {
+                                        if (d) setTime(d.toTimeString().slice(0, 5));
+                                    }}
+                                    showTimeSelect
+                                    showTimeSelectOnly
+                                    timeIntervals={30}
+                                    timeCaption="Time"
+                                    dateFormat="HH:mm"
+                                    className="w-full px-3 py-2 border rounded-lg cursor-pointer selection-none"
+                                    onChangeRaw={(e) => e?.preventDefault()}
+                                />
+                            </div>
+
 
                         </div>
                         <Input
@@ -178,7 +182,7 @@ export default function CustomOrderPage() {
                                 ref={fileInputRef}
                                 onChange={(e) => setReferenceFile(e.target.files?.[0] || null)}
                                 accept="image/*"
-                                className="w-full"
+                                className="w-full border p-2 rounded-md"
                             />
                         </div>
                     </div>
