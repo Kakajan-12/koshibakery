@@ -72,7 +72,6 @@ export default function Products({sort, search, selectedType, availability, pric
                     };
                 });
 
-                console.log("Formatted products:", formatted); // <-- Добавлено
                 setProducts(formatted);
             } catch (err: any) {
                 console.error("Fetch error:", err);
@@ -124,7 +123,6 @@ export default function Products({sort, search, selectedType, availability, pric
         filteredProducts = filteredProducts.filter((p) => p.product_availability === 0);
     }
 
-    console.log("Price range filter:", priceRange);
     filteredProducts = filteredProducts.filter(p =>
         p.price >= (priceRange?.[0] || 0) && p.price <= (priceRange?.[1] || Infinity)
     );
