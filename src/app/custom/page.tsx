@@ -126,7 +126,6 @@ export default function CustomOrderPage() {
                 {orderType === "custom" && (
                     <div className="space-y-3 mt-2">
                         <div className="flex flex-col space-y-2">
-                            <label className="text-sm font-medium">Time of delivery (Date Required)</label>
                             <div className="flex space-x-2">
                                 <DatePicker
                                     selected={date ? new Date(date) : null}
@@ -137,6 +136,8 @@ export default function CustomOrderPage() {
                                     minDate={new Date()}
                                     className="w-full px-3 py-2 border rounded-lg cursor-pointer selection-none"
                                     onChangeRaw={(e) => e?.preventDefault()}
+                                    placeholderText="Date Required"
+                                    required
                                 />
 
 
@@ -152,6 +153,8 @@ export default function CustomOrderPage() {
                                     dateFormat="HH:mm"
                                     className="w-full px-3 py-2 border rounded-lg cursor-pointer selection-none"
                                     onChangeRaw={(e) => e?.preventDefault()}
+                                    placeholderText="Time of delivery"
+                                    required={}
                                 />
                             </div>
 
