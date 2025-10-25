@@ -33,7 +33,7 @@ export default function Header() {
                     href="/"
                     className="flex items-center gap-2 font-bold text-gray-900"
                 >
-                    <Image src="/icon.svg" alt="Logo" width={50} height={50}
+                    <Image src="/icon.webp" alt="Logo" width={50} height={50}
                            className="w-20 lg:w-30"/>
                 </Link>
 

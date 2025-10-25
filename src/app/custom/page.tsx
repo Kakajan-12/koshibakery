@@ -55,7 +55,6 @@ export default function CustomOrderPage() {
             setMessage("✅ Your order request has been sent! We will contact you soon.");
             setShowModal(true);
 
-            // Очистка формы
             setName(""); setEmail(""); setPhone("");
             setDate(""); setTime(""); setSize(""); setDetails(""); setReferenceFile(null);
             if (fileInputRef.current) fileInputRef.current.value = "";
@@ -76,7 +75,6 @@ export default function CustomOrderPage() {
                     You can submit a standard inquiry or a custom order for cakes, pastries, etc.
                 </p>
 
-                {/* Тип заказа */}
                 <div className="flex justify-center space-x-4 mt-2">
                     <button
                         type="button"
@@ -104,7 +102,6 @@ export default function CustomOrderPage() {
                 </div>
 
 
-                {/* Основные поля */}
                 <Input
                     type="text"
                     placeholder="Your Name"
@@ -126,7 +123,6 @@ export default function CustomOrderPage() {
                     onChange={(e) => setPhone(e.target.value)}
                 />
 
-                {/* Поля для кастомного заказа */}
                 {orderType === "custom" && (
                     <div className="space-y-3 mt-2">
                         <div className="flex flex-col space-y-2">
