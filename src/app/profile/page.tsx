@@ -3,7 +3,7 @@
 import {useEffect, useRef, useState} from "react";
 import {useRouter} from "next/navigation";
 import Image from "next/image";
-import {quicksand} from "@/app/fonts";
+import {manrope, quicksand, raleway, sora} from "@/app/fonts";
 
 interface User {
     id: number;
@@ -194,13 +194,13 @@ const Profile = () => {
         <div className="container mx-auto px-4">
             <div className="py-20 lg:py-40">
                 <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-2xl lg:text-4xl font-bold">Profile</h2>
+                    <h2 className={`${raleway.className} text-2xl lg:text-4xl font-bold`}>Profile</h2>
                     <button
                         onClick={() => {
                             localStorage.removeItem("token");
                             router.push("/login");
                         }}
-                        className="bg-red-600 text-white px-4 py-1 rounded-4xl text-sm hover:bg-red-700 transition"
+                        className="text-[#833B45] border-2 border-[#833B45] px-4 py-1 rounded-4xl text-md cursor-pointer"
                     >
                         Logout
                     </button>
@@ -212,10 +212,10 @@ const Profile = () => {
                         className="flex flex-col sm:flex-row lg:flex-col space-y-2 sm:space-y-0 lg:space-y-2 sm:space-x-2 lg:space-x-0 mb-6 lg:w-1/3">
                         <button
                             onClick={() => setActiveTab("info")}
-                            className={`rounded-4xl text-sm px-2 py-2 border w-full lg:w-56 cursor-pointer ${
+                            className={`${raleway.className} rounded-4xl text-sm px-2 py-2 border w-full lg:w-56 cursor-pointer ${
                                 activeTab === "info"
-                                    ? "bg-[#264D30] text-white border-[#264D30]"
-                                    : "border-[#264D30] text-[#264D30]"
+                                    ? "bg-[#833B45] text-white border-[#833B45]"
+                                    : "border-[#833B45] text-[#833B45]"
                             }`}
                         >
                             Personal Information
@@ -223,10 +223,10 @@ const Profile = () => {
 
                         <button
                             onClick={() => setActiveTab("orders")}
-                            className={`rounded-4xl text-sm px-2 py-2 border w-full lg:w-56 cursor-pointer ${
+                            className={`${raleway.className} rounded-4xl text-sm px-2 py-2 border w-full lg:w-56 cursor-pointer ${
                                 activeTab === "orders"
-                                    ? "bg-[#264D30] text-white border-[#264D30]"
-                                    : "border-[#264D30] text-[#264D30]"
+                                    ? "bg-[#833B45] text-white border-[#833B45]"
+                                    : "border-[#833B45] text-[#833B45]"
                             }`}
                         >
                             Order History
@@ -234,16 +234,16 @@ const Profile = () => {
                     </div>
                     {activeTab === "info" && (
                         <div className="space-y-2 lg:space-y-4 animate-fadeIn bg-white p-4 w-full">
-                            <p className="text-sm lg:text-lg"><span
+                            <p className={`${raleway.className} text-sm lg:text-lg`}><span
                                 className="font-bold">Name:</span> {user?.fname} {user?.lname}</p>
-                            <p className="text-sm lg:text-lg"><span className="font-bold">Email:</span> {user?.email}
+                            <p className={`${raleway.className} text-sm lg:text-lg`}><span className="font-bold">Email:</span> {user?.email}
                             </p>
-                            <p className="text-sm lg:text-lg"><span className="font-bold">Phone:</span> {user?.phone}
+                            <p className={`${raleway.className} text-sm lg:text-lg`}><span className="font-bold">Phone:</span> {user?.phone}
                             </p>
-                            <p className="text-sm lg:text-lg"><span
+                            <p className={`${raleway.className} text-sm lg:text-lg`}><span
                                 className="font-bold">Main address:</span> {user?.address}</p>
                             <div className="mt-4">
-                                <p className="font-bold text-sm lg:text-lg mb-2">Additional addresses:</p>
+                                <p className={`${raleway.className} font-bold text-sm lg:text-lg mb-2`}>Additional addresses:</p>
                                 {extraAddresses.length === 0 && (
                                     <p className="text-sm text-gray-500">No additional addresses yet.</p>
                                 )}
@@ -255,7 +255,7 @@ const Profile = () => {
                                         <p className="text-sm lg:text-lg">{addr.address}</p>
                                         <button
                                             onClick={() => handleDeleteAddress(addr.id)}
-                                            className="text-white bg-red-600 text-sm cursor-pointer px-2 py-1 rounded-md"
+                                            className={`${manrope.className} text-white bg-red-600 text-sm cursor-pointer px-3 py-2 rounded-full`}
                                         >
                                             Delete
                                         </button>
@@ -266,7 +266,7 @@ const Profile = () => {
                                 {!isAddingAddress ? (
                                     <button
                                         onClick={() => setIsAddingAddress(true)}
-                                        className="border border-[#264D30] rounded-4xl text-sm text-[#264D30] px-2 py-2 w-full max-w-56"
+                                        className="border border-[#833B45] rounded-4xl text-sm text-[#833B45] px-2 py-2 w-full max-w-56 cursor-pointer"
                                     >
                                         Add address
                                     </button>
@@ -279,13 +279,12 @@ const Profile = () => {
                                                 setNewAddress(e.target.value);
                                                 setIsSelectingAddress(false);
                                                 setHouseNumberInputVisible(false);
-                                                setHouseNumber(""); // сброс house number при ручном вводе
+                                                setHouseNumber("");
                                             }}
                                             placeholder="Enter new address"
                                             className="border rounded-lg px-3 py-2 w-full"
                                         />
 
-                                        {/* Автоподсказки */}
                                         {addressSuggestions.length > 0 && (
                                             <ul className="absolute z-10 w-full bg-white border rounded mt-1 max-h-48 overflow-auto top-10">
                                                 {addressSuggestions.map((s, i) => {
@@ -324,7 +323,6 @@ const Profile = () => {
                                             </ul>
                                         )}
 
-                                        {/* Поле для house number, если нужно */}
                                         {houseNumberInputVisible && (
                                             <input
                                                 ref={houseInputRef}
@@ -380,13 +378,13 @@ const Profile = () => {
                                             <div
                                                 className="flex justify-between items-start mb-2 sm:flex-col sm:justify-start sm:space-y-2">
                                                 <div
-                                                    className={`text-white rounded-2xl text-xs py-2 px-3 ${order.payment_status === "paid" ? "bg-[#264D30]" : "bg-yellow-500"}`}>{order.payment_status}
+                                                    className={`${sora.className} text-white rounded-2xl text-xs py-2 px-3 ${order.payment_status === "paid" ? "bg-[#833B45]" : "bg-yellow-500"}`}>{order.payment_status}
                                                 </div>
                                                 <div
                                                     className="text-sm">{new Date(order.created_at).toLocaleDateString()}</div>
                                             </div>
                                             <div className="space-y-2 w-full">
-                                                <p className={`${quicksand} hidden sm:block font-bold text-lg`}>List of
+                                                <p className={`${quicksand.className} hidden sm:block font-bold text-lg`}>List of
                                                     products</p>
                                                 {order.order_data.cart.map((item: any, i: number) => (
                                                     <div key={i}
@@ -400,8 +398,8 @@ const Profile = () => {
                                                         />
                                                         <div className="flex justify-between w-full">
                                                             <div className="space-y-1">
-                                                                <p className="text-sm sm:text-md md:text-lg">{item.product_name}</p>
-                                                        <p className="text-xs text-gray-400">[x{item.quantity}]</p>
+                                                                <p className={`${sora.className} text-sm sm:text-md md:text-lg`}>{item.product_name}</p>
+                                                        <p className={`${sora.className} text-xs text-gray-400`}>[x{item.quantity}]</p>
                                                     </div>
                                                     <div className="text-sm sm:text-md">£{item.price.toFixed(2)}</div>
                                                 </div>
@@ -412,13 +410,13 @@ const Profile = () => {
                                 <div className="space-y-1 sm:pt-8 min-w-36 md:min-w-56">
                                     <div
                                         className="flex justify-start items-center space-x-2">
-                                        <p className="font-bold text-sm sm:text-md md:text-lg">Order type</p>
-                                        <p className="text-xs sm:text-sm md:text-md">{order.order_data.orderType} {order.order_data.deliveryFee}</p>
+                                        <p className={`${sora.className} font-bold text-sm sm:text-md md:text-lg`}>Order type</p>
+                                        <p className={`${sora.className} text-xs sm:text-sm md:text-md`}>{order.order_data.orderType} {order.order_data.deliveryFee}</p>
                                     </div>
                                     <div
                                         className="flex justify-start items-center space-x-2">
-                                        <p className="font-bold text-sm sm:text-md md:text-lg">Total payment:</p>
-                                        <p className="text-xs font-bold sm:text-sm md:text-lg">£{Number(order.total).toFixed(2)}</p>
+                                        <p className={`${sora.className} font-bold text-sm sm:text-md md:text-lg`}>Total payment:</p>
+                                        <p className={`${sora.className} text-xs font-bold sm:text-sm md:text-lg`}>£{Number(order.total).toFixed(2)}</p>
                                     </div>
                                 </div>
                             </div>

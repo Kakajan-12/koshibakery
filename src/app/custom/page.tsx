@@ -79,10 +79,10 @@ export default function CustomOrderPage() {
                     <button
                         type="button"
                         onClick={() => setOrderType("standard")}
-                        className={`px-4 py-2 rounded-xl border-2 transition-all font-medium cursor-pointer ${
+                        className={`px-4 py-2 rounded-full border-2 transition-all font-medium cursor-pointer ${
                             orderType === "standard"
-                                ? "bg-green-700 text-white border-green-700"
-                                : "border-green-700 text-green-700 hover:bg-green-50"
+                                ? "bg-[#A16D89] text-white border-[#833B45]"
+                                : "border-[#833B45] text-[#6F5E53] hover:bg-[#A16D89] hover:text-white"
                         }`}
                     >
                         Standard Inquiry
@@ -91,10 +91,10 @@ export default function CustomOrderPage() {
                     <button
                         type="button"
                         onClick={() => setOrderType("custom")}
-                        className={`px-4 py-2 rounded-xl border-2 transition-all font-medium cursor-pointer ${
+                        className={`px-4 py-2 rounded-full border-2 transition-all font-medium cursor-pointer ${
                             orderType === "custom"
-                                ? "bg-green-700 text-white border-green-700"
-                                : "border-green-700 text-green-700 hover:bg-green-50"
+                                ? "bg-[#A16D89] text-white border-[#833B45]"
+                                : "border-[#833B45] text-[#6F5E53] hover:bg-[#A16D89] hover:text-white"
                         }`}
                     >
                         Custom Order
@@ -187,7 +187,7 @@ export default function CustomOrderPage() {
                     </div>
                 )}
 
-                <Button type="submit" className="w-full mt-2 bg-green-700 text-white border-green-700 hover:bg-green-700 cursor-pointer">Submit Order</Button>
+                <Button type="submit" className="rounded-full w-full mt-2 bg-[#A16D89] text-white border-[#833B45] hover:bg-[#A16D89] cursor-pointer">Submit Order</Button>
 
                 {showModal && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/50">

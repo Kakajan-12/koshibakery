@@ -3,7 +3,7 @@
 import React, {useEffect, useState} from "react";
 import {useParams} from "next/navigation";
 import Image from "next/image";
-import {sora} from "@/app/fonts";
+import {manrope, quicksand, raleway, sora} from "@/app/fonts";
 import {Button} from "@/components/ui/button";
 import {ChevronLeft, ChevronRight} from "lucide-react";
 import {FaPoundSign} from "react-icons/fa";
@@ -148,7 +148,7 @@ const MenuItem = () => {
     if (!product) return <p className="text-center py-10">No product found</p>;
 
     return (
-        <div className="mt-24">
+        <div className="mt-24 my-container mx-auto">
             <div className="container mx-auto px-4">
                 <div>
                     <div className="flex flex-col lg:flex-row lg:space-x-4">
@@ -184,7 +184,7 @@ const MenuItem = () => {
                                             <div
                                                 key={index}
                                                 className={`relative w-16 h-16 rounded-md overflow-hidden cursor-pointer border-2 transition 
-                                        ${index === current ? "border-green-700" : "border-transparent"}`}
+                                        ${index === current ? "border-[#A16D89]" : "border-transparent"}`}
                                                 onClick={() => setCurrent(index)}
                                             >
                                                 <Image
@@ -202,24 +202,24 @@ const MenuItem = () => {
                         <div className="w-full">
                             <div className="space-y-1 pt-4">
                                 <h1
-                                    className={`${sora.className} text-2xl sm:text-3xl lg:text-4xl`}
+                                    className={`${raleway.className} text-2xl sm:text-3xl lg:text-4xl`}
                                     dangerouslySetInnerHTML={{__html: product.product_name}}
                                 />
-                                <div className="text-md text-[#6F5E53]"
+                                <div className={`${manrope.className} text-sm sm:text-md text-[#6F5E53]`}
                                      dangerouslySetInnerHTML={{__html: product.product_desc}}/>
-                                <div className="text-md text-red-800">{product.notice}</div>
+                                <div className={`${manrope.className} text-sm sm:text-md text-red-800`}>{product.notice}</div>
                                 {/*<p className="text-sm text-gray-600">Serves: {product.product_serves}</p>*/}
                             </div>
 
                             <div className="flex items-center space-x-2 pt-2">
-                                <p className="text-md">Size:</p>
+                                <p className={`${raleway.className} text-lg sm:text-2xl font-bold`}>Size:</p>
                                 <div className="flex space-x-2">
                                     {product.variants?.map((variant) => (
                                         <Button
                                             key={variant.id}
                                             onClick={() => setSelectedVariant(variant)}
-                                            className={`rounded-2xl px-4 py-1 text-sm transition-colors
-            ${selectedVariant?.id === variant.id ? "bg-[#264D30] text-white" : "bg-transparent border border-green-800 text-[#6F5E53] hover:bg-green-100"}`}
+                                            className={`${quicksand.className} rounded-full px-4 py-1 text-sm transition-colors border border-[#833B45] cursor-pointer
+            ${selectedVariant?.id === variant.id ? "bg-[#A16D89] text-white hover:bg-[#A16D89]" : "bg-transparent text-[#6F5E53] hover:bg-[#A16D89] hover:text-white"}`}
                                         >
                                             {variant.variant_name}
                                         </Button>
@@ -230,20 +230,19 @@ const MenuItem = () => {
 
                             {selectedVariant && (
                                 <div className="pt-2 flex items-center space-x-2">
-                                    <p className="text-md ">Price:</p>
-                                    <div className="flex items-center font-semibold text-md"><FaPoundSign size={14}
-                                                                                                          style={{marginBottom: "2px"}}/>{selectedVariant.price}
+                                    <p className={`${manrope.className} text-md sm:text-lg`}>Price:</p>
+                                    <div className={`${manrope.className} flex items-center text-md sm:text-lg font-bold`}><FaPoundSign size={14} className="font-normal" style={{marginBottom: "2px"}}/>{selectedVariant.price}
                                     </div>
                                 </div>
                             )}
                             <div className="flex items-center py-4">
                                 <Button
                                     onClick={handleAddToCart}
-                                    className={`border-2 w-full md:w-72 rounded-2xl font-bold py-3 text-md transition-colors
+                                    className={`${sora.className} border-2 w-full md:w-72 rounded-full font-bold py-3 text-md transition-colors cursor-pointer
       ${
                                         isInCart
                                             ? "bg-red-600 text-white border-red-600 hover:bg-red-700"
-                                            : "bg-transparent text-black border-green-800 hover:bg-green-50"
+                                            : "bg-transparent text-[#833B45] border-[#A16D89] hover:bg-transparent"
                                     }`}
                                 >
                                     {isInCart ? "Remove from Cart" : "Order Now"}
@@ -254,19 +253,19 @@ const MenuItem = () => {
                     </div>
 
 
-                    <div className="lg:flex lg:space-x-8 lg:justify-between pt-10">
+                    <div className="lg:flex lg:space-x-8 lg:justify-between pt-6">
                         <div className="w-full">
                             <div>
                                 <button
                                     onClick={() => setIsIngredientsOpen(!isIngredientsOpen)}
                                     className="w-full flex justify-between items-center px-4 py-3 border-b border-[#264D30] cursor-pointer"
                                 >
-                                    <div className="text-left text-lg md:text-2xl">
+                                    <div className={`${raleway.className} text-left text-md sm:text-lg md:text-xl lg:text-2xl`}>
                                         Ingredients and Allergens
                                     </div>
 
                                     <GoPlus
-                                        className={`transform transition-transform duration-300 text-[#264D30] ${
+                                        className={`transform transition-transform duration-300 text-[#833B45] ${
                                             isIngredientsOpen ? "rotate-45" : ""
                                         }`}
                                         size={24}
@@ -281,19 +280,19 @@ const MenuItem = () => {
                                 >
                                     <div className="px-4 py-3 space-y-3">
                                         <div>
-                                            <p className="text-md font-semibold">Ingredients:</p>
+                                            <p className={`${raleway.className} text-sm sm:text-md md:text-lg font-semibold`}>Ingredients:</p>
                                             <p
-                                                className="text-sm text-gray-600"
+                                                className={`${raleway.className} text-sm sm:text-md md:text-lg text-grey-600`}
                                                 dangerouslySetInnerHTML={{__html: product.product_ingredients}}
                                             />
                                         </div>
 
                                         {product.allergens && product.allergens.length > 0 && (
                                             <div>
-                                                <h3 className="font-semibold">Allergens:</h3>
+                                                <p className={`${raleway.className} text-sm sm:text-md md:text-lg font-semibold`}>Allergens:</p>
                                                 <ul className="list-disc pl-5">
                                                     {product.allergens.map((a) => (
-                                                        <li key={a.id}>{a.name}</li>
+                                                        <li key={a.id} className={`${raleway.className} text-sm sm:text-md`}>{a.name}</li>
                                                     ))}
                                                 </ul>
                                             </div>
@@ -307,10 +306,10 @@ const MenuItem = () => {
                                     onClick={() => setIsDeliveryOpen(!isDeliveryOpen)}
                                     className="w-full flex justify-between items-center px-4 py-3 border-b border-[#264D30] cursor-pointer"
                                 >
-                                    <div className="text-left text-lg md:text-2xl">Delivery</div>
+                                    <div className={`${raleway.className} text-left text-md sm:text-lg md:text-xl lg:text-2xl`}>Delivery</div>
 
                                     <GoPlus
-                                        className={`transform transition-transform duration-300 text-[#264D30] ${
+                                        className={`transform transition-transform duration-300 text-[#833B45] ${
                                             isDeliveryOpen ? "rotate-45" : ""
                                         }`}
                                         size={24}
@@ -325,7 +324,7 @@ const MenuItem = () => {
                                 >
                                     <div className="px-4 py-3 space-y-3">
                                         <p
-                                            className="text-sm text-gray-600"
+                                            className={`${raleway.className} text-sm sm:text-md text-gray-600`}
                                             dangerouslySetInnerHTML={{__html: product.delivery}}
                                         />
                                     </div>
@@ -334,7 +333,7 @@ const MenuItem = () => {
                         </div>
                     </div>
 
-                    <div className="mt-10 mb-6 text-center md:text-2xl">Perfect for special occasions or as a luxurious treat for
+                    <div className={`${raleway.className} mt-10 mb-6 text-center font-bold text-md md:text-xl lg:text-3xl xl:text-5xl max-w-[900px] mx-auto`}>Perfect for special occasions or as a luxurious treat for
                         yourself.
                     </div>
                 </div>

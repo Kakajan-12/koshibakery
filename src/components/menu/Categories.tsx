@@ -1,7 +1,7 @@
 "use client";
 import {useEffect, useState} from "react";
 import Image from "next/image";
-import {quicksand} from "@/app/fonts";
+import {quicksand, raleway} from "@/app/fonts";
 import {useCategory} from "@/app/context/CategoryContext";
 import {Navigation} from "swiper/modules";
 import {Swiper, SwiperSlide} from "swiper/react";
@@ -72,7 +72,6 @@ export default function Categories() {
                 }}
                 className="!overflow-hidden"
             >
-                {/* Один слайд для "All" */}
                 <SwiperSlide>
                     <div
                         onClick={() => setSelectedCategory(null)}
@@ -81,8 +80,8 @@ export default function Categories() {
                         }`}
                     >
                         <div
-                            className={`w-24 h-24 sm:w-28 sm:h-28 lg:w-36 lg:h-36 rounded-full overflow-hidden flex items-center justify-center border-4 bg-gray-200 ${
-                                selectedCategory === null ? "border-green-700" : "border-transparent"
+                            className={`w-24 h-24 sm:w-28 sm:h-28 lg:w-36 lg:h-36 rounded-full overflow-hidden flex items-center justify-center border-4 ${
+                                selectedCategory === null ? "border-[#833B45]" : "border-transparent"
                             }`}
                         >
                             <Image
@@ -94,14 +93,13 @@ export default function Categories() {
                             />
                         </div>
                         <p
-                            className={`${quicksand.className} mt-2 font-bold text-md sm:text-lg lg:text-xl text-[#6F5E53]`}
+                            className={`${raleway.className} mt-2 font-bold text-md sm:text-lg lg:text-xl text-[#6F5E53]`}
                         >
                             All
                         </p>
                     </div>
                 </SwiperSlide>
 
-                {/* Остальные категории */}
                 {categories.map((item) => (
                     <SwiperSlide key={item.id}>
                         <div
@@ -114,7 +112,7 @@ export default function Categories() {
                         >
                             <div
                                 className={`w-24 h-24 sm:w-28 sm:h-28 lg:w-36 lg:h-36 rounded-full overflow-hidden border-4 transition-colors ${
-                                    selectedCategory === item.id ? "border-green-700" : "border-transparent"
+                                    selectedCategory === item.id ? "border-[#833B45]" : "border-transparent"
                                 }`}
                             >
                                 <Image
@@ -126,7 +124,7 @@ export default function Categories() {
                                 />
                             </div>
                             <p
-                                className={`${quicksand.className} mt-2 font-bold text-md sm:text-lg lg:text-xl text-[#6F5E53]`}
+                                className={`${raleway.className} mt-2 font-bold text-md sm:text-lg lg:text-xl text-[#6F5E53]`}
                             >
                                 {item.name}
                             </p>
@@ -135,11 +133,10 @@ export default function Categories() {
                 ))}
             </Swiper>
 
-            {/* Кнопки навигации */}
-            <div className="category-prev hidden xl:flex absolute bottom-0 right-20 z-30 w-12 h-12 bg-[#165225] text-white rounded-full items-center justify-center cursor-pointer transition">
+            <div className="category-prev hidden xl:flex absolute bottom-0 right-20 z-30 w-12 h-12 bg-[#833B45] text-white rounded-full items-center justify-center cursor-pointer transition">
                 <IoIosArrowBack />
             </div>
-            <div className="category-next hidden xl:flex absolute bottom-0 right-0 z-30 w-12 h-12 bg-[#165225] text-white rounded-full items-center justify-center cursor-pointer transition">
+            <div className="category-next hidden xl:flex absolute bottom-0 right-0 z-30 w-12 h-12 bg-[#833B45] text-white rounded-full items-center justify-center cursor-pointer transition">
                 <IoIosArrowForward />
             </div>
         </div>

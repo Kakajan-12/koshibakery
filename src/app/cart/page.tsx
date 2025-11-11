@@ -1,6 +1,6 @@
 "use client";
 
-import { quicksand, sora } from "@/app/fonts";
+import {manrope, quicksand, raleway, sora} from "@/app/fonts";
 import { Button } from "@/components/ui/button";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
@@ -58,7 +58,6 @@ const Cart = () => {
         return null;
     };
 
-    // Загрузка адресов пользователя
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (!token) return;
@@ -88,7 +87,6 @@ const Cart = () => {
             });
     }, []);
 
-    // Расчёт deliveryFee
     useEffect(() => {
         if (!selectedAddress) {
             setDeliveryFee(0);
@@ -168,7 +166,7 @@ const Cart = () => {
                             </h6>
 
                             <div className="flex items-center py-4 md:justify-center w-64">
-                                <Link href="/menu" className="border-2 border-green-800 bg-[#FDFBF8] text-center text-black w-full rounded-2xl font-bold py-3 text-md md:w-72 hover:bg-[#FDFBF8] cursor-pointer">
+                                <Link href="/menu" className="border-2 border-[#833B45] text-center text-[#833B45] w-full rounded-full font-bold py-3 text-md md:text-lg md:w-72 cursor-pointer">
                                     Order Now
                                 </Link>
                             </div>
@@ -181,46 +179,53 @@ const Cart = () => {
 
     return (
         <div className="mt-[64px] container mx-auto px-4 py-10">
-            <h2 className={`${sora.className} text-2xl lg:text-4xl font-bold mb-6 text-center`}>Your Cart</h2>
-            {/* Товары */}
+            <div className="mb-6">
+                <h2 className={`${raleway.className} text-2xl lg:text-4xl font-bold text-center`}>Your Cart</h2>
+                <p className={`${manrope.className} text-sm md:text-md text-center text-[#833B45]`}>Here’s what you’ve
+                    selected — sweet choices!</p>
+                <p className={`${manrope.className} text-sm md:text-md text-center text-[#833B45]`}>Review your items
+                    below before proceeding to checkout. You can update quantities or remove items as needed.</p>
+            </div>
+
             <div className="flex justify-center">
                 <div className="space-y-2 max-w-4xl w-full">
                     {cart.map((item, index) => {
                         const key = `${item.id}-${item.variantName}`;
                         return (
-                            <div key={key} className="border-2 border-color p-2 rounded-md space-y-2">
-                                <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
+                            <div key={key} className="border-2 border-[#833B45] p-2 rounded-md space-y-2">
+                                <div
+                                    className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
                                     <div className="flex space-x-4 w-full">
                                         <Image src={item.main_image} alt={item.product_name} width={180} height={80} className="rounded-md w-28 h-28" />
                                         <div className="flex flex-col justify-between min-h-full">
-                                            <h3 className={`${quicksand.className} font-semibold text-lg`}>{item.product_name}</h3>
-                                            <p className="text-sm text-gray-500 italic">Size: {item.variantName}</p>
-                                            <p className="text-md font-bold">£{item.price}</p>
+                                            <h3 className={`${raleway.className} font-semibold text-lg`}>{item.product_name}</h3>
+                                            <p className={`${manrope.className} text-sm text-gray-500 italic`}>Size: {item.variantName}</p>
+                                            <p className={`${sora.className} text-md font-bold`}>£{item.price}</p>
                                         </div>
                                     </div>
                                     <div className="flex justify-between items-center space-x-4 w-full md:w-fit">
                                         <div className="flex items-center border rounded-lg overflow-hidden">
                                             <button
-                                                className="px-3 py-1 bg-green-200"
+                                                className="px-3 py-1 bg-[#E6BEBD] cursor-pointer"
                                                 onClick={() => updateQuantity(item.id, item.variantName, Math.max(item.quantity - 1, 1))}
                                             >
                                                 -
                                             </button>
-                                            <span className="px-4">{item.quantity}</span>
+                                            <p className="w-10 text-center">
+                                                {item.quantity}</p>
                                             <button
-                                                className="px-3 py-1 bg-green-200"
+                                                className="px-3 py-1 bg-[#E6BEBD] cursor-pointer"
                                                 onClick={() => updateQuantity(item.id, item.variantName, item.quantity + 1)}
                                             >
                                                 +
                                             </button>
                                         </div>
-                                        <Button variant="destructive" onClick={() => removeFromCart(item.id, item.variantName)}>
+                                        <Button className="cursor-pointer" variant="destructive" onClick={() => removeFromCart(item.id, item.variantName)}>
                                             <FaRegTrashCan />
                                         </Button>
                                     </div>
                                 </div>
 
-                                {/* Custom message */}
                                 <div className="flex flex-col space-y-2">
                                     <div className="flex items-center">
                                         <input
@@ -228,9 +233,9 @@ const Cart = () => {
                                             type="checkbox"
                                             checked={!!showInput[key]}
                                             onChange={() => toggleCustomMessage(key)}
-                                            className="h-5 w-5 appearance-none rounded border-2 border-green-700 checked:bg-green-700 checked:border-green-700 transition-all duration-200 cursor-pointer"
+                                            className="h-5 w-5 appearance-none rounded border-2 border-[#833B45] checked:bg-[#833B45] checked:border-[#833B45] transition-all duration-200 cursor-pointer"
                                         />
-                                        <label htmlFor={`custom-message-${index}`} className="ml-2 text-sm text-gray-900 cursor-pointer">
+                                        <label htmlFor={`custom-message-${index}`} className={`${manrope.className} ml-2 text-sm text-gray-900 cursor-pointer`}>
                                             Custom message
                                         </label>
                                     </div>
@@ -240,7 +245,7 @@ const Cart = () => {
                                             placeholder="Enter your message..."
                                             value={customMessages[key] || ""}
                                             onChange={e => handleInputChange(key, e.target.value)}
-                                            className="border border-green-700 rounded-lg p-2 w-full outline-none focus:ring-2 focus:ring-green-500"
+                                            className={`${manrope.className} border border-[#833B45] rounded-lg p-2 w-full outline-none focus:ring-1 focus:ring-[#833B45]`}
                                         />
                                     )}
                                 </div>
@@ -250,26 +255,25 @@ const Cart = () => {
                 </div>
             </div>
 
-            {/* Order type selection */}
             <div className="flex justify-center">
                 <div className="max-w-4xl w-full">
                     <div className="mt-4 flex space-x-4">
                         <button
                             onClick={() => setOrderType("delivery")}
-                            className={`px-2 py-1 rounded-xl border-2 transition-all ${
+                            className={`${manrope.className} px-3 py-1 rounded-full border-2 transition-all cursor-pointer text-[#833B45] ${
                                 orderType === "delivery"
-                                    ? "bg-green-700 text-white border-green-700"
-                                    : "border-green-700 text-green-700 hover:bg-green-50"
+                                    ? "bg-[#833B45] text-white border-[#833B45]"
+                                    : "border-[#833B45] hover:text-white hover:bg-[#E6BEBD]"
                             }`}
                         >
                             Delivery
                         </button>
                         <button
                             onClick={() => setOrderType("collect")}
-                            className={`px-2 py-1 rounded-xl border-2 transition-all ${
+                            className={`${manrope.className} px-3 py-1 rounded-full border-2 transition-all cursor-pointer text-[#833B45] ${
                                 orderType === "collect"
-                                    ? "bg-green-700 text-white border-green-700"
-                                    : "border-green-700 text-green-700 hover:bg-green-50"
+                                    ? "bg-[#833B45] text-white border-[#833B45]"
+                                    : "border-[#833B45] hover:text-white hover:bg-[#E6BEBD]"
                             }`}
                         >
                             Collect order
@@ -277,11 +281,11 @@ const Cart = () => {
                     </div>
                     {orderType === "delivery" && (
                         <div className="mt-2 flex flex-col items-start">
-                            <label className="text-sm font-semibold ml-1 mb-2">Choose delivery address:</label>
+                            <label className={`${manrope.className} text-sm md:text-md font-semibold ml-1 mb-2`}>Choose delivery address:</label>
                             <select
                                 value={selectedAddress}
                                 onChange={(e) => setSelectedAddress(e.target.value)}
-                                className="border-green-700 border-2 rounded-lg p-2 w-full max-w-md text-xs sm:text-sm"
+                                className={`${manrope.className} border-[#833B45] border-2 rounded-lg p-2 w-full max-w-md text-xs sm:text-sm cursor-pointer`}
                             >
                                 {addresses.map((addr, i) => (
                                     <option key={i} value={addr}>
@@ -295,16 +299,15 @@ const Cart = () => {
             </div>
 
 
-            {/* Totals */}
             <div className="mt-10 flex flex-col items-end space-y-2">
-                <p className="font-semibold lg:text-lg">Price: £{total}</p>
-                {orderType === "delivery" && <p className="font-semibold lg:text-lg">Delivery: £{deliveryFee}</p>}
+                <p className={`${manrope.className} font-semibold lg:text-lg`}>Price: £{total}</p>
+                {orderType === "delivery" && <p className={`${manrope.className} font-semibold lg:text-lg`}>Delivery: £{deliveryFee}</p>}
                 {customMessageFee > 0 &&
-                    <p className="font-semibold lg:text-lg">Custom messages: £{customMessageFee}</p>}
-                <p className="text-md lg:text-2xl font-bold">Total: £{grandTotal.toFixed(2)}</p>
+                    <p className={`${manrope.className} font-semibold lg:text-lg`}>Custom messages: £{customMessageFee}</p>}
+                <p className={`${manrope.className} text-md lg:text-2xl font-bold`}>Total: £{grandTotal.toFixed(2)}</p>
                 <div className="flex space-x-4">
-                    <Button variant="outline" onClick={clearCart}>Clear Cart</Button>
-                    <Button className="bg-green-700 text-white" onClick={handleCheckout}>Checkout</Button>
+                    <Button className={`${manrope.className} border-2 border-[#833B45] text-[#833B45] cursor-pointer`} variant="outline" onClick={clearCart}>Clear Cart</Button>
+                    <Button className={`${manrope.className} bg-[#833B45] text-white cursor-pointer hover:bg-[#833B45]`} onClick={handleCheckout}>Checkout</Button>
                 </div>
             </div>
         </div>

@@ -20,6 +20,7 @@ import {
 import {Input} from "@/components/ui/input";
 import {Slider} from "@/components/ui/slider";
 import {SortOption} from "@/lib/sorts"
+import {inter, manrope, raleway} from "@/app/fonts";
 
 type AvailabilityOption = "all" | "in-stock" | "pre-order";
 
@@ -90,7 +91,7 @@ export default function FilterBar({
 
     return (
         <div className="container mx-auto px-4 py-6 space-y-4">
-            <div className="flex items-center w-full bg-white shadow-sm rounded-md overflow-hidden">
+            <div className="flex items-center w-full bg-white shadow-sm rounded-full overflow-hidden">
                 <div className="px-3 text-gray-400">
                     <FaSearch/>
                 </div>
@@ -99,28 +100,28 @@ export default function FilterBar({
                     placeholder="Cakes..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="flex-1 p-3 outline-none text-sm"
+                    className={`${manrope.className} flex-1 p-3 outline-none text-sm md:text-md`}
                 />
 
             </div>
 
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                    <span className="text-gray-700 text-md sm:text-lg font-medium">Sort By:</span>
+                    <span className={`${raleway.className} text-gray-700 text-md sm:text-lg font-bold`}>Sort By:</span>
 
                     <DropdownMenu modal={false}>
                         <DropdownMenuTrigger asChild>
                             <Button
                                 variant="outline"
-                                className="min-w-[160px] justify-between shadow-sm"
+                                className={`${inter.className} min-w-[160px] justify-between shadow-sm cursor-pointer`}
                             >
                                 {sortOptions.find((o) => o.value === sort)?.label}
                             </Button>
                         </DropdownMenuTrigger>
 
-                        <DropdownMenuContent align="start" className="w-[160px]">
+                        <DropdownMenuContent align="start" className={`${inter.className} w-[160px] cursor-pointer`}>
                             {sortOptions.map((o) => (
-                                <DropdownMenuItem key={o.value} onClick={() => setSort(o.value)}>
+                                <DropdownMenuItem key={o.value} onClick={() => setSort(o.value)} className={"cursor-pointer"}>
                                     {o.label}
                                 </DropdownMenuItem>
                             ))}
@@ -138,10 +139,10 @@ export default function FilterBar({
                     <DialogContent className="max-w-sm pt-10">
                         <DialogHeader>
                             <DialogTitle className="flex justify-between items-center">
-                                <span>Filter</span>
+                                <span className={`${raleway.className} font-bold`}>Filter</span>
                                 <button
                                     onClick={resetFilters}
-                                    className="text-sm text-blue-500 hover:underline"
+                                    className={`${manrope.className} text-sm text-blue-500 cursor-pointer`}
                                 >
                                     Reset all
                                 </button>
@@ -152,23 +153,22 @@ export default function FilterBar({
                         <div className="space-y-6">
 
                             <div className="space-y-2">
-                                <p className="text-sm text-gray-500">Occasion</p>
+                                <p className={`${raleway.className} text-sm text-gray-500`}>Occasion</p>
                                 <div className="grid grid-cols-2 gap-2">
                                     {loadingTypes && <p className="col-span-2 text-sm text-gray-400">Loading...</p>}
                                     {!loadingTypes &&
                                         types.map((t) => (
                                             <Button
                                                 key={t.id}
-                                                // variant={selectedType === t.id ? "default" : "outline"}
                                                 variant="outline"
                                                 onClick={() =>
                                                     setSelectedType(selectedType === t.id ? null : t.id)
                                                 }
-                                                className={`justify-center transition-colors rounded-3xl cursor-pointer
+                                                className={`${manrope.className} justify-center transition-colors rounded-3xl cursor-pointer
               ${
                                                     selectedType === t.id
-                                                        ? "bg-green-700 text-white border-green-700 hover:bg-green-700 hover:text-white"
-                                                        : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                                                        ? "bg-[#E6BEBD] text-white hover:bg-[#E6BEBD] hover:text-white"
+                                                        : "bg-[#F2F4F7] text-gray-700 hover:bg-gray-100"
                                                 }`}
                                             >
                                                 {t.type_name}
@@ -178,9 +178,9 @@ export default function FilterBar({
                             </div>
 
                             <div className="space-y-2">
-                                <p className="text-sm text-gray-500">Availability</p>
+                                <p className={`${manrope.className} text-sm text-gray-500`}>Availability</p>
                                 <div className="space-y-2">
-                                    <label className="flex items-center gap-2">
+                                    <label className={`${manrope.className} flex items-center gap-2 w-fit cursor-pointer`}>
                                         <input
                                             type="radio"
                                             name="availability"
@@ -190,7 +190,7 @@ export default function FilterBar({
                                         />
                                         All
                                     </label>
-                                    <label className="flex items-center gap-2">
+                                    <label className={`${manrope.className} flex items-center gap-2 w-fit cursor-pointer`}>
                                         <input
                                             type="radio"
                                             name="availability"
@@ -200,7 +200,7 @@ export default function FilterBar({
                                         />
                                         In Stock
                                     </label>
-                                    <label className="flex items-center gap-2">
+                                    <label className={`${manrope.className} flex items-center gap-2 w-fit cursor-pointer`}>
                                         <input
                                             type="radio"
                                             name="availability"
@@ -215,7 +215,7 @@ export default function FilterBar({
 
 
                             <div className="space-y-2">
-                                <p className="text-sm text-gray-500">Price</p>
+                                <p className={`${manrope.className} text-sm text-gray-500`}>Price</p>
                                 <div className="flex gap-2">
                                     <Input
                                         placeholder="Min"
@@ -243,6 +243,7 @@ export default function FilterBar({
                                     min={0}
                                     max={maxPrice}
                                     step={1}
+                                    className="[&_>[data-state=on]]:bg-[#833B45]"
                                 />
 
                                 <div className="flex justify-between text-xs text-gray-500">
@@ -252,7 +253,7 @@ export default function FilterBar({
                             </div>
 
                             <DialogTrigger asChild>
-                                <Button variant="ghost" className="w-full bg-green-900 hover:bg-green-800 text-white hover:text-white cursor-pointer">
+                                <Button variant="ghost" className="w-full bg-[#833B45] hover:bg-[#833B45] text-white hover:text-white cursor-pointer">
                                     Save
                                 </Button>
                             </DialogTrigger>

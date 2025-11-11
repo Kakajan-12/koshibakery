@@ -1,6 +1,6 @@
 "use client";
 
-import {quicksand, sora} from "@/app/fonts";
+import {manrope, raleway} from "@/app/fonts";
 
 import {Swiper, SwiperSlide} from "swiper/react";
 import {Navigation} from "swiper/modules";
@@ -45,7 +45,7 @@ export default function MainMenu() {
     if (loading) {
         return (
             <div className="container mx-auto px-4 py-10 text-center">
-                <p className={`${sora.className} text-lg`}>Loading...</p>
+                <p className={`${raleway.className} text-lg`}>Loading...</p>
             </div>
         );
     }
@@ -61,8 +61,8 @@ export default function MainMenu() {
     return (
         <div className="container mx-auto px-4">
             <div className="py-10">
-                <h6 className={`${sora.className} text-center text-xl lg:text-4xl`}>Menu</h6>
-                <p className={`${quicksand.className} text-center text-md lg:text-lg pt-2`}>
+                <h6 className={`${raleway.className} font-bold text-center text-xl sm:text-2xl md:text-3xl lg:text-4xl`}>Menu</h6>
+                <p className={`${manrope.className} text-center text-sm sm:text-md lg:text-lg pt-2`}>
                     From soft layered cakes to delicate tarts — each treat is made to brighten your day.
                 </p>
             </div>
@@ -106,11 +106,11 @@ export default function MainMenu() {
                     ))}
                     <div className="relative bottom-0 w-full h-20 z-20">
                         <div
-                            className="category-prev absolute bottom-0 z-30 w-12 h-12 bg-[#165225] text-white rounded-full flex items-center justify-center cursor-pointer transition right-20">
+                            className="category-prev absolute bottom-0 z-30 w-12 h-12 bg-[#833B45] text-white rounded-full flex items-center justify-center cursor-pointer transition right-20">
                             <IoIosArrowBack/>
                         </div>
                         <div
-                            className="category-next absolute bottom-0 z-30 w-12 h-12 bg-[#165225] text-white rounded-full flex items-center justify-center cursor-pointer transition right-0">
+                            className="category-next absolute bottom-0 z-30 w-12 h-12 bg-[#833B45] text-white rounded-full flex items-center justify-center cursor-pointer transition right-0">
                             <IoIosArrowForward/>
                         </div>
                     </div>
@@ -143,7 +143,7 @@ function MenuCard({name, image, id}: { name: string; image: string; id: number; 
         >
             <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-transparent"/>
             <div
-                className={`${sora.className} border-b-2 border-white w-fit z-20 relative text-white text-md md:text-2xl`}
+                className={`${raleway.className} border-b-2 border-white w-fit z-20 relative text-white text-md md:text-2xl`}
             >
                 {name}
             </div>
