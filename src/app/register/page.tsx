@@ -4,6 +4,7 @@ import {useState, useEffect, useRef} from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {raleway} from "@/app/fonts";
 
 export default function RegisterPage() {
     const [fname, setfName] = useState("");
@@ -67,9 +68,6 @@ export default function RegisterPage() {
         return () => clearTimeout(timeout);
     }, [fullAddress]);
 
-
-
-    // ======== REGISTER ========
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -103,7 +101,7 @@ export default function RegisterPage() {
             const data = await res.json();
             if (!res.ok) throw new Error(data.message || "Registration failed");
 
-            setMessage("✅ Account created! Check your email to verify your account.");
+            setMessage("Account created! Check your email to verify your account.");
             setShowModal(true);
         } catch (err: any) {
             setMessage(err.message || "Something went wrong");
@@ -111,21 +109,19 @@ export default function RegisterPage() {
         }
     };
 
-    // ======== UI ========
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="flex items-center justify-center min-h-screen">
             <form
                 onSubmit={handleRegister}
                 className="w-full max-w-sm space-y-4 p-6 border rounded-lg bg-white shadow-md relative"
             >
-                <h1 className="text-2xl font-bold text-center">Register</h1>
+                <h1 className={`${raleway.className} text-2xl font-bold text-center`}>Register</h1>
 
                 <Input type="text" placeholder="First name" value={fname} onChange={(e) => setfName(e.target.value)}
                        required/>
                 <Input type="text" placeholder="Last name" value={lname} onChange={(e) => setlName(e.target.value)}
                        required/>
 
-                {/* Address autocomplete */}
                 <div className="relative">
                     <Input
                         type="text"
@@ -171,10 +167,10 @@ export default function RegisterPage() {
                                                     setTimeout(() => houseInputRef.current?.focus(), 50);
                                                 } else {
                                                     setHouseNumber(p.housenumber || "");
-                                                    setHouseNumberInputVisible(false); // можно оставить false
+                                                    setHouseNumberInputVisible(false);
                                                 }
 
-                                            }, 100); // 100ms достаточно
+                                            }, 100);
 
 
                                         }}
@@ -211,7 +207,7 @@ export default function RegisterPage() {
                 <Input type="password" placeholder="Password" value={password}
                        onChange={(e) => setPassword(e.target.value)} required/>
 
-                <Button type="submit" className="w-full">
+                <Button type="submit" className="w-full bg-[#833B45] cursor-pointer hover:bg-[#833B45]">Register
                     Register
                 </Button>
 

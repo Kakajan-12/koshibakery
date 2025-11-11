@@ -1,7 +1,7 @@
 'use client';
 
 import {useEffect, useState} from "react";
-import {quicksand, sora} from "@/app/fonts";
+import {manrope, quicksand, raleway, sora} from "@/app/fonts";
 import {IoLocationOutline} from "react-icons/io5";
 import {FiPhone, FiFacebook, FiLinkedin} from "react-icons/fi";
 import {MdOutlineMail} from "react-icons/md";
@@ -58,16 +58,16 @@ export default function Footer() {
     if (error) return <div className="text-center py-10 text-red-500">{error}</div>;
 
     return (
-        <div className="footer py-10">
+        <div className="my-container mx-auto footer py-10">
             <div className="container mx-auto px-4">
                 <div className="pt-28 pb-10">
-                    <div className={`${sora.className} text-white text-lg font-bold mb-3 lg:text-2xl xl:text-5xl`}>
+                    <div className={`${raleway.className} text-white font-bold mb-3 text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl`}>
                         Koşi bakery
                     </div>
 
                     <div className="lg:flex lg:justify-between lg:space-x-4">
                         <div className="mb-4 space-y-4 lg:w-2/3">
-                            <p className={`${quicksand.className} text-white text-xs sm:text-sm`}>
+                            <p className={`${manrope.className} text-white text-xs sm:text-sm md:text-md`}>
                                 The name “Koşi Bakery”
                                 carries personal significance. It originates from the small, culturally rich town of
                                 Koşi in
@@ -87,7 +87,7 @@ export default function Footer() {
 
                         <div className="flex justify-between flex-col-reverse md:flex-row">
                             <div className="flex flex-col justify-between space-y-4">
-                                <div className="space-y-4 lg:hidden">
+                                <div className="space-y-2 lg:hidden">
                                     <ContactItem icon={<IoLocationOutline className="w-5 flex-shrink-0"/>}
                                                  text={contact?.address}/>
                                     <ContactItem icon={<FiPhone className="w-5 flex-shrink-0"/>} text={contact?.phone}/>
@@ -100,8 +100,8 @@ export default function Footer() {
                                 </div>
                             </div>
 
-                            <div className="space-y-2 flex flex-col lg:w-full min-w-32">
-                                <div className={`${sora.className} text-white font-semibold text-md`}>Quick Links</div>
+                            <div className="space-y-2 flex flex-col lg:w-full min-w-32 mb-2">
+                                <div className={`${sora.className} text-white font-semibold text-sm md:text-md lg:text-lg`}>Quick Links</div>
                                 <LinkItem href="/about">About Us</LinkItem>
                                 <LinkItem href="/contact">Contact Us</LinkItem>
                                 <LinkItem href="/menu">Menu</LinkItem>
@@ -116,19 +116,19 @@ export default function Footer() {
                 </div>
 
                 <div className="flex flex-col md:flex-row justify-center items-center space-x-1 pb-2 space-x-4">
-                    <div className={`${sora.className} text-white`}>
+                    <div className={`${raleway.className} text-white text-xs sm:text-sm`}>
                         All rights reserved
                     </div>
                     <div>
-                        <Link className="text-white" href="/termsandconditions">Terms and Conditions</Link>
+                        <Link className={`${raleway.className} text-white text-xs sm:text-sm`} href="/termsandconditions">Terms and Conditions</Link>
                     </div>
                     <div>
-                        <Link className="text-white" href="/privacypolicy">Privacy Policy</Link>
+                        <Link  className={`${raleway.className} text-white text-xs sm:text-sm`} href="/privacypolicy">Privacy Policy</Link>
                     </div>
                     <div className="flex items-center space-x-1">
-                        <p className="text-white">Powered by</p>
+                        <p className="text-white text-xs sm:text-sm">Powered by</p>
                         <Image src="/hebent_logo.svg" alt="hebent_logo" width={50} height={50} className="w-5"/>
-                        <div className="text-white">Hebent Tech</div>
+                        <div className="text-white text-xs sm:text-sm">Hebent Tech</div>
                     </div>
 
                 </div>
@@ -141,14 +141,14 @@ function ContactItem({icon, text}: { icon: React.ReactNode; text?: string }) {
     return (
         <div className="flex items-start space-x-2">
             <span className="text-white flex-shrink-0">{icon}</span>
-            <p className={`${quicksand.className} text-white text-sm`}>{text || "-"}</p>
+            <p className={`${manrope.className} text-white text-sm`}>{text || "-"}</p>
         </div>
     );
 }
 
 function LinkItem({href, children}: { href: string; children: React.ReactNode }) {
     return (
-        <Link href={href} className={`${quicksand.className} text-white text-sm`}>
+        <Link href={href} className={`${manrope.className} text-white text-sm`}>
             {children}
         </Link>
     );

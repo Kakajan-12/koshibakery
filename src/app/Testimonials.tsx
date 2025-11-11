@@ -1,6 +1,6 @@
 'use client'
 import Image from "next/image";
-import {quicksand, sora} from "@/app/fonts";
+import {manrope, raleway} from "@/app/fonts";
 import {Swiper, SwiperSlide} from "swiper/react";
 import {Navigation} from "swiper/modules";
 import "swiper/css";
@@ -89,7 +89,7 @@ export default function Testimonials() {
                 </div>
 
                 <div className="w-full">
-                    <h6 className={`${sora.className} text-center pt-8 text-lg mb-10 md:text-3xl lg:text-4xl`}>Testimonials</h6>
+                    <h6 className={`${raleway.className} text-center font-bold pt-8 mb-10 text-lg sm:text-xl md:text-3xl lg:text-4xl`}>Testimonials</h6>
                 </div>
                 <div className="pb-24 relative md:mt-16 px-4 overflow-visible">
                     <Swiper
@@ -133,7 +133,7 @@ export default function Testimonials() {
                                 <div
                                     className="w-13 h-13 xl:w-16 xl:h-16 rounded-full relative overflow-hidden absolute">
                                     <div
-                                        className="absolute inset-0 bg-gradient-to-r from-[#7DDF9A] to-transparent rounded-full flex justify-center items-center">
+                                        className="absolute inset-0 bg-gradient-to-r from-[#A16D89] to-transparent rounded-full flex justify-center items-center">
                                         <div
                                             className="w-11 h-11 xl:w-13 xl:h-13 absolute bg-[#FDFBF8] rounded-full"></div>
                                     </div>
@@ -152,7 +152,7 @@ export default function Testimonials() {
                                 <div
                                     className="w-13 h-13 xl:w-16 xl:h-16 rounded-full relative overflow-hidden absolute">
                                     <div
-                                        className="absolute inset-0 bg-gradient-to-l from-[#7DDF9A] to-transparent rounded-full flex justify-center items-center">
+                                        className="absolute inset-0 bg-gradient-to-l from-[#A16D89] to-transparent rounded-full flex justify-center items-center">
                                         <div
                                             className="w-11 h-11 xl:w-13 xl:h-13 absolute bg-[#FDFBF8] rounded-full"></div>
                                     </div>
@@ -182,10 +182,10 @@ function TestomonialCard({text, name, image}: { text: string; name: string; imag
                            height={75}
                            className="rounded-full bg-gray-100 w-19 h-19"/>
                 </div>
-                <p className={`${quicksand.className} text-xs md:text-md text-black`}>
+                <p className={`${manrope.className} text-xs md:text-md text-black`}>
                     {stripHtmlTags(text)}
                 </p>
-                <p className={`${quicksand.className} text-sm md:text-md text-black`}>
+                <p className={`${manrope.className} text-sm md:text-md text-black`}>
                     {name}
                 </p>
             </div>

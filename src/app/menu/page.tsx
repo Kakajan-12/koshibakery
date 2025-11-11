@@ -1,7 +1,7 @@
 'use client'
 
 import React, {useEffect, useState} from "react";
-import {quicksand, sora} from "@/app/fonts";
+import {manrope, quicksand, raleway, sora} from "@/app/fonts";
 import {FaPoundSign, FaRegHeart} from "react-icons/fa";
 import Image from "next/image";
 import Categories from "@/components/menu/Categories";
@@ -88,7 +88,7 @@ const Menu = () => {
         <div className="my-container mx-auto mt-[64px]">
             <div className="container mx-auto px-4">
                 <div
-                    className="mt-4 flex flex-col items-center justify-center h-50 lg:h-60"
+                    className="mt-24 lg:mt-32 flex flex-col items-center justify-center h-50 lg:h-60"
                     style={{
                         backgroundImage: "url('/images/shopping-cart.svg')",
                         backgroundSize: "contain",
@@ -97,12 +97,12 @@ const Menu = () => {
                     }}
                 >
                     <h6
-                        className={`${sora.className} pt-6 lg:pt-0 text-center font-light text-lg mb-3 sm:text-xl lg:text-4xl xl:text-5xl`}
+                        className={`${raleway.className} pt-6 lg:pt-0 text-center font-light text-lg mb-3 sm:text-xl lg:text-4xl xl:text-5xl`}
                     >
                         Place an Order
                     </h6>
                     <p
-                        className={`${quicksand.className} text-[#6F5E53] text-center text-sm max-w-lg lg:text-md`}
+                        className={`${manrope.className} text-[#6F5E53] text-center text-sm max-w-lg lg:text-md`}
                     >
                         Whether you're planning a birthday, surprising a friend, or simply craving something sweet —
                         we're here to make
@@ -113,11 +113,11 @@ const Menu = () => {
 
             <div className="relative">
                 <div className="absolute inset-x-0 lg:hidden">
-                    <Image src="/images/menu_bg_mobile.svg" alt="mobile menu bg" width={100} height={500}
+                    <Image src="/images/menu_bg_mobile.png" alt="mobile menu bg" width={100} height={500}
                            className="w-full"/>
                 </div>
                 <div className="absolute inset-x-0 hidden lg:block">
-                    <Image src="/images/menu_bg.webp" alt="menu bg" width={900} height={900}
+                    <Image src="/images/menu_bg.png" alt="menu bg" width={900} height={900}
                            className="w-full h-[800px]"/>
                 </div>
 
@@ -128,7 +128,7 @@ const Menu = () => {
                                 <div className="flex flex-col justify-center items-center space-y-2">
                                     <FaRegHeart className="w-5 h-5 sm:w-6 sm:h-6 lg:h-7"/>
                                     <div
-                                        className={`${sora.className} text-black font-bold text-md sm:text-xl lg:text-2xl`}
+                                        className={`${raleway.className} text-black font-bold text-md sm:text-xl lg:text-2xl`}
                                     >
                                         Most Loved
                                     </div>
@@ -138,7 +138,7 @@ const Menu = () => {
                             <div className="flex flex-col items-start space-y-4 lg:space-y-7">
                                 {loading && <p>Loading...</p>}
                                 {!loading && lovedProducts.length === 0 && (
-                                    <p className={`${quicksand.className} text-gray-600`}>No loved products yet.</p>
+                                    <p className={`${raleway.className} text-gray-600`}>No loved products yet.</p>
                                 )}
                                 {lovedProducts.map((item) => (
                                     <div key={item.id} className="flex justify-start items-center w-fit space-x-6">
@@ -154,13 +154,13 @@ const Menu = () => {
 
                                         <div className="flex flex-col">
                                             <p
-                                                className={`${quicksand.className} font-bold text-sm sm:text-lg lg:text-2xl`}>
+                                                className={`${raleway.className} font-bold text-sm sm:text-lg lg:text-2xl`}>
                                                 {item.product_name}
                                             </p>
                                             <p
-                                                className={`${quicksand.className} font-bold text-sm sm:text-lg lg:text-2xl flex items-center`}
+                                                className={`${manrope.className} text-sm sm:text-lg lg:text-2xl flex items-center`}
                                             >
-                                                <FaPoundSign size={18}/>{item.price}
+                                                <FaPoundSign className="w-2 sm:w-3"/>{item.price}
                                             </p>
                                         </div>
                                     </div>

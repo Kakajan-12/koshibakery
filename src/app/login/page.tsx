@@ -54,7 +54,7 @@ export default function LoginPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                 />
-                <Button type="submit" className="w-full">Login</Button>
+                <Button type="submit" className="w-full rounded-full text-[#833B45] border-2 border-[#833B45] bg-white cursor-pointer hover:bg-white">Login</Button>
                 <p className="text-sm text-gray-500">
                     No account?{" "}
                     <span

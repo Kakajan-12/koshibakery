@@ -109,7 +109,7 @@
 
 @media (max-width: 768px) {
     .footer{
-        background-image: url("/images/mobile-footer.svg");
+        background-image: url("/images/mobile-footer.png");
     }
 }
 

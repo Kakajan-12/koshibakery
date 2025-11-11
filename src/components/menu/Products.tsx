@@ -1,7 +1,7 @@
 "use client";
 import React, {useEffect, useRef, useState} from "react";
 import Image from "next/image";
-import {quicksand, sora} from "@/app/fonts";
+import {manrope, quicksand, raleway, sora, workSans} from "@/app/fonts";
 import {FaPoundSign} from "react-icons/fa";
 import {SortOption} from "@/lib/sorts"
 import {useRouter} from "next/navigation";
@@ -169,17 +169,17 @@ export default function Products({sort, search, selectedType, availability, pric
                                     />
                                 </div>
                                 <div className="space-y-3 w-full px-2 py-4">
-                                    <div className="font-semibold text-xs text-red-500">
+                                    <div className={`${raleway.className} font-semibold text-xs text-red-500`}>
                                         {item.notice}
                                     </div>
                                     <div className="flex items-center justify-center">
                                         <div className="flex items-center">
                                             <FaPoundSign size={14} style={{marginBottom: "2px"}}/>
-                                            <div className="text-md md:text-lg font-bold">{item.price}</div>
+                                            <div className={`${raleway.className} text-md md:text-lg font-bold`}>{item.price}</div>
                                         </div>
                                     </div>
                                     <div
-                                        className={`${quicksand.className} text-md sm:text-lg lg:text-xl text-center`}
+                                        className={`${manrope.className} text-md sm:text-lg lg:text-xl text-center`}
                                     >
                                         {item.product_name}
                                     </div>
@@ -187,7 +187,7 @@ export default function Products({sort, search, selectedType, availability, pric
                                         {item.allergens?.map((a) => (
                                             <p
                                                 key={a.id}
-                                                className="bg-red-400 rounded-md px-2 py-1 text-white text-sm break-words max-w-[100px] text-center"
+                                                className={`${manrope.className} bg-red-400 rounded-md px-2 py-1 text-white text-sm break-words max-w-[100px] text-center`}
                                             >
                                                 {a.name}
                                             </p>
@@ -200,7 +200,7 @@ export default function Products({sort, search, selectedType, availability, pric
                             <div className="w-full mb-4 flex items-center justify-center">
                                 <button
                                     onClick={() => router.push(`/menu/${item.id}`)}
-                                    className={`${sora.className} w-56 border-2 cursor-pointer border-[#264D30] text-[#0E2D16] hover:bg-green-100 font-bold rounded-2xl px-8 py-1 transition-all`}
+                                    className={`${raleway.className} w-56 border-2 cursor-pointer border-[#833B45] text-[#833B45] hover:bg-green-100 font-bold rounded-full px-8 py-1 transition-all`}
                                 >
                                     PLACE AN ORDER
                                 </button>
@@ -217,7 +217,7 @@ export default function Products({sort, search, selectedType, availability, pric
                     <button
                         onClick={() => goToPage(currentPage - 1)}
                         disabled={currentPage === 1}
-                        className="px-3 py-1 border rounded disabled:opacity-50"
+                        className={`${workSans.className} px-3 py-1 border rounded disabled:opacity-50 cursor-pointer`}
                     >
                         Prev
                     </button>
@@ -226,8 +226,8 @@ export default function Products({sort, search, selectedType, availability, pric
                         <button
                             key={i}
                             onClick={() => goToPage(i + 1)}
-                            className={`px-3 py-1 border rounded ${
-                                currentPage === i + 1 ? "bg-[#264D30] text-white" : "hover:bg-gray-200"
+                            className={`${workSans.className} px-3 py-1 border rounded cursor-pointer ${
+                                currentPage === i + 1 ? "bg-[#833B45] text-white" : "hover:bg-gray-200"
                             }`}
                         >
                             {i + 1}
@@ -237,7 +237,7 @@ export default function Products({sort, search, selectedType, availability, pric
                     <button
                         onClick={() => goToPage(currentPage + 1)}
                         disabled={currentPage === totalPages}
-                        className="px-3 py-1 border rounded disabled:opacity-50"
+                        className={`${workSans.className} px-3 py-1 border rounded disabled:opacity-50 cursor-pointer`}
                     >
                         Next
                     </button>

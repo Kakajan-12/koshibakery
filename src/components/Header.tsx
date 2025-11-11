@@ -23,7 +23,7 @@ export default function Header() {
 
     return (
         <header
-            className={`w-full fixed top-0 z-50 transition-all duration-300 transition-shadow transition-colors ${
+            className={`w-full fixed top-0 z-50 transition-all duration-300 transition-shadow transition-colors bg-white ${
                 scrolled ? "bg-white shadow-md" : "bg-transparent shadow-none"
             }`}
         >
@@ -33,7 +33,7 @@ export default function Header() {
                     href="/"
                     className="flex items-center gap-2 font-bold text-gray-900"
                 >
-                    <Image src="/icon.webp" alt="Logo" width={50} height={50}
+                    <Image src="/logo.png" alt="Logo" width={50} height={50}
                            className="w-20 lg:w-30"/>
                 </Link>
 
