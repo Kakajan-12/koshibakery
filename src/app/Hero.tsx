@@ -6,24 +6,24 @@ import {ArrowRight} from "lucide-react";
 export default function Hero() {
     return (
         <div>
-            <div className="my-container mx-auto bg-[#E6BEBD]">
+            <div className="my-container mx-auto main-background-color">
                 <div className="pt-24 lg:pt-34 pb-12 lg:pb-22">
                     <div className="container mx-auto px-4">
-                        <div className="flex justify-between items-center">
-                            <div className="flex flex-col space-y-6 sm:max-w-96 md:max-w-full md:w-2/3">
-                                <div className="h-full space-y-6">
-                                    <h1 className={`${raleway.className} text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-bold pt-6 text-center sm:text-left`}>A
+                        <div className="flex justify-between items-center relative">
+                            <div className="flex flex-col space-y-6 w-2/3 sm:max-w-96 md:max-w-full md:w-2/3">
+                                <div className="h-full space-y-6 max-w-[300px] sm:max-w-full">
+                                    <h1 className={`${raleway.className} text-xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-bold pt-6 text-left`}>A
                                         Taste of Perfection
                                         in Every Bite</h1>
-                                    <p className={`${manrope.className} text-md sm:text-lg lg:text-xl text-[#833B45] font-medium text-center sm:text-left sm:w-[500px] md:w-[600px]`}>A
+                                    <p className={`${manrope.className} text-sm sm:text-lg lg:text-xl text-[#833B45] font-medium text-left sm:w-[500px] md:w-[600px]`}>A
                                         boutique bakery offering thoughtfully made cakes and pastries — for morning
                                         coffee or meaningful celebrations.</p>
                                 </div>
-                                <div className="w-full flex justify-center sm:justify-start pt-6">
+                                <div className="w-full flex sm:justify-center sm:justify-start pt-2 md:pt-6">
                                     <Link
                                         href="/menu"
-                                        className="group relative inline-flex items-center gap-3 px-8 py-4 rounded-full
-             bg-[#833B45] text-white text-lg font-medium shadow-md shadow-[#5C262E]/40
+                                        className="group relative inline-flex items-center gap-3 px-4 py-2 md:px-8 md:py-4 rounded-full
+             main-button-color text-white text-lg font-medium shadow-md shadow-[#5C262E]/40
              hover:shadow-xl hover:shadow-[#F3CBB6]/60 transition-all duration-300 hover:-translate-y-1"
                                     >
                                         <span className="relative z-10">Order now</span>
@@ -37,7 +37,7 @@ export default function Hero() {
                                 </div>
 
                             </div>
-                            <div className="hidden sm:block w-full md:w-1/3">
+                            <div className="absolute max-w-[150px] w-full top-8 right-0 md:w-1/3 sm:max-w-full sm:static">
                                 <Image
                                     src="/images/main_hero.webp"
                                     alt="cookie"

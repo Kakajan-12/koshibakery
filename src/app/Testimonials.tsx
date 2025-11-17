@@ -133,7 +133,7 @@ export default function Testimonials() {
                                 <div
                                     className="w-13 h-13 xl:w-16 xl:h-16 rounded-full relative overflow-hidden absolute">
                                     <div
-                                        className="absolute inset-0 bg-gradient-to-r from-[#A16D89] to-transparent rounded-full flex justify-center items-center">
+                                        className="absolute inset-0 bg-gradient-to-r from-[#B8485B] to-transparent rounded-full flex justify-center items-center">
                                         <div
                                             className="w-11 h-11 xl:w-13 xl:h-13 absolute bg-[#FDFBF8] rounded-full"></div>
                                     </div>
@@ -152,7 +152,7 @@ export default function Testimonials() {
                                 <div
                                     className="w-13 h-13 xl:w-16 xl:h-16 rounded-full relative overflow-hidden absolute">
                                     <div
-                                        className="absolute inset-0 bg-gradient-to-l from-[#A16D89] to-transparent rounded-full flex justify-center items-center">
+                                        className="absolute inset-0 bg-gradient-to-l from-[#B8485B] to-transparent rounded-full flex justify-center items-center">
                                         <div
                                             className="w-11 h-11 xl:w-13 xl:h-13 absolute bg-[#FDFBF8] rounded-full"></div>
                                     </div>

@@ -4,7 +4,7 @@ import Image from "next/image";
 const About = () => {
     return (
         <div className="flex flex-col space-y-2">
-            <div className="my-container mx-auto mt-[70px] md:mt-[90px] bg-[#E6BEBD]">
+            <div className="my-container mx-auto mt-[70px] md:mt-[90px] main-background-color">
                 <div className="container mx-auto px-4">
                     <div className="flex items-center lg:max-h-screen">
                         <div className="hidden sm:block w-1/3">
@@ -14,7 +14,7 @@ const About = () => {
                         <div className="sm:w-2/3 space-y-4">
                             <h6 className={`${raleway.className} text-3xl font-bold md:text-6xl lg:text-7xl xl:text-8xl text-center sm:text-left mb-2`}>About
                                 Us</h6>
-                            <p className={`${manrope.className} text-sm text-[#6F5E53] md:text-lg`}>We are a patisserie
+                            <p className={`${manrope.className} text-sm md:text-lg main-text-color`}>We are a patisserie
                                 proudly located in the heart of central London, nestled on the vibrant and
                                 diverse Edgware Road. Established in 2019, Koşi Bakery was born from a deep passion for
                                 baking
@@ -22,7 +22,7 @@ const About = () => {
                                 traditional sweets soon evolved into a thriving bakery where quality, creativity, and
                                 heritage
                                 come together.</p>
-                            <p className={`${manrope.className} text-sm text-[#6F5E53] md:text-lg`}>The name “Koşi
+                            <p className={`${manrope.className} text-sm md:text-lg main-text-color`}>The name “Koşi
                                 Bakery” carries personal significance. It originates from the small, culturally
                                 rich town of Koşi in Turkmenistan — the birthplace of our founder and the source of much
                                 of
@@ -49,7 +49,7 @@ const About = () => {
                     </div>
 
                     <div
-                        className="rounded-md bg-[#E6BEBD] py-10 px-4 lg:px-10 space-y-2 md:space-y-6 md:w-1/2 flex flex-col justify-center h-[500px]">
+                        className="rounded-md main-background-color py-10 px-4 lg:px-10 space-y-2 md:space-y-6 md:w-1/2 flex flex-col justify-center h-[500px]">
                         <div className="space-y-2">
                             <h6 className={`${raleway.className} text-xl font-bold md:text-4xl`}>Koşi bakery</h6>
                             <p className={`${manrope.className} text-md`}>

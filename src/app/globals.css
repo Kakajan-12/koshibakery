@@ -101,25 +101,25 @@
     max-width: 1920px;
 }
 
-.footer{
+.footer {
     background-image: url("/images/footer.webp");
     background-repeat: no-repeat;
     background-size: cover;
 }
 
 @media (max-width: 768px) {
-    .footer{
+    .footer {
         background-image: url("/images/mobile-footer.png");
     }
 }
 
-.testimonials-active{
+.testimonials-active {
     display: flex;
     justify-content: center;
 }
 
 @layer components {
-    .swiper-slide .testimonials-active{
+    .swiper-slide .testimonials-active {
         @apply scale-90 opacity-60 transition-all duration-500;
     }
 
@@ -137,7 +137,7 @@
 }
 
 @media (min-width: 768px) {
-    .swiper-slide-active .testimonials-active  {
+    .swiper-slide-active .testimonials-active {
         margin-top: -3.3rem;
         transition: all 0.3s ease;
         z-index: 99;
@@ -148,7 +148,7 @@
 }
 
 @media (min-width: 768px) {
-    .swiper-slide .testimonials-active{
+    .swiper-slide .testimonials-active {
         margin-top: 60%;
         bottom: 90px;
     }
@@ -160,7 +160,7 @@
         bottom: 90px;
     }
 
-    .testimonials-active .img{
+    .testimonials-active .img {
         transform: scale(1.2);
     }
 }
@@ -173,12 +173,12 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(255,255,255,0.5), rgba(255,255,255,0.1));
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.1));
 }
 
 @media (max-width: 768px) {
     .bg-gradient-layer::before {
-        background-image: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(255,255,255,0.9), rgba(255,255,255,0.8));
+        background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.8));
     }
 }
 
@@ -197,11 +197,12 @@
         height: auto;
     }
 }
+
 .scroll-mt-10 {
     scroll-margin-top: 220px;
 }
 
-.menu{
+.menu {
     background-image: url("/images/menu_bg.webp");
     background-repeat: no-repeat;
     background-position: bottom;
@@ -209,12 +210,32 @@
 }
 
 @media (max-width: 1024px) {
-    .menu{
+    .menu {
         background-image: unset;
     }
 
 }
 
-.text{
+.text {
     color: #6F5E53;
+}
+
+.main-background-color {
+    background-color: #F6D6D5;
+}
+
+.main-button-color {
+    background-color: #B8485B;
+}
+
+.main-border-color {
+    border-color: #B8485B;
+}
+
+.main-text-color{
+    color: #A16D89;
+}
+
+.variant-text-color{
+    color: #B8485B;
 }

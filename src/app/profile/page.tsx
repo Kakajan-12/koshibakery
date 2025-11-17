@@ -116,7 +116,7 @@ const Profile = () => {
 
 
     const handleSaveAddress = async () => {
-        if (!newAddress.trim() || !selectedFeature) return; // добавляем проверку
+        if (!newAddress.trim() || !selectedFeature) return;
 
         try {
             const token = localStorage.getItem("token");
@@ -146,7 +146,7 @@ const Profile = () => {
             setExtraAddresses((prev) => [...prev, newAddr]);
             setIsAddingAddress(false);
             setNewAddress("");
-            setSelectedFeature(null); // <- сброс после сохранения
+            setSelectedFeature(null);
         } catch (err) {
             console.error(err);
             alert("Failed to save address");
@@ -200,7 +200,7 @@ const Profile = () => {
                             localStorage.removeItem("token");
                             router.push("/login");
                         }}
-                        className="text-[#833B45] border-2 border-[#833B45] px-4 py-1 rounded-4xl text-md cursor-pointer"
+                        className="main-text-color border-2 main-border-color px-4 py-1 rounded-4xl text-md cursor-pointer"
                     >
                         Logout
                     </button>
@@ -214,8 +214,8 @@ const Profile = () => {
                             onClick={() => setActiveTab("info")}
                             className={`${raleway.className} rounded-4xl text-sm px-2 py-2 border w-full lg:w-56 cursor-pointer ${
                                 activeTab === "info"
-                                    ? "bg-[#833B45] text-white border-[#833B45]"
-                                    : "border-[#833B45] text-[#833B45]"
+                                    ? "main-button-color text-white main-border-color"
+                                    : "main-border-color main-text-color hover:bg-[#B8485B] hover:!text-white"
                             }`}
                         >
                             Personal Information
@@ -225,8 +225,8 @@ const Profile = () => {
                             onClick={() => setActiveTab("orders")}
                             className={`${raleway.className} rounded-4xl text-sm px-2 py-2 border w-full lg:w-56 cursor-pointer ${
                                 activeTab === "orders"
-                                    ? "bg-[#833B45] text-white border-[#833B45]"
-                                    : "border-[#833B45] text-[#833B45]"
+                                    ? "main-button-color text-white main-border-color"
+                                    : "main-border-color main-text-color hover:bg-[#B8485B] hover:!text-white"
                             }`}
                         >
                             Order History
@@ -234,16 +234,16 @@ const Profile = () => {
                     </div>
                     {activeTab === "info" && (
                         <div className="space-y-2 lg:space-y-4 animate-fadeIn bg-white p-4 w-full">
-                            <p className={`${raleway.className} text-sm lg:text-lg`}><span
+                            <p className={`${manrope.className} text-sm lg:text-lg`}><span
                                 className="font-bold">Name:</span> {user?.fname} {user?.lname}</p>
-                            <p className={`${raleway.className} text-sm lg:text-lg`}><span className="font-bold">Email:</span> {user?.email}
+                            <p className={`${manrope.className} text-sm lg:text-lg`}><span className="font-bold">Email:</span> {user?.email}
                             </p>
-                            <p className={`${raleway.className} text-sm lg:text-lg`}><span className="font-bold">Phone:</span> {user?.phone}
+                            <p className={`${manrope.className} text-sm lg:text-lg`}><span className="font-bold">Phone:</span> {user?.phone}
                             </p>
-                            <p className={`${raleway.className} text-sm lg:text-lg`}><span
+                            <p className={`${manrope.className} text-sm lg:text-lg`}><span
                                 className="font-bold">Main address:</span> {user?.address}</p>
                             <div className="mt-4">
-                                <p className={`${raleway.className} font-bold text-sm lg:text-lg mb-2`}>Additional addresses:</p>
+                                <p className={`${manrope.className} font-bold text-sm lg:text-lg mb-2`}>Additional addresses:</p>
                                 {extraAddresses.length === 0 && (
                                     <p className="text-sm text-gray-500">No additional addresses yet.</p>
                                 )}
@@ -252,10 +252,10 @@ const Profile = () => {
                                         key={addr.id}
                                         className="flex justify-between items-center py-2 mb-2"
                                     >
-                                        <p className="text-sm lg:text-lg">{addr.address}</p>
+                                        <p className={`${manrope.className} text-sm lg:text-lg`}>{addr.address}</p>
                                         <button
                                             onClick={() => handleDeleteAddress(addr.id)}
-                                            className={`${manrope.className} text-white bg-red-600 text-sm cursor-pointer px-3 py-2 rounded-full`}
+                                            className={`${manrope.className} text-white bg-red-600 text-sm cursor-pointer px-4 py-2 rounded-full`}
                                         >
                                             Delete
                                         </button>
@@ -266,7 +266,7 @@ const Profile = () => {
                                 {!isAddingAddress ? (
                                     <button
                                         onClick={() => setIsAddingAddress(true)}
-                                        className="border border-[#833B45] rounded-4xl text-sm text-[#833B45] px-2 py-2 w-full max-w-56 cursor-pointer"
+                                        className="border main-border-color main-button-color rounded-4xl text-sm text-white px-2 py-2 w-full max-w-56 cursor-pointer"
                                     >
                                         Add address
                                     </button>
@@ -338,7 +338,7 @@ const Profile = () => {
                                         <div className="flex space-x-3">
                                             <button
                                                 onClick={handleSaveAddress}
-                                                className="bg-[#264D30] text-white rounded-4xl text-sm px-4 py-2"
+                                                className="main-button-color text-white rounded-4xl text-sm w-30 py-2"
                                             >
                                                 Save
                                             </button>
@@ -350,7 +350,7 @@ const Profile = () => {
                                                     setHouseNumberInputVisible(false);
                                                     setSelectedFeature(null);
                                                 }}
-                                                className="border border-[#264D30] text-[#264D30] rounded-4xl text-sm px-4 py-2"
+                                                className="border main-border-color main-text-color rounded-4xl text-sm w-30 py-2"
                                             >
                                                 Cancel
                                             </button>

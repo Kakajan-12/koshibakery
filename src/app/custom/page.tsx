@@ -81,8 +81,8 @@ export default function CustomOrderPage() {
                         onClick={() => setOrderType("standard")}
                         className={`px-4 py-2 rounded-full border-2 transition-all font-medium cursor-pointer ${
                             orderType === "standard"
-                                ? "bg-[#A16D89] text-white border-[#833B45]"
-                                : "border-[#833B45] text-[#6F5E53] hover:bg-[#A16D89] hover:text-white"
+                                ? "main-button-color text-white main-border-color"
+                                : "main-border-color main-text-color hover:bg-[#B8485B] hover:!text-white"
                         }`}
                     >
                         Standard Inquiry
@@ -93,8 +93,8 @@ export default function CustomOrderPage() {
                         onClick={() => setOrderType("custom")}
                         className={`px-4 py-2 rounded-full border-2 transition-all font-medium cursor-pointer ${
                             orderType === "custom"
-                                ? "bg-[#A16D89] text-white border-[#833B45]"
-                                : "border-[#833B45] text-[#6F5E53] hover:bg-[#A16D89] hover:text-white"
+                                ? "main-button-color text-white main-border-color"
+                                : "main-border-color main-text-color hover:bg-[#B8485B] hover:!text-white"
                         }`}
                     >
                         Custom Order
@@ -187,14 +187,14 @@ export default function CustomOrderPage() {
                     </div>
                 )}
 
-                <Button type="submit" className="rounded-full w-full mt-2 bg-[#A16D89] text-white border-[#833B45] hover:bg-[#A16D89] cursor-pointer">Submit Order</Button>
+                <Button type="submit" className="rounded-full w-full mt-2 main-button-color text-white main-border-color cursor-pointer">Submit Order</Button>
 
                 {showModal && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/50">
                         <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm text-center">
                             <p>{message}</p>
                             <Button
-                                className="mt-4 w-full bg-green-700 text-white border-green-700 hover:bg-green-700 cursor-pointer"
+                                className="mt-4 w-full main-button-color text-white main-border-color cursor-pointer"
                                 onClick={() => setShowModal(false)}
                             >
                                 OK

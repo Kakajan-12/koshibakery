@@ -80,7 +80,7 @@ const Contact: React.FC = () => {
                         Contact Us
                     </h6>
                     <p
-                        className={`${quicksand.className} text-sm max-w-96 md:max-w-[500px] text-center text-[#6F5E53] md:text-md`}
+                        className={`${quicksand.className} text-sm max-w-96 md:max-w-[500px] text-center main-text-color md:text-md`}
                     >
                         We’d love to hear from you! Whether you have a question about our
                         menu, want to place a custom order, or just want to say hello — feel
@@ -105,7 +105,7 @@ const Contact: React.FC = () => {
                     <div className="flex flex-col xl:flex-row xl:space-x-6 space-y-4 py-8">
                         <div className="flex flex-col justify-center space-y-3 xl:w-1/2">
                             <div className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-2">
-                                <div className="flex bg-[#EBCAC9] py-2 px-3 rounded-md space-x-2 xl:h-full w-full items-center">
+                                <div className="flex main-background-color py-2 px-3 rounded-md space-x-2 xl:h-full w-full items-center">
                                     <MdOutlineMail className="w-12 h-12 md:w-16 md:h-16 flex-shrink-0" />
                                     <div className="flex flex-col justify-center">
                                         <div
@@ -121,7 +121,7 @@ const Contact: React.FC = () => {
                                     </div>
                                 </div>
 
-                                <div className="flex bg-[#EBCAC9] py-2 px-3 rounded-md space-x-2 xl:h-full w-full items-center">
+                                <div className="flex main-background-color py-2 px-3 rounded-md space-x-2 xl:h-full w-full items-center">
                                     <FiPhone className="w-10 h-10 md:w-14 md:h-14 flex-shrink-0" />
                                     <div className="flex flex-col justify-center">
                                         <div
@@ -154,7 +154,7 @@ const Contact: React.FC = () => {
                                 Get In Touch
                             </h6>
                             <p
-                                className={`${manrope.className} text-[#6F5E53] text-sm md:text-md leading-4`}
+                                className={`${manrope.className} main-text-color text-sm md:text-md leading-4`}
                             >
                                 Put in your details below and how we can help and we will try to get back to you within a couple of hours.
                             </p>
@@ -195,7 +195,7 @@ const Contact: React.FC = () => {
                                 <button
                                     type="submit"
                                     disabled={status === 'loading'}
-                                    className={`${sora.className} font-bold w-full text-center text-[#833B45] border-2 border-[#833B45] rounded-full py-2 text-lg cursor-pointer transition-all hover:bg-[#833B45] hover:text-white`}
+                                    className={`${sora.className} font-bold w-full text-center text-[#B8485B] border-2 main-border-color rounded-full py-2 text-lg cursor-pointer transition-all hover:bg-[#B8485B] hover:text-white`}
                                 >
                                     {status === 'loading'
                                         ? 'Sending...'
