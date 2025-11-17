@@ -81,7 +81,7 @@ export default function Categories() {
                     >
                         <div
                             className={`w-24 h-24 sm:w-28 sm:h-28 lg:w-36 lg:h-36 rounded-full overflow-hidden flex items-center justify-center border-4 ${
-                                selectedCategory === null ? "border-[#833B45]" : "border-transparent"
+                                selectedCategory === null ? "main-border-color" : "border-transparent"
                             }`}
                         >
                             <Image

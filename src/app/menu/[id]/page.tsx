@@ -218,11 +218,16 @@ const MenuItem = () => {
                                         <Button
                                             key={variant.id}
                                             onClick={() => setSelectedVariant(variant)}
-                                            className={`${quicksand.className} rounded-full px-4 py-1 text-sm transition-colors border border-[#833B45] cursor-pointer
-            ${selectedVariant?.id === variant.id ? "bg-[#A16D89] text-white hover:bg-[#A16D89]" : "bg-transparent text-[#6F5E53] hover:bg-[#A16D89] hover:text-white"}`}
+                                            className={`${quicksand.className} rounded-full px-4 py-1 text-sm transition-colors cursor-pointer
+    ${
+                                                selectedVariant?.id === variant.id
+                                                    ? "main-button-color text-white hover:bg-[#A16D89]"
+                                                    : "bg-transparent border main-border-color variant-text-color hover:bg-[#B8485B] hover:!text-white"
+                                            }`}
                                         >
                                             {variant.variant_name}
                                         </Button>
+
                                     ))}
 
                                 </div>
@@ -231,7 +236,9 @@ const MenuItem = () => {
                             {selectedVariant && (
                                 <div className="pt-2 flex items-center space-x-2">
                                     <p className={`${manrope.className} text-md sm:text-lg`}>Price:</p>
-                                    <div className={`${manrope.className} flex items-center text-md sm:text-lg font-bold`}><FaPoundSign size={14} className="font-normal" style={{marginBottom: "2px"}}/>{selectedVariant.price}
+                                    <div className={`${manrope.className} flex items-center text-md sm:text-lg font-bold`}
+                                    ><FaPoundSign size={14} className="font-normal"/>
+                                        {selectedVariant.price}
                                     </div>
                                 </div>
                             )}
@@ -242,7 +249,7 @@ const MenuItem = () => {
       ${
                                         isInCart
                                             ? "bg-red-600 text-white border-red-600 hover:bg-red-700"
-                                            : "bg-transparent text-[#833B45] border-[#A16D89] hover:bg-transparent"
+                                            : "bg-transparent main-text-color main-border-color hover:bg-transparent"
                                     }`}
                                 >
                                     {isInCart ? "Remove from Cart" : "Order Now"}
@@ -324,7 +331,7 @@ const MenuItem = () => {
                                 >
                                     <div className="px-4 py-3 space-y-3">
                                         <p
-                                            className={`${raleway.className} text-sm sm:text-md text-gray-600`}
+                                            className={`${raleway.className} text-sm sm:text-md md:text-lg text-gray-600`}
                                             dangerouslySetInnerHTML={{__html: product.delivery}}
                                         />
                                     </div>

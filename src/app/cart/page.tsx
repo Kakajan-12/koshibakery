@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useCart } from "@/app/context/CartContext";
 import Link from "next/link";
-import { FaRegTrashCan } from "react-icons/fa6";
+import {FaMinus, FaPlus, FaRegTrashCan} from "react-icons/fa6";
 import { useRouter } from "next/navigation";
 
 const Cart = () => {
@@ -166,7 +166,7 @@ const Cart = () => {
                             </h6>
 
                             <div className="flex items-center py-4 md:justify-center w-64">
-                                <Link href="/menu" className="border-2 border-[#833B45] text-center text-[#833B45] w-full rounded-full font-bold py-3 text-md md:text-lg md:w-72 cursor-pointer">
+                                <Link href="/menu" className="border-2 main-border-color text-center main-text-color hover:bg-[#B8485B] hover:!text-white w-full rounded-full font-bold py-3 text-md md:text-lg md:w-72 cursor-pointer">
                                     Order Now
                                 </Link>
                             </div>
@@ -181,9 +181,9 @@ const Cart = () => {
         <div className="mt-[64px] container mx-auto px-4 py-10">
             <div className="mb-6">
                 <h2 className={`${raleway.className} text-2xl lg:text-4xl font-bold text-center`}>Your Cart</h2>
-                <p className={`${manrope.className} text-sm md:text-md text-center text-[#833B45]`}>Here’s what you’ve
+                <p className={`${manrope.className} text-sm md:text-md text-center main-text-color`}>Here’s what you’ve
                     selected — sweet choices!</p>
-                <p className={`${manrope.className} text-sm md:text-md text-center text-[#833B45]`}>Review your items
+                <p className={`${manrope.className} text-sm md:text-md text-center main-text-color`}>Review your items
                     below before proceeding to checkout. You can update quantities or remove items as needed.</p>
             </div>
 
@@ -192,7 +192,7 @@ const Cart = () => {
                     {cart.map((item, index) => {
                         const key = `${item.id}-${item.variantName}`;
                         return (
-                            <div key={key} className="border-2 border-[#833B45] p-2 rounded-md space-y-2">
+                            <div key={key} className="border-2 main-border-color p-2 rounded-md space-y-2">
                                 <div
                                     className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
                                     <div className="flex space-x-4 w-full">
@@ -206,18 +206,18 @@ const Cart = () => {
                                     <div className="flex justify-between items-center space-x-4 w-full md:w-fit">
                                         <div className="flex items-center border rounded-lg overflow-hidden">
                                             <button
-                                                className="px-3 py-1 bg-[#E6BEBD] cursor-pointer"
+                                                className="px-3 py-1 main-background-color cursor-pointer text-green-800 h-8"
                                                 onClick={() => updateQuantity(item.id, item.variantName, Math.max(item.quantity - 1, 1))}
                                             >
-                                                -
+                                                <FaMinus />
                                             </button>
                                             <p className="w-10 text-center">
                                                 {item.quantity}</p>
                                             <button
-                                                className="px-3 py-1 bg-[#E6BEBD] cursor-pointer"
+                                                className="px-3 py-1 main-background-color cursor-pointer text-green-800 h-8"
                                                 onClick={() => updateQuantity(item.id, item.variantName, item.quantity + 1)}
                                             >
-                                                +
+                                                <FaPlus />
                                             </button>
                                         </div>
                                         <Button className="cursor-pointer" variant="destructive" onClick={() => removeFromCart(item.id, item.variantName)}>
@@ -233,7 +233,7 @@ const Cart = () => {
                                             type="checkbox"
                                             checked={!!showInput[key]}
                                             onChange={() => toggleCustomMessage(key)}
-                                            className="h-5 w-5 appearance-none rounded border-2 border-[#833B45] checked:bg-[#833B45] checked:border-[#833B45] transition-all duration-200 cursor-pointer"
+                                            className="h-5 w-5 appearance-none rounded border-2 main-border-color checked:bg-[#B8485B] checked:border-[#B8485B] transition-all duration-200 cursor-pointer"
                                         />
                                         <label htmlFor={`custom-message-${index}`} className={`${manrope.className} ml-2 text-sm text-gray-900 cursor-pointer`}>
                                             Custom message
@@ -245,7 +245,7 @@ const Cart = () => {
                                             placeholder="Enter your message..."
                                             value={customMessages[key] || ""}
                                             onChange={e => handleInputChange(key, e.target.value)}
-                                            className={`${manrope.className} border border-[#833B45] rounded-lg p-2 w-full outline-none focus:ring-1 focus:ring-[#833B45]`}
+                                            className={`${manrope.className} border main-border-color rounded-lg p-2 w-full outline-none focus:ring-1 focus:ring-[#B8485B]`}
                                         />
                                     )}
                                 </div>
@@ -260,27 +260,27 @@ const Cart = () => {
                     <div className="mt-4 flex space-x-4">
                         <button
                             onClick={() => setOrderType("delivery")}
-                            className={`${manrope.className} px-3 py-1 rounded-full border-2 transition-all cursor-pointer text-[#833B45] ${
+                            className={`${manrope.className} px-3 py-1 rounded-full border-2 transition-all cursor-pointer ${
                                 orderType === "delivery"
-                                    ? "bg-[#833B45] text-white border-[#833B45]"
-                                    : "border-[#833B45] hover:text-white hover:bg-[#E6BEBD]"
+                                    ? "main-button-color text-white main-border-color"
+                                    : "main-border-color hover:text-white hover:bg-[#B8485B]"
                             }`}
                         >
                             Delivery
                         </button>
                         <button
                             onClick={() => setOrderType("collect")}
-                            className={`${manrope.className} px-3 py-1 rounded-full border-2 transition-all cursor-pointer text-[#833B45] ${
+                            className={`${manrope.className} px-3 py-1 rounded-full border-2 transition-all cursor-pointer ${
                                 orderType === "collect"
-                                    ? "bg-[#833B45] text-white border-[#833B45]"
-                                    : "border-[#833B45] hover:text-white hover:bg-[#E6BEBD]"
+                                    ? "main-button-color text-white main-border-color"
+                                    : "main-border-color hover:text-white hover:bg-[#B8485B]"
                             }`}
                         >
                             Collect order
                         </button>
                     </div>
                     {orderType === "delivery" && (
-                        <div className="mt-2 flex flex-col items-start">
+                        <div className="mt-2 flex flex-col items-start main-border-color">
                             <label className={`${manrope.className} text-sm md:text-md font-semibold ml-1 mb-2`}>Choose delivery address:</label>
                             <select
                                 value={selectedAddress}
@@ -306,8 +306,8 @@ const Cart = () => {
                     <p className={`${manrope.className} font-semibold lg:text-lg`}>Custom messages: £{customMessageFee}</p>}
                 <p className={`${manrope.className} text-md lg:text-2xl font-bold`}>Total: £{grandTotal.toFixed(2)}</p>
                 <div className="flex space-x-4">
-                    <Button className={`${manrope.className} border-2 border-[#833B45] text-[#833B45] cursor-pointer`} variant="outline" onClick={clearCart}>Clear Cart</Button>
-                    <Button className={`${manrope.className} bg-[#833B45] text-white cursor-pointer hover:bg-[#833B45]`} onClick={handleCheckout}>Checkout</Button>
+                    <Button className={`${manrope.className} border-2 main-border-color main-text-color cursor-pointer`} variant="outline" onClick={clearCart}>Clear Cart</Button>
+                    <Button className={`${manrope.className} main-button-color text-white cursor-pointer hover:bg-[#833B45]`} onClick={handleCheckout}>Checkout</Button>
                 </div>
             </div>
         </div>

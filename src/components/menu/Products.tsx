@@ -174,8 +174,8 @@ export default function Products({sort, search, selectedType, availability, pric
                                     </div>
                                     <div className="flex items-center justify-center">
                                         <div className="flex items-center">
-                                            <FaPoundSign size={14} style={{marginBottom: "2px"}}/>
-                                            <div className={`${raleway.className} text-md md:text-lg font-bold`}>{item.price}</div>
+                                            <FaPoundSign size={14}/>
+                                            <div className={`${manrope.className} text-md md:text-lg font-bold`}>{item.price}</div>
                                         </div>
                                     </div>
                                     <div
@@ -200,7 +200,7 @@ export default function Products({sort, search, selectedType, availability, pric
                             <div className="w-full mb-4 flex items-center justify-center">
                                 <button
                                     onClick={() => router.push(`/menu/${item.id}`)}
-                                    className={`${raleway.className} w-56 border-2 cursor-pointer border-[#833B45] text-[#833B45] hover:bg-green-100 font-bold rounded-full px-8 py-1 transition-all`}
+                                    className={`${raleway.className} w-56 border-2 cursor-pointer main-border-color main-text-color font-bold rounded-full px-8 py-1 transition-all`}
                                 >
                                     PLACE AN ORDER
                                 </button>

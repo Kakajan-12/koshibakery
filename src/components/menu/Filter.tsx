@@ -167,7 +167,7 @@ export default function FilterBar({
                                                 className={`${manrope.className} justify-center transition-colors rounded-3xl cursor-pointer
               ${
                                                     selectedType === t.id
-                                                        ? "bg-[#E6BEBD] text-white hover:bg-[#E6BEBD] hover:text-white"
+                                                        ? "main-button-color text-white hover:main-button-color hover:text-white"
                                                         : "bg-[#F2F4F7] text-gray-700 hover:bg-gray-100"
                                                 }`}
                                             >
@@ -224,7 +224,7 @@ export default function FilterBar({
                                         onChange={(e) =>
                                             setPriceRange([Number(e.target.value) || 0, priceRange[1]])
                                         }
-                                        className="w-1/2"
+                                        className={`${manrope.className} w-1/2`}
                                     />
                                     <Input
                                         placeholder="Max"
@@ -233,7 +233,7 @@ export default function FilterBar({
                                         onChange={(e) =>
                                             setPriceRange([priceRange[0], Number(e.target.value) || 0])
                                         }
-                                        className="w-1/2"
+                                        className={`${manrope.className} w-1/2`}
                                     />
                                 </div>
 
@@ -243,17 +243,12 @@ export default function FilterBar({
                                     min={0}
                                     max={maxPrice}
                                     step={1}
-                                    className="[&_>[data-state=on]]:bg-[#833B45]"
+                                    className="[&_[data-slot=slider-range]]:bg-[#B8485B]"
                                 />
-
-                                <div className="flex justify-between text-xs text-gray-500">
-                                    <span>${priceRange[0]}</span>
-                                    <span>${priceRange[1]}</span>
-                                </div>
                             </div>
 
                             <DialogTrigger asChild>
-                                <Button variant="ghost" className="w-full bg-[#833B45] hover:bg-[#833B45] text-white hover:text-white cursor-pointer">
+                                <Button variant="ghost" className="w-full main-button-color hover:main-button-color text-white hover:text-white cursor-pointer">
                                     Save
                                 </Button>
                             </DialogTrigger>

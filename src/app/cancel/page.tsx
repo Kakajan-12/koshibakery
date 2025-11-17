@@ -15,12 +15,12 @@ export default function CancelPage() {
             </p>
             <div className="flex space-x-4">
                 <Link href="/cart">
-                    <Button className={`${manrope.className} bg-white hover:bg-white text-[#833B45] border-2 border-[#833B45] px-6 py-3 rounded-full cursor-pointer`}>
+                    <Button className={`${manrope.className} bg-white hover:bg-white main-text-color border-2 main-border-color px-6 py-3 rounded-full cursor-pointer`}>
                         Back to Cart
                     </Button>
                 </Link>
                 <Link href="/menu">
-                    <Button className={`${manrope.className} bg-[#833B45] text-white px-6 py-3 rounded-full hover:bg-[#833B45] cursor-pointer`}>
+                    <Button className={`${manrope.className} main-button-color text-white px-6 py-3 rounded-full hover:bg-[#833B45] cursor-pointer`}>
                         Back to Menu
                     </Button>
                 </Link>
