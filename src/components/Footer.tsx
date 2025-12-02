@@ -128,7 +128,14 @@ export default function Footer() {
                     <div className="flex items-center space-x-1">
                         <p className="text-white text-xs sm:text-sm">Powered by</p>
                         <Image src="/hebent_logo.svg" alt="hebent_logo" width={50} height={50} className="w-5"/>
-                        <div className="text-white text-xs sm:text-sm">Hebent Tech</div>
+                        <Link
+                            href="https://hebent.tech"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm md:text-base text-white"
+                        >
+                            Hebent Tech
+                        </Link>
                     </div>
 
                 </div>
