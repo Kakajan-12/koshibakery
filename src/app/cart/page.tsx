@@ -147,9 +147,9 @@ const Cart = () => {
 
     if (cart.length === 0) {
         return (
-            <div className="mt-[64px]">
-                <div className="container mx-auto px-4">
-                    <div className="py-20">
+            <div className="h-screen">
+                <div className="container mx-auto px-4 h-full">
+                    <div className="flex justify-center items-center h-full">
                         <div
                             className="mt-4 flex flex-col items-center justify-center h-50 lg:h-60"
                             style={{
@@ -160,13 +160,13 @@ const Cart = () => {
                             }}
                         >
                             <h6
-                                className={`${sora.className} pt-6 text-center text-xl mb-3 sm:text-xl lg:text-4xl xl:text-5xl font-semibold`}
+                                className={`${sora.className} pt-6 text-white text-center text-2xl mb-3 sm:text-3xl lg:text-4xl xl:text-5xl font-medium`}
                             >
-                                Your Cart Is Empty!
+                                Your cart is empty!
                             </h6>
 
-                            <div className="flex items-center py-4 md:justify-center w-64">
-                                <Link href="/menu" className="border-2 main-border-color text-center main-text-color hover:bg-[#B8485B] hover:!text-white w-full rounded-full font-bold py-3 text-md md:text-lg md:w-72 cursor-pointer">
+                            <div className="flex items-center py-4 md:justify-center max-w-96 w-full">
+                                <Link href="/menu" className="border-2 bg-white text-center main-text-color w-full rounded-full font-bold py-3 text-lg md:text-xl cursor-pointer">
                                     Order Now
                                 </Link>
                             </div>
@@ -178,138 +178,156 @@ const Cart = () => {
     }
 
     return (
-        <div className="mt-[64px] container mx-auto px-4 py-10">
-            <div className="mb-6">
-                <h2 className={`${raleway.className} text-2xl lg:text-4xl font-bold text-center`}>Your Cart</h2>
-                <p className={`${manrope.className} text-sm md:text-md text-center main-text-color`}>Here’s what you’ve
-                    selected — sweet choices!</p>
-                <p className={`${manrope.className} text-sm md:text-md text-center main-text-color`}>Review your items
-                    below before proceeding to checkout. You can update quantities or remove items as needed.</p>
-            </div>
-
-            <div className="flex justify-center">
-                <div className="space-y-2 max-w-4xl w-full">
-                    {cart.map((item, index) => {
-                        const key = `${item.id}-${item.variantName}`;
-                        return (
-                            <div key={key} className="border-2 main-border-color p-2 rounded-md space-y-2">
-                                <div
-                                    className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
-                                    <div className="flex space-x-4 w-full">
-                                        <Image src={item.main_image} alt={item.product_name} width={180} height={80} className="rounded-md w-28 h-28" />
-                                        <div className="flex flex-col justify-between min-h-full">
-                                            <h3 className={`${raleway.className} font-semibold text-lg`}>{item.product_name}</h3>
-                                            <p className={`${manrope.className} text-sm text-gray-500 italic`}>Size: {item.variantName}</p>
-                                            <p className={`${sora.className} text-md font-bold`}>£{item.price}</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex justify-between items-center space-x-4 w-full md:w-fit">
-                                        <div className="flex items-center border rounded-lg overflow-hidden">
-                                            <button
-                                                className="px-3 py-1 main-background-color cursor-pointer text-green-800 h-8"
-                                                onClick={() => updateQuantity(item.id, item.variantName, Math.max(item.quantity - 1, 1))}
-                                            >
-                                                <FaMinus />
-                                            </button>
-                                            <p className="w-10 text-center">
-                                                {item.quantity}</p>
-                                            <button
-                                                className="px-3 py-1 main-background-color cursor-pointer text-green-800 h-8"
-                                                onClick={() => updateQuantity(item.id, item.variantName, item.quantity + 1)}
-                                            >
-                                                <FaPlus />
-                                            </button>
-                                        </div>
-                                        <Button className="cursor-pointer" variant="destructive" onClick={() => removeFromCart(item.id, item.variantName)}>
-                                            <FaRegTrashCan />
-                                        </Button>
-                                    </div>
-                                </div>
-
-                                <div className="flex flex-col space-y-2">
-                                    <div className="flex items-center">
-                                        <input
-                                            id={`custom-message-${index}`}
-                                            type="checkbox"
-                                            checked={!!showInput[key]}
-                                            onChange={() => toggleCustomMessage(key)}
-                                            className="h-5 w-5 appearance-none rounded border-2 main-border-color checked:bg-[#B8485B] checked:border-[#B8485B] transition-all duration-200 cursor-pointer"
-                                        />
-                                        <label htmlFor={`custom-message-${index}`} className={`${manrope.className} ml-2 text-sm text-gray-900 cursor-pointer`}>
-                                            Custom message
-                                        </label>
-                                    </div>
-                                    {showInput[key] && (
-                                        <input
-                                            type="text"
-                                            placeholder="Enter your message..."
-                                            value={customMessages[key] || ""}
-                                            onChange={e => handleInputChange(key, e.target.value)}
-                                            className={`${manrope.className} border main-border-color rounded-lg p-2 w-full outline-none focus:ring-1 focus:ring-[#B8485B]`}
-                                        />
-                                    )}
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
-            </div>
-
-            <div className="flex justify-center">
-                <div className="max-w-4xl w-full">
-                    <div className="mt-4 flex space-x-4">
-                        <button
-                            onClick={() => setOrderType("delivery")}
-                            className={`${manrope.className} px-3 py-1 rounded-full border-2 transition-all cursor-pointer ${
-                                orderType === "delivery"
-                                    ? "main-button-color text-white main-border-color"
-                                    : "main-border-color hover:text-white hover:bg-[#B8485B]"
-                            }`}
-                        >
-                            Delivery
-                        </button>
-                        <button
-                            onClick={() => setOrderType("collect")}
-                            className={`${manrope.className} px-3 py-1 rounded-full border-2 transition-all cursor-pointer ${
-                                orderType === "collect"
-                                    ? "main-button-color text-white main-border-color"
-                                    : "main-border-color hover:text-white hover:bg-[#B8485B]"
-                            }`}
-                        >
-                            Collect order
-                        </button>
+        <div className="my-28">
+            <div className="container mx-auto px-4">
+                <div className="main-block-color p-8 rounded-xl">
+                    <div className="mb-6">
+                        <h2 className={`${raleway.className} text-2xl lg:text-4xl font-bold text-center`}>Your Cart</h2>
+                        <p className={`${manrope.className} text-sm md:text-md text-center main-text-color`}>Here’s what
+                            you’ve
+                            selected — sweet choices!</p>
+                        <p className={`${manrope.className} text-sm md:text-md text-center main-text-color`}>Review your
+                            items
+                            below before proceeding to checkout. You can update quantities or remove items as
+                            needed.</p>
                     </div>
-                    {orderType === "delivery" && (
-                        <div className="mt-2 flex flex-col items-start main-border-color">
-                            <label className={`${manrope.className} text-sm md:text-md font-semibold ml-1 mb-2`}>Choose delivery address:</label>
-                            <select
-                                value={selectedAddress}
-                                onChange={(e) => setSelectedAddress(e.target.value)}
-                                className={`${manrope.className} border-[#833B45] border-2 rounded-lg p-2 w-full max-w-md text-xs sm:text-sm cursor-pointer`}
-                            >
-                                {addresses.map((addr, i) => (
-                                    <option key={i} value={addr}>
-                                        {addr}
-                                    </option>
-                                ))}
-                            </select>
+                    <div className="flex justify-center">
+                        <div className="space-y-2 max-w-4xl w-full">
+                            {cart.map((item, index) => {
+                                const key = `${item.id}-${item.variantName}`;
+                                return (
+                                    <div key={key} className="border-2 main-border-color p-2 rounded-md space-y-2">
+                                        <div
+                                            className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
+                                            <div className="flex space-x-4 w-full">
+                                                <Image src={item.main_image} alt={item.product_name} width={180}
+                                                       height={80} className="rounded-md w-28 h-28"/>
+                                                <div className="flex flex-col justify-between min-h-full">
+                                                    <h3 className={`${raleway.className} font-semibold text-lg`}>{item.product_name}</h3>
+                                                    <p className={`${manrope.className} text-sm main-text-color italic`}>Size: {item.variantName}</p>
+                                                    <p className={`${sora.className} text-md font-bold`}>£{item.price}</p>
+                                                </div>
+                                            </div>
+                                            <div
+                                                className="flex justify-between items-center space-x-4 w-full md:w-fit">
+                                                <div className="flex items-center border rounded-sm overflow-hidden">
+                                                    <button
+                                                        className="px-3 py-1 contact-color cursor-pointer text-green-800 h-8"
+                                                        onClick={() => updateQuantity(item.id, item.variantName, Math.max(item.quantity - 1, 1))}
+                                                    >
+                                                        <FaMinus/>
+                                                    </button>
+                                                    <div className="w-10 h-8 text-center bg-white flex items-center justify-center">
+                                                        <p className={`${manrope.className}`}>{item.quantity}</p></div>
+                                                    <button
+                                                        className="px-3 py-1 contact-color cursor-pointer text-green-800 h-8"
+                                                        onClick={() => updateQuantity(item.id, item.variantName, item.quantity + 1)}
+                                                    >
+                                                        <FaPlus/>
+                                                    </button>
+                                                </div>
+                                                <Button className="cursor-pointer" variant="destructive"
+                                                        onClick={() => removeFromCart(item.id, item.variantName)}>
+                                                    <FaRegTrashCan/>
+                                                </Button>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex flex-col space-y-2">
+                                            <div className="flex items-center">
+                                                <input
+                                                    id={`custom-message-${index}`}
+                                                    type="checkbox"
+                                                    checked={!!showInput[key]}
+                                                    onChange={() => toggleCustomMessage(key)}
+                                                    className="h-5 w-5 appearance-none rounded border-2 main-border-color checked:bg-[#B8485B] checked:border-[#B8485B] transition-all duration-200 cursor-pointer"
+                                                />
+                                                <label htmlFor={`custom-message-${index}`}
+                                                       className={`${manrope.className} ml-2 text-sm text-gray-900 cursor-pointer`}>
+                                                    Custom message
+                                                </label>
+                                            </div>
+                                            {showInput[key] && (
+                                                <input
+                                                    type="text"
+                                                    placeholder="Enter your message..."
+                                                    value={customMessages[key] || ""}
+                                                    onChange={e => handleInputChange(key, e.target.value)}
+                                                    className={`${manrope.className} border main-border-color rounded-lg p-2 w-full outline-none focus:ring-1 focus:ring-[#B8485B]`}
+                                                />
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
-                    )}
+                    </div>
+                    <div className="flex justify-center">
+                        <div className="max-w-4xl w-full">
+                            <div className="mt-4 flex space-x-4">
+                                <button
+                                    onClick={() => setOrderType("delivery")}
+                                    className={`${manrope.className} px-3 py-1 rounded-full border-2 transition-all cursor-pointer ${
+                                        orderType === "delivery"
+                                            ? "main-button-color text-white main-border-color"
+                                            : "main-border-color hover:text-white hover:bg-[#B8485B]"
+                                    }`}
+                                >
+                                    Delivery
+                                </button>
+                                <button
+                                    onClick={() => setOrderType("collect")}
+                                    className={`${manrope.className} px-3 py-1 rounded-full border-2 transition-all cursor-pointer ${
+                                        orderType === "collect"
+                                            ? "main-button-color text-white main-border-color"
+                                            : "main-border-color hover:text-white hover:bg-[#B8485B]"
+                                    }`}
+                                >
+                                    Collect order
+                                </button>
+                            </div>
+                            {orderType === "delivery" && (
+                                <div className="mt-2 flex flex-col items-start main-border-color">
+                                    <label
+                                        className={`${manrope.className} text-base md:text-md font-semibold ml-1 mb-2`}>Choose
+                                        delivery address:</label>
+                                    <select
+                                        value={selectedAddress}
+                                        onChange={(e) => setSelectedAddress(e.target.value)}
+                                        className={`${manrope.className} border-[#833B45] border-2 rounded-lg p-2 w-full max-w-md text-xs sm:text-sm cursor-pointer`}
+                                    >
+                                        {addresses.map((addr, i) => (
+                                            <option key={i} value={addr}>
+                                                {addr}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    <div className="mt-10 flex flex-col items-end space-y-2">
+                        <p className={`${manrope.className} font-semibold lg:text-lg`}>Price: £{total}</p>
+                        {orderType === "delivery" &&
+                            <p className={`${manrope.className} font-semibold lg:text-lg`}>Delivery: £{deliveryFee}</p>}
+                        {customMessageFee > 0 &&
+                            <p className={`${manrope.className} font-semibold lg:text-lg`}>Custom messages:
+                                £{customMessageFee}</p>}
+                        <p className={`${manrope.className} text-md lg:text-2xl font-bold`}>Total:
+                            £{grandTotal.toFixed(2)}</p>
+                        <div className="flex space-x-4">
+                            <Button
+                                className={`${manrope.className} border-2 main-border-color main-block-color cursor-pointer main-text-color`}
+                                variant="outline" onClick={clearCart}>Clear Cart</Button>
+                            <Button
+                                className={`${manrope.className} main-button-color text-white cursor-pointer hover:bg-[#833B45]`}
+                                onClick={handleCheckout}>Checkout</Button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
 
-            <div className="mt-10 flex flex-col items-end space-y-2">
-                <p className={`${manrope.className} font-semibold lg:text-lg`}>Price: £{total}</p>
-                {orderType === "delivery" && <p className={`${manrope.className} font-semibold lg:text-lg`}>Delivery: £{deliveryFee}</p>}
-                {customMessageFee > 0 &&
-                    <p className={`${manrope.className} font-semibold lg:text-lg`}>Custom messages: £{customMessageFee}</p>}
-                <p className={`${manrope.className} text-md lg:text-2xl font-bold`}>Total: £{grandTotal.toFixed(2)}</p>
-                <div className="flex space-x-4">
-                    <Button className={`${manrope.className} border-2 main-border-color main-text-color cursor-pointer`} variant="outline" onClick={clearCart}>Clear Cart</Button>
-                    <Button className={`${manrope.className} main-button-color text-white cursor-pointer hover:bg-[#833B45]`} onClick={handleCheckout}>Checkout</Button>
-                </div>
-            </div>
         </div>
     );
 };

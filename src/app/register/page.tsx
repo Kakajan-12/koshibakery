@@ -4,7 +4,7 @@ import {useState, useEffect, useRef} from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {raleway} from "@/app/fonts";
+import {manrope, raleway} from "@/app/fonts";
 
 export default function RegisterPage() {
     const [fname, setfName] = useState("");
@@ -118,9 +118,9 @@ export default function RegisterPage() {
                 <h1 className={`${raleway.className} text-2xl font-bold text-center`}>Register</h1>
 
                 <Input type="text" placeholder="First name" value={fname} onChange={(e) => setfName(e.target.value)}
-                       required/>
+                       required className={manrope.className}/>
                 <Input type="text" placeholder="Last name" value={lname} onChange={(e) => setlName(e.target.value)}
-                       required/>
+                       required className={manrope.className}/>
 
                 <div className="relative">
                     <Input
@@ -129,6 +129,7 @@ export default function RegisterPage() {
                         value={fullAddress}
                         onChange={(e) => setFullAddress(e.target.value)}
                         required
+                        className={manrope.className}
                     />
                     {suggestions.length > 0 && (
                         <ul className="absolute z-10 w-full bg-white border rounded mt-1 max-h-48 overflow-auto">
@@ -195,19 +196,20 @@ export default function RegisterPage() {
                             value={housenumber}
                             onChange={(e) => setHouseNumber(e.target.value)}
                             required
+                            className={manrope.className}
                         />
                     )}
                 </div>
 
 
                 <Input type="text" placeholder="Phone" value={phone} onChange={(e) => setPhone(e.target.value)}
-                       required/>
+                       required className={manrope.className}/>
                 <Input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)}
-                       required/>
+                       required className={manrope.className}/>
                 <Input type="password" placeholder="Password" value={password}
-                       onChange={(e) => setPassword(e.target.value)} required/>
+                       onChange={(e) => setPassword(e.target.value)} required className={manrope.className}/>
 
-                <Button type="submit" className="w-full bg-[#833B45] cursor-pointer hover:bg-[#833B45]">Register
+                <Button type="submit" className="w-full main-button-color cursor-pointer rounded-full">Register
                     Register
                 </Button>
 
@@ -220,7 +222,7 @@ export default function RegisterPage() {
                                     setShowModal(false);
                                     if (message.includes("Account created")) router.push("/login");
                                 }}
-                                className="mt-4 w-full"
+                                className="mt-4 w-full main-button-color"
                             >
                                 OK
                             </Button>

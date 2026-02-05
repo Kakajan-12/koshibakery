@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {manrope} from "@/app/fonts";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
@@ -46,6 +47,8 @@ export default function LoginPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    className={manrope.className}
+
                 />
                 <Input
                     type="password"
@@ -53,6 +56,7 @@ export default function LoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    className={manrope.className}
                 />
                 <Button type="submit" className="text-sm sm:text-md md:text-lg w-full rounded-full main-text-color hover:!text-white border-2 main-border-color bg-white cursor-pointer hover:bg-[#B8485B]">Login</Button>
                 <p className="text-sm text-gray-500">

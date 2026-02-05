@@ -88,7 +88,7 @@ const Menu = () => {
         <div className="my-container mx-auto mt-[64px]">
             <div className="container mx-auto px-4">
                 <div
-                    className="mt-24 lg:mt-32 flex flex-col items-center justify-center h-50 lg:h-60"
+                    className="mt-24 lg:mt-32 flex flex-col items-center h-50 lg:h-96"
                     style={{
                         backgroundImage: "url('/images/shopping-cart.svg')",
                         backgroundSize: "contain",
@@ -97,12 +97,12 @@ const Menu = () => {
                     }}
                 >
                     <h6
-                        className={`${raleway.className} pt-6 lg:pt-0 text-center font-light text-lg mb-3 sm:text-xl lg:text-4xl xl:text-5xl`}
+                        className={`${raleway.className} text-white pt-6 lg:pt-18 text-center font-bold text-3xl mb-3 sm:text-4xl lg:text-6xl xl:text-7xl`}
                     >
                         Place an Order
                     </h6>
                     <p
-                        className={`${manrope.className} text-[#6F5E53] text-center text-sm max-w-lg lg:text-md`}
+                        className={`${manrope.className} text-white text-center max-w-2xl text-sm sm:text-md lg:text-lg pt-8 leading-8`}
                     >
                         Whether you're planning a birthday, surprising a friend, or simply craving something sweet —
                         we're here to make
@@ -181,7 +181,7 @@ const Menu = () => {
                 </div>
             </div>
 
-            <div className="my-container relative z-20 bg-[#FDFBF8] mt-20">
+            <div className="my-container relative z-20 mt-20 main-background-color">
                 <Categories/>
                 <FilterBar sort={sort} setSort={setSort} search={search} setSearch={setSearch}
                            selectedType={selectedType}

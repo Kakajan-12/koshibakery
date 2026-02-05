@@ -27,7 +27,7 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
-        <body className={`${raleway.className} bg-[#FDFBF8] text-gray-900`}>
+        <body className={`${raleway.className} main-background-color`}>
         <CategoryProvider>
             <CartProvider>
                 <Header />
