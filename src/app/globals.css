@@ -221,7 +221,15 @@
 }
 
 .main-background-color {
-    background-color: #F6D6D5;
+    background-color: #833B46;
+}
+
+.main-block-color{
+    background-color: #F7EBE6;
+}
+
+.border-line{
+    border: 2px solid #833B46;
 }
 
 .main-button-color {
@@ -233,9 +241,44 @@
 }
 
 .main-text-color{
-    color: #A16D89;
+    color: #833B46;
+}
+
+.text-color{
+    color: #F7EBE6;
 }
 
 .variant-text-color{
     color: #B8485B;
+}
+
+.hero-swiper .swiper-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    bottom: 20px !important;
+}
+
+.hero-swiper .swiper-pagination-bullet {
+    width: 8px;
+    height: 8px;
+    background-color: #d9a6aa;
+    opacity: 1;
+    border-radius: 9999px;
+    transition: all 0.3s ease;
+}
+
+.hero-swiper .swiper-pagination-bullet-active {
+    width: 14px;
+    height: 14px;
+    background-color: #7b2f36;
+}
+
+.active-category{
+    color: #F6D6D5;
+}
+
+.contact-color{
+    background-color: #F6D6D5;
 }

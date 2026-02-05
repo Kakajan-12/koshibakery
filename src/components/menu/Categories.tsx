@@ -80,8 +80,8 @@ export default function Categories() {
                         }`}
                     >
                         <div
-                            className={`w-24 h-24 sm:w-28 sm:h-28 lg:w-36 lg:h-36 rounded-full overflow-hidden flex items-center justify-center border-4 ${
-                                selectedCategory === null ? "main-border-color" : "border-transparent"
+                            className={`w-24 h-24 sm:w-28 sm:h-28 lg:w-36 lg:h-36 rounded-full overflow-hidden flex items-center justify-center border-10 ${
+                                selectedCategory === null ? "active-category" : "border-transparent"
                             }`}
                         >
                             <Image
@@ -93,7 +93,7 @@ export default function Categories() {
                             />
                         </div>
                         <p
-                            className={`${raleway.className} mt-2 font-bold text-md sm:text-lg lg:text-xl text-[#6F5E53]`}
+                            className={`${raleway.className} mt-2 font-bold text-md sm:text-lg lg:text-xl text-color`}
                         >
                             All
                         </p>
@@ -111,8 +111,8 @@ export default function Categories() {
                             }`}
                         >
                             <div
-                                className={`w-24 h-24 sm:w-28 sm:h-28 lg:w-36 lg:h-36 rounded-full overflow-hidden border-4 transition-colors ${
-                                    selectedCategory === item.id ? "border-[#833B45]" : "border-transparent"
+                                className={`w-24 h-24 sm:w-28 sm:h-28 lg:w-36 lg:h-36 rounded-full overflow-hidden border-10 transition-colors ${
+                                    selectedCategory === item.id ? "active-category" : "border-transparent"
                                 }`}
                             >
                                 <Image
@@ -124,7 +124,7 @@ export default function Categories() {
                                 />
                             </div>
                             <p
-                                className={`${raleway.className} mt-2 font-bold text-md sm:text-lg lg:text-xl text-[#6F5E53]`}
+                                className={`${raleway.className} mt-2 font-bold text-md sm:text-lg lg:text-xl text-color`}
                             >
                                 {item.name}
                             </p>

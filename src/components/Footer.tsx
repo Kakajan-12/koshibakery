@@ -58,10 +58,18 @@ export default function Footer() {
     if (error) return <div className="text-center py-10 text-red-500">{error}</div>;
 
     return (
-        <div className="my-container mx-auto footer py-10">
+        <div className="my-container mx-auto py-10">
+            <Image src="/footer.png" alt="footer"
+                   width={900} height={300}
+                   className="w-full hidden sm:block"
+            />
+            <Image src="/mob-footer.png" alt="footer"
+                   width={900} height={300}
+                   className="w-full h-24 sm:hidden"
+            />
             <div className="container mx-auto px-4">
-                <div className="pt-28 pb-10">
-                    <div className={`${raleway.className} text-white font-bold mb-3 text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl`}>
+                <div className="py-10">
+                    <div className={`${raleway.className} text-white font-bold mb-3 text-xl md:text-2xl lg:text-3xl xl:text-4xl`}>
                         Koşi bakery
                     </div>
 
@@ -115,7 +123,7 @@ export default function Footer() {
                     </div>
                 </div>
 
-                <div className="flex flex-col md:flex-row justify-center items-center space-x-1 pb-2 space-x-4">
+                <div className="flex flex-col md:flex-row justify-center items-center pb-2 md:space-x-4">
                     <div className={`${raleway.className} text-white text-xs sm:text-sm`}>
                         All rights reserved
                     </div>

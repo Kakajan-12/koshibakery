@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import {useState, useRef} from "react";
+import {useRouter} from "next/navigation";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {Textarea} from "@/components/ui/textarea";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -55,8 +55,14 @@ export default function CustomOrderPage() {
             setMessage("✅ Your order request has been sent! We will contact you soon.");
             setShowModal(true);
 
-            setName(""); setEmail(""); setPhone("");
-            setDate(""); setTime(""); setSize(""); setDetails(""); setReferenceFile(null);
+            setName("");
+            setEmail("");
+            setPhone("");
+            setDate("");
+            setTime("");
+            setSize("");
+            setDetails("");
+            setReferenceFile(null);
             if (fileInputRef.current) fileInputRef.current.value = "";
         } catch (err: any) {
             setMessage(err.message || "Something went wrong");
@@ -65,42 +71,15 @@ export default function CustomOrderPage() {
     };
 
     return (
-        <div className="flex justify-center pt-24 pb-12">
+        <div className="flex justify-center pt-36 pb-12">
             <form
                 onSubmit={handleSubmit}
                 className="w-full max-w-xl space-y-4 p-6 border rounded-lg bg-white shadow-md relative"
             >
-                <h1 className="text-2xl font-bold text-center">Order Form</h1>
+                <h1 className="text-2xl font-bold text-center">Custom order form</h1>
                 <p className="text-center text-gray-600">
                     You can submit a standard inquiry or a custom order for cakes, pastries, etc.
                 </p>
-
-                <div className="flex justify-center space-x-4 mt-2">
-                    <button
-                        type="button"
-                        onClick={() => setOrderType("standard")}
-                        className={`px-4 py-2 rounded-full border-2 transition-all font-medium cursor-pointer ${
-                            orderType === "standard"
-                                ? "main-button-color text-white main-border-color"
-                                : "main-border-color main-text-color hover:bg-[#B8485B] hover:!text-white"
-                        }`}
-                    >
-                        Standard Inquiry
-                    </button>
-
-                    <button
-                        type="button"
-                        onClick={() => setOrderType("custom")}
-                        className={`px-4 py-2 rounded-full border-2 transition-all font-medium cursor-pointer ${
-                            orderType === "custom"
-                                ? "main-button-color text-white main-border-color"
-                                : "main-border-color main-text-color hover:bg-[#B8485B] hover:!text-white"
-                        }`}
-                    >
-                        Custom Order
-                    </button>
-                </div>
-
 
                 <Input
                     type="text"
@@ -123,71 +102,73 @@ export default function CustomOrderPage() {
                     onChange={(e) => setPhone(e.target.value)}
                 />
 
-                {orderType === "custom" && (
-                    <div className="space-y-3 mt-2">
-                        <div className="flex flex-col space-y-2">
-                            <div className="flex space-x-2">
-                                <DatePicker
-                                    selected={date ? new Date(date) : null}
-                                    onChange={(d: Date | null) => {
-                                        if (d) setDate(d.toISOString().split("T")[0]);
-                                    }}
-                                    dateFormat="yyyy-MM-dd"
-                                    minDate={new Date()}
-                                    className="w-full px-3 py-2 border rounded-lg cursor-pointer selection-none"
-                                    onChangeRaw={(e) => e?.preventDefault()}
-                                    placeholderText="Date Required"
-                                    required
-                                />
+
+                <div className="space-y-3 mt-2">
+                    <div className="flex flex-col space-y-2">
+                        <div className="flex space-x-2">
+                            <DatePicker
+                                selected={date ? new Date(date) : null}
+                                onChange={(d: Date | null) => {
+                                    if (d) setDate(d.toISOString().split("T")[0]);
+                                }}
+                                dateFormat="yyyy-MM-dd"
+                                minDate={new Date()}
+                                className="w-full px-3 py-2 border rounded-lg cursor-pointer selection-none"
+                                onChangeRaw={(e) => e?.preventDefault()}
+                                placeholderText="Date Required"
+                                required
+                            />
 
 
-                                <DatePicker
-                                    selected={time ? new Date(`1970-01-01T${time}`) : null}
-                                    onChange={(d: Date | null) => {
-                                        if (d) setTime(d.toTimeString().slice(0, 5));
-                                    }}
-                                    showTimeSelect
-                                    showTimeSelectOnly
-                                    timeIntervals={30}
-                                    timeCaption="Time"
-                                    dateFormat="HH:mm"
-                                    className="w-full px-3 py-2 border rounded-lg cursor-pointer selection-none"
-                                    onChangeRaw={(e) => e?.preventDefault()}
-                                    placeholderText="Time of delivery"
-                                    required
-                                />
-                            </div>
-
-
-                        </div>
-                        <Input
-                            type="text"
-                            placeholder="Size (e.g., 6-inch, 1kg)"
-                            value={size}
-                            onChange={(e) => setSize(e.target.value)}
-                            required
-                        />
-                        <Textarea
-                            placeholder="Describe your custom order (flavor, design, special requests)"
-                            value={details}
-                            onChange={(e) => setDetails(e.target.value)}
-                            rows={4}
-                            required
-                        />
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Upload reference image (optional)</label>
-                            <input
-                                type="file"
-                                ref={fileInputRef}
-                                onChange={(e) => setReferenceFile(e.target.files?.[0] || null)}
-                                accept="image/*"
-                                className="w-full border p-2 rounded-md"
+                            <DatePicker
+                                selected={time ? new Date(`1970-01-01T${time}`) : null}
+                                onChange={(d: Date | null) => {
+                                    if (d) setTime(d.toTimeString().slice(0, 5));
+                                }}
+                                showTimeSelect
+                                showTimeSelectOnly
+                                timeIntervals={30}
+                                timeCaption="Time"
+                                dateFormat="HH:mm"
+                                className="w-full px-3 py-2 border rounded-lg cursor-pointer selection-none"
+                                onChangeRaw={(e) => e?.preventDefault()}
+                                placeholderText="Time of delivery"
+                                required
                             />
                         </div>
-                    </div>
-                )}
 
-                <Button type="submit" className="rounded-full w-full mt-2 main-button-color text-white main-border-color cursor-pointer">Submit Order</Button>
+
+                    </div>
+                    <Input
+                        type="text"
+                        placeholder="Size (e.g., 6-inch, 1kg)"
+                        value={size}
+                        onChange={(e) => setSize(e.target.value)}
+                        required
+                    />
+                    <Textarea
+                        placeholder="Describe your custom order (flavor, design, special requests)"
+                        value={details}
+                        onChange={(e) => setDetails(e.target.value)}
+                        rows={4}
+                        required
+                    />
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Upload reference image (optional)</label>
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={(e) => setReferenceFile(e.target.files?.[0] || null)}
+                            accept="image/*"
+                            className="w-full border p-2 rounded-md"
+                        />
+                    </div>
+                </div>
+
+
+                <Button type="submit"
+                        className="rounded-full w-full mt-2 main-button-color text-white main-border-color cursor-pointer">Submit
+                    Order</Button>
 
                 {showModal && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/50">

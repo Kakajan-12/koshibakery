@@ -107,13 +107,13 @@ export default function FilterBar({
 
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                    <span className={`${raleway.className} text-gray-700 text-md sm:text-lg font-bold`}>Sort By:</span>
+                    <span className={`${raleway.className} text-color text-md sm:text-lg font-bold`}>Sort By:</span>
 
                     <DropdownMenu modal={false}>
                         <DropdownMenuTrigger asChild>
                             <Button
                                 variant="outline"
-                                className={`${inter.className} min-w-[160px] justify-between shadow-sm cursor-pointer`}
+                                className={`${inter.className} min-w-[160px] justify-between shadow-sm cursor-pointer main-block-color`}
                             >
                                 {sortOptions.find((o) => o.value === sort)?.label}
                             </Button>
@@ -131,7 +131,7 @@ export default function FilterBar({
 
                 <Dialog>
                     <DialogTrigger asChild>
-                        <Button variant="ghost" size="icon" className="border cursor-pointer">
+                        <Button variant="ghost" size="icon" className="border cursor-pointer main-block-color">
                             <FiSliders/>
                         </Button>
                     </DialogTrigger>

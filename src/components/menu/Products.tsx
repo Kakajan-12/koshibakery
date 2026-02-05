@@ -48,7 +48,7 @@ export default function Products({sort, search, selectedType, availability, pric
     const router = useRouter();
     const { cart} = useCart();
 
-    const productsPerPage = 8;
+    const productsPerPage = 12;
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -148,101 +148,102 @@ export default function Products({sort, search, selectedType, availability, pric
     };
 
     return (
-        <div ref={containerRef} className="container mx-auto px-4 py-14 min-h-[500px]">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 justify-items-center">
-                {currentProducts.map((item, i) => {
-                    const isInCart = cart.some((p) => p.id === item.id);
+        <div ref={containerRef} className="container mx-auto px-4">
+            <div className="py-14 min-h-[500px] main-block-color rounded-xl p-6 mb-20">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 justify-items-center">
+                    {currentProducts.map((item, i) => {
+                        const isInCart = cart.some((p) => p.id === item.id);
 
-                    return (
-                        <div
-                            key={item.id}
-                            ref={i === 0 ? firstProductRef : null}
-                            className="flex flex-col justify-between items-center text-center cursor-pointer border-2 rounded-lg w-full scroll-mt-24"
-                        >
-                            <div className="w-full flex-1" onClick={() => router.push(`/menu/${item.id}`)}>
-                                <div className="w-full aspect-square relative">
-                                    <Image
-                                        src={item.main_image}
-                                        alt={item.product_name}
-                                        fill
-                                        className="object-cover"
-                                    />
-                                </div>
-                                <div className="space-y-3 w-full px-2 py-4">
-                                    <div className={`${raleway.className} font-semibold text-xs text-red-500`}>
-                                        {item.notice}
+                        return (
+                            <div
+                                key={item.id}
+                                ref={i === 0 ? firstProductRef : null}
+                                className="flex flex-col justify-between items-center text-center cursor-pointer border-2 rounded-xl w-full scroll-mt-24 bg-white p-4"
+                            >
+                                <div className="w-full flex-1" onClick={() => router.push(`/menu/${item.id}`)}>
+                                    <div className="w-full aspect-square relative">
+                                        <Image
+                                            src={item.main_image}
+                                            alt={item.product_name}
+                                            fill
+                                            className="object-cover"
+                                        />
                                     </div>
-                                    <div className="flex items-center justify-center">
-                                        <div className="flex items-center">
-                                            <FaPoundSign size={14}/>
-                                            <div className={`${manrope.className} text-md md:text-lg font-bold`}>{item.price}</div>
+                                    <div className="space-y-3 w-full px-2 py-4">
+                                        <div className={`${raleway.className} font-semibold text-xs text-red-500`}>
+                                            {item.notice}
                                         </div>
-                                    </div>
-                                    <div
-                                        className={`${manrope.className} text-md sm:text-lg lg:text-xl text-center`}
-                                    >
-                                        {item.product_name}
-                                    </div>
-                                    <div className="flex flex-wrap justify-center gap-2 max-w-full">
-                                        {item.allergens?.map((a) => (
-                                            <p
-                                                key={a.id}
-                                                className={`${manrope.className} bg-red-400 rounded-md px-2 py-1 text-white text-sm break-words max-w-[100px] text-center`}
-                                            >
-                                                {a.name}
-                                            </p>
-                                        ))}
-                                    </div>
+                                        <div className="flex items-center justify-center">
+                                            <div className="flex items-center">
+                                                <FaPoundSign size={14}/>
+                                                <div
+                                                    className={`${manrope.className} text-md md:text-lg font-bold`}>{item.price}</div>
+                                            </div>
+                                        </div>
+                                        <div
+                                            className={`${manrope.className} text-md sm:text-lg lg:text-xl text-center`}
+                                        >
+                                            {item.product_name}
+                                        </div>
+                                        <div className="flex flex-wrap justify-center gap-2 max-w-full">
+                                            {item.allergens?.map((a) => (
+                                                <p
+                                                    key={a.id}
+                                                    className={`${manrope.className} bg-red-400 rounded-md px-2 py-1 text-white text-sm break-words max-w-[100px] text-center`}
+                                                >
+                                                    {a.name}
+                                                </p>
+                                            ))}
+                                        </div>
 
+                                    </div>
                                 </div>
+
+                                <div className="w-full mb-4 flex items-center justify-center">
+                                    <button
+                                        onClick={() => router.push(`/menu/${item.id}`)}
+                                        className={`${raleway.className} w-56 border-2 cursor-pointer main-border-color main-text-color font-bold rounded-full px-8 py-1 transition-all`}
+                                    >
+                                        PLACE AN ORDER
+                                    </button>
+                                </div>
+
                             </div>
-
-                            <div className="w-full mb-4 flex items-center justify-center">
-                                <button
-                                    onClick={() => router.push(`/menu/${item.id}`)}
-                                    className={`${raleway.className} w-56 border-2 cursor-pointer main-border-color main-text-color font-bold rounded-full px-8 py-1 transition-all`}
-                                >
-                                    PLACE AN ORDER
-                                </button>
-                            </div>
-
-                        </div>
-                    );
-                })}
-
-            </div>
-
-            {totalPages > 1 && (
-                <div className="flex justify-center mt-8 space-x-2">
-                    <button
-                        onClick={() => goToPage(currentPage - 1)}
-                        disabled={currentPage === 1}
-                        className={`${workSans.className} px-3 py-1 border rounded disabled:opacity-50 cursor-pointer`}
-                    >
-                        Prev
-                    </button>
-
-                    {Array.from({length: totalPages}, (_, i) => (
-                        <button
-                            key={i}
-                            onClick={() => goToPage(i + 1)}
-                            className={`${workSans.className} px-3 py-1 border rounded cursor-pointer ${
-                                currentPage === i + 1 ? "bg-[#833B45] text-white" : "hover:bg-gray-200"
-                            }`}
-                        >
-                            {i + 1}
-                        </button>
-                    ))}
-
-                    <button
-                        onClick={() => goToPage(currentPage + 1)}
-                        disabled={currentPage === totalPages}
-                        className={`${workSans.className} px-3 py-1 border rounded disabled:opacity-50 cursor-pointer`}
-                    >
-                        Next
-                    </button>
+                        );
+                    })}
                 </div>
-            )}
+                {totalPages > 1 && (
+                    <div className="flex justify-center mt-8 space-x-2">
+                        <button
+                            onClick={() => goToPage(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            className={`${workSans.className} px-3 py-1 border rounded disabled:opacity-50 cursor-pointer`}
+                        >
+                            Prev
+                        </button>
+
+                        {Array.from({length: totalPages}, (_, i) => (
+                            <button
+                                key={i}
+                                onClick={() => goToPage(i + 1)}
+                                className={`${workSans.className} px-3 py-1 border rounded cursor-pointer ${
+                                    currentPage === i + 1 ? "main-button-color text-white" : "hover:bg-gray-200"
+                                }`}
+                            >
+                                {i + 1}
+                            </button>
+                        ))}
+
+                        <button
+                            onClick={() => goToPage(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                            className={`${workSans.className} px-3 py-1 border rounded disabled:opacity-50 cursor-pointer`}
+                        >
+                            Next
+                        </button>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

@@ -31,7 +31,7 @@ export default function MainMenu() {
                     }`,
                 }));
 
-                setMenuItems(formatted); // <-- Используем уже исправленные ссылки
+                setMenuItems(formatted);
             } catch (err: any) {
                 setError(err.message);
             } finally {
@@ -59,64 +59,69 @@ export default function MainMenu() {
     }
 
     return (
-        <div className="container mx-auto px-4">
-            <div className="py-10">
-                <h6 className={`${raleway.className} font-bold text-center text-xl sm:text-2xl md:text-3xl lg:text-4xl`}>Menu</h6>
-                <p className={`${manrope.className} text-center text-sm sm:text-md lg:text-lg pt-2`}>
-                    From soft layered cakes to delicate tarts — each treat is made to brighten your day.
-                </p>
-            </div>
-
-            <div className="flex flex-col space-y-4 md:hidden">
-                {menuItems.map((item, i) => (
-                    <MenuCard key={i} {...item}/>
-                ))}
-            </div>
-
-            <div className="hidden md:block pb-24">
-                <Swiper
-                    modules={[Navigation]}
-                    spaceBetween={20}
-                    slidesPerView={1}
-                    navigation={{
-                        nextEl: ".category-next",
-                        prevEl: ".category-prev",
-                    }}
-                    pagination={{clickable: true}}
-                    centerInsufficientSlides={true}
-                    breakpoints={{
-                        768: {
-                            slidesPerView: 3,
-                            spaceBetween: 30,
-                        },
-                        1024: {
-                            slidesPerView: 4,
-                            spaceBetween: 40,
-                        },
-                        1280: {
-                            slidesPerView: 5,
-                            spaceBetween: 50,
-                        },
-                    }}
-                >
-                    {menuItems.map((item, i) => (
-                        <SwiperSlide key={i}>
-                            <MenuCard {...item} />
-                        </SwiperSlide>
-                    ))}
-                    <div className="relative bottom-0 w-full h-20 z-20">
-                        <div
-                            className="category-prev absolute bottom-0 z-30 w-12 h-12 bg-[#833B45] text-white rounded-full flex items-center justify-center cursor-pointer transition right-20">
-                            <IoIosArrowBack/>
-                        </div>
-                        <div
-                            className="category-next absolute bottom-0 z-30 w-12 h-12 bg-[#833B45] text-white rounded-full flex items-center justify-center cursor-pointer transition right-0">
-                            <IoIosArrowForward/>
-                        </div>
+        <div className="container mx-auto px-6">
+            <div className="main-block-color rounded-lg p-2">
+                <div className="border-line rounded-lg p-8">
+                    <div className="py-5">
+                        <h6 className={`${raleway.className} main-text-color font-bold text-center text-xl sm:text-2xl md:text-3xl lg:text-4xl`}>Menu</h6>
+                        <p className={`${manrope.className} main-text-color text-center text-sm sm:text-md lg:text-lg pt-2`}>
+                            From soft layered cakes to delicate tarts — each treat is made to brighten your day.
+                        </p>
                     </div>
 
-                </Swiper>
+                    <div className="flex flex-col space-y-4 md:hidden">
+                        {menuItems.map((item, i) => (
+                            <MenuCard key={i} {...item}/>
+                        ))}
+                    </div>
+
+                    <div className="hidden md:block">
+                        <Swiper
+                            modules={[Navigation]}
+                            spaceBetween={20}
+                            slidesPerView={1}
+                            navigation={{
+                                nextEl: ".category-next",
+                                prevEl: ".category-prev",
+                            }}
+                            pagination={{clickable: true}}
+                            centerInsufficientSlides={true}
+                            breakpoints={{
+                                768: {
+                                    slidesPerView: 3,
+                                    spaceBetween: 30,
+                                },
+                                1024: {
+                                    slidesPerView: 4,
+                                    spaceBetween: 40,
+                                },
+                                1280: {
+                                    slidesPerView: 5,
+                                    spaceBetween: 50,
+                                },
+                            }}
+                        >
+                            {menuItems.map((item, i) => (
+                                <SwiperSlide key={i}>
+                                    <MenuCard {...item} />
+                                </SwiperSlide>
+                            ))}
+                            <div className="relative bottom-0 w-full h-20 z-20">
+                                <div
+                                    className="category-prev absolute bottom-0 z-30 w-12 h-12 bg-[#833B45] text-white rounded-full flex items-center justify-center cursor-pointer transition right-20">
+                                    <IoIosArrowBack/>
+                                </div>
+                                <div
+                                    className="category-next absolute bottom-0 z-30 w-12 h-12 bg-[#833B45] text-white rounded-full flex items-center justify-center cursor-pointer transition right-0">
+                                    <IoIosArrowForward/>
+                                </div>
+                            </div>
+
+                        </Swiper>
+                    </div>
+                </div>
             </div>
+
         </div>
     );
 }
@@ -133,7 +138,7 @@ function MenuCard({name, image, id}: { name: string; image: string; id: number; 
 
         <div
             onClick={handleClick}
-            className="relative py-5 px-3 h-40 md:h-64 md:w-full"
+            className="relative py-5 px-3 h-44 md:w-full"
             style={{
                 backgroundImage: `url(${image})`,
                 backgroundRepeat: "no-repeat",
