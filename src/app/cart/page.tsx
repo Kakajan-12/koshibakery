@@ -109,36 +109,57 @@ const Cart = () => {
 
     const handleCheckout = async () => {
         const token = localStorage.getItem("token");
+
+        // если токена вообще нет — сразу на логин
         if (!token) {
             router.push("/login");
             return;
         }
 
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/create-checkout-session`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                    cart: cart.map(item => ({
-                        ...item,
-                        image: item.main_image.startsWith("http")
-                            ? item.main_image
-                            : `${process.env.NEXT_PUBLIC_API_URL}${item.main_image}`, // делаем абсолютный URL
-                    })),
-                    deliveryFee,
-                    customMessageFee,
-                    orderType,
-                    selectedAddress,
-                    total: grandTotal,
-                }),
-            });
+            const res = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/api/create-checkout-session`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({
+                        cart: cart.map(item => ({
+                            ...item,
+                            image: item.main_image.startsWith("http")
+                                ? item.main_image
+                                : `${process.env.NEXT_PUBLIC_API_URL}${item.main_image}`,
+                        })),
+                        deliveryFee,
+                        customMessageFee,
+                        orderType,
+                        selectedAddress,
+                        total: grandTotal,
+                    }),
+                }
+            );
+
+            // 👇 ВОТ САМОЕ ВАЖНОЕ
+            if (res.status === 401) {
+                localStorage.removeItem("token"); // чистим мусорный токен
+                router.push("/login");
+                return;
+            }
+
+            if (!res.ok) {
+                console.error("Checkout error:", res.status);
+                return;
+            }
 
             const data = await res.json();
-            if (data.url) window.location.href = data.url;
-            else console.error("Stripe session creation failed:", data);
+
+            if (data.url) {
+                window.location.href = data.url;
+            } else {
+                console.error("Stripe session creation failed:", data);
+            }
         } catch (err) {
             console.error(err);
             router.push("/login");

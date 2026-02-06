@@ -94,7 +94,6 @@ const Profile = () => {
                 const data = await res.json();
                 if (!data.features) return;
 
-                // Оставляем уникальные по адресу
                 const unique = Array.from(
                     new Map(
                         data.features.map((f: any) => [
@@ -192,7 +191,7 @@ const Profile = () => {
 
     return (
         <div className="container mx-auto px-4">
-            <div className="py-20 lg:py-40">
+            <div className="my-20 lg:my-40 main-block-color p-8 rounded-xl">
                 <div className="flex justify-between items-center mb-4">
                     <h2 className={`${raleway.className} text-2xl lg:text-4xl font-bold`}>Profile</h2>
                     <button
@@ -233,7 +232,7 @@ const Profile = () => {
                         </button>
                     </div>
                     {activeTab === "info" && (
-                        <div className="space-y-2 lg:space-y-4 animate-fadeIn bg-white p-4 w-full">
+                        <div className="space-y-2 lg:space-y-4 animate-fadeIn bg-white p-6 w-full rounded-xl">
                             <p className={`${manrope.className} text-sm lg:text-lg`}><span
                                 className="font-bold">Name:</span> {user?.fname} {user?.lname}</p>
                             <p className={`${manrope.className} text-sm lg:text-lg`}><span className="font-bold">Email:</span> {user?.email}
@@ -255,7 +254,7 @@ const Profile = () => {
                                         <p className={`${manrope.className} text-sm lg:text-lg`}>{addr.address}</p>
                                         <button
                                             onClick={() => handleDeleteAddress(addr.id)}
-                                            className={`${manrope.className} text-white bg-red-600 text-sm cursor-pointer px-4 py-2 rounded-full`}
+                                            className={`${manrope.className} text-white bg-red-600 text-sm cursor-pointer px-8 py-2 rounded-full`}
                                         >
                                             Delete
                                         </button>
@@ -381,7 +380,7 @@ const Profile = () => {
                                                     className={`${sora.className} text-white rounded-2xl text-xs py-2 px-3 ${order.payment_status === "paid" ? "bg-[#833B45]" : "bg-yellow-500"}`}>{order.payment_status}
                                                 </div>
                                                 <div
-                                                    className="text-sm">{new Date(order.created_at).toLocaleDateString()}</div>
+                                                    className={`${manrope.className} text-sm`}>{new Date(order.created_at).toLocaleDateString()}</div>
                                             </div>
                                             <div className="space-y-2 w-full">
                                                 <p className={`${quicksand.className} hidden sm:block font-bold text-lg`}>List of
@@ -410,13 +409,13 @@ const Profile = () => {
                                 <div className="space-y-1 sm:pt-8 min-w-36 md:min-w-56">
                                     <div
                                         className="flex justify-start items-center space-x-2">
-                                        <p className={`${sora.className} font-bold text-sm sm:text-md md:text-lg`}>Order type</p>
-                                        <p className={`${sora.className} text-xs sm:text-sm md:text-md`}>{order.order_data.orderType} {order.order_data.deliveryFee}</p>
+                                        <p className={`${sora.className} font-bold text-sm sm:text-md md:text-base`}>Order type</p>
+                                        <p className={`${sora.className} text-sm sm:text-sm md:text-base`}>{order.order_data.orderType} {order.order_data.deliveryFee}</p>
                                     </div>
                                     <div
                                         className="flex justify-start items-center space-x-2">
-                                        <p className={`${sora.className} font-bold text-sm sm:text-md md:text-lg`}>Total payment:</p>
-                                        <p className={`${sora.className} text-xs font-bold sm:text-sm md:text-lg`}>£{Number(order.total).toFixed(2)}</p>
+                                        <p className={`${sora.className} font-bold text-sm sm:text-md md:text-base`}>Total payment:</p>
+                                        <p className={`${sora.className} text-xs font-bold sm:text-sm md:text-base`}>£{Number(order.total).toFixed(2)}</p>
                                     </div>
                                 </div>
                             </div>
