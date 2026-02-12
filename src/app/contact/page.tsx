@@ -110,11 +110,20 @@ const Contact: React.FC = () => {
                                             >
                                                 E-mail
                                             </div>
-                                            <p
-                                                className={`${quicksand.className} text-md font-light md:text-lg lg:text-xl`}
-                                            >
-                                                {contact?.mail || '—'}
-                                            </p>
+                                            {contact?.mail ? (
+                                                <a
+                                                    href={`mailto:${contact.mail}`}
+                                                    className={`${quicksand.className} text-md font-light md:text-lg lg:text-xl`}
+                                                >
+                                                    {contact.mail}
+                                                </a>
+                                            ) : (
+                                                <p
+                                                    className={`${quicksand.className} text-md font-light md:text-lg lg:text-xl`}
+                                                >
+                                                    —
+                                                </p>
+                                            )}
                                         </div>
                                     </div>
 
@@ -126,22 +135,43 @@ const Contact: React.FC = () => {
                                             >
                                                 Phone
                                             </div>
-                                            <p
-                                                className={`${quicksand.className} text-md font-light md:text-lg lg:text-xl`}
-                                            >
-                                                {contact?.phone || '—'}
-                                            </p>
+                                            {contact?.phone ? (
+                                                <a
+                                                    href={`tel:${contact.phone}`}
+                                                    className={`${quicksand.className} text-md font-light md:text-lg lg:text-xl`}
+                                                >
+                                                    {contact.phone}
+                                                </a>
+                                            ) : (
+                                                <p
+                                                    className={`${quicksand.className} text-md font-light md:text-lg lg:text-xl`}
+                                                >
+                                                    —
+                                                </p>
+                                            )}
+
                                         </div>
                                     </div>
                                 </div>
 
                                 {contact?.map ? (
-                                    <div className="w-full h-[250px] overflow-hidden rounded-lg">
-                                        {mapElement}
+                                    <div className="relative w-full h-[250px] rounded-lg overflow-hidden">
+                                        <div
+                                            dangerouslySetInnerHTML={{ __html: contact.map }}
+                                            className="w-full h-full"
+                                        />
+
+                                        <a
+                                            href="https://www.google.com/maps/dir/?api=1&destination=185+Edgware+Rd+London+W2+1ET"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="absolute inset-0 z-10"
+                                        />
                                     </div>
                                 ) : (
                                     <p className="text-gray-500 text-center">Map not available</p>
                                 )}
+
                             </div>
 
                             <div className="space-y-2 xl:w-1/2">

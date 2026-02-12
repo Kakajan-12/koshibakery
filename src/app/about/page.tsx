@@ -1,7 +1,27 @@
 import {manrope, quicksand, raleway, sora} from "@/app/fonts";
 import Image from "next/image";
 
-const About = () => {
+type OpenTime = {
+    id: number;
+    days: string;
+    times: string;
+};
+
+async function getOpenTimes(): Promise<OpenTime[]> {
+    const res = await fetch("http://localhost:3001/api/open-time", {
+        cache: "no-store",
+    });
+
+    if (!res.ok) {
+        throw new Error("Failed to fetch open times");
+    }
+
+    return res.json();
+}
+
+
+const About = async () => {
+    const openTimes = await getOpenTimes();
     return (
         <div className="flex flex-col space-y-6">
             <div className="my-container mx-auto mt-[60px] main-block-color py-10 sm:py-0">
@@ -80,15 +100,19 @@ const About = () => {
                                     Opening hours:
                                 </h2>
                                 <div className="space-y-3">
-                                    <div className="flex justify-between items-center border-b border-gray-200 pb-2">
-              <span className={`${manrope.className} text-base lg:text-lg font-medium text-gray-800`}>
-                Monday - Sunday
-              </span>
-                                        <span
-                                            className={`${manrope.className} text-base lg:text-lg font-semibold text-gray-900`}>
-                09:00 - 18:00
-              </span>
-                                    </div>
+                                    {openTimes.map((item) => (
+                                        <div
+                                            key={item.id}
+                                            className="flex justify-between items-center pb-2"
+                                        >
+                                            <span className={`${manrope.className} text-base lg:text-lg font-medium text-gray-800`}>
+                                              {item.days}
+                                            </span>
+                                            <span className={`${manrope.className} text-base lg:text-lg font-semibold text-gray-900`}>
+                                              {item.times}
+                                            </span>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                         </div>

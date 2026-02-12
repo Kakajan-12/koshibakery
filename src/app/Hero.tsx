@@ -11,8 +11,27 @@ import "swiper/css"
 import "swiper/css/pagination"
 
 import {manrope, raleway} from "@/app/fonts"
+import {useEffect, useState} from "react";
+
+interface Slider {
+    id: number
+    image: string
+    title: string
+    text: string
+}
 
 export default function Hero() {
+    const [slides, setSlides] = useState<Slider[]>([])
+
+    useEffect(() => {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/sliders`)
+            .then(res => res.json())
+            .then(data => setSlides(data))
+            .catch(err => console.error("Slider fetch error:", err))
+    }, [])
+
+    if (!slides.length) return null
+
     return (
         <div>
             <div className="my-container mx-auto">
@@ -23,88 +42,45 @@ export default function Hero() {
                     loop
                     className="hero-swiper main-background-color"
                 >
-                    <SwiperSlide>
-                        <div className="relative min-h-[70vh] lg:min-h-[85vh] flex items-center">
+                    {slides.map(slide => (
+                        <SwiperSlide key={slide.id}>
+                            <div className="relative min-h-[70vh] lg:min-h-[85vh] flex items-center">
+                                <Image
+                                    src={`${process.env.NEXT_PUBLIC_API_URL}/${slide.image.replace(/\\/g, "/")}`}
+                                    alt={slide.title}
+                                    fill
+                                    className="object-cover"
+                                    priority
+                                />
 
-                            <Image
-                                src="/teast.png"
-                                alt="test"
-                                fill
-                                className="object-cover"
-                                priority
-                            />
+                                <div className="absolute inset-0 bg-black/40" />
 
-                            <div className="absolute inset-0 bg-black/40"/>
+                                <div className="relative z-20 container mx-auto px-4">
+                                    <div className="flex items-center">
+                                        <div className="flex flex-col space-y-6 w-full md:w-2/3">
+                                            <h1 className={`${raleway.className} text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold`}>
+                                                {slide.title}
+                                            </h1>
 
-                            <div className="relative z-20 container mx-auto px-4">
-                                <div className="flex items-center">
-                                    <div className="flex flex-col space-y-6 w-full md:w-2/3">
-                                        <h1 className={`${raleway.className} text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold`}>
-                                            A Taste of Perfection in Every Bite
-                                        </h1>
+                                            <p className={`${manrope.className} text-white text-sm sm:text-lg lg:text-xl max-w-[600px]`}>
+                                                {slide.text}
+                                            </p>
 
-                                        <p className={`${manrope.className} text-white text-sm sm:text-lg lg:text-xl max-w-[600px]`}>
-                                            A boutique bakery offering thoughtfully made cakes and pastries — for
-                                            morning coffee or meaningful celebrations.
-                                        </p>
-
-                                        <Link
-                                            href="/menu"
-                                            className="group inline-flex w-fit items-center gap-3 px-6 py-3 rounded-full
-                                main-button-color text-white text-lg font-medium shadow-md
-                                hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-                                        >
-                                            Order now
-                                            <ArrowRight
-                                                className="w-5 h-5 transition-transform group-hover:translate-x-1"/>
-                                        </Link>
+                                            <Link
+                                                href="/menu"
+                                                className="group inline-flex w-fit items-center gap-3 px-6 py-3 rounded-full
+                                                main-button-color text-white text-lg font-medium shadow-md
+                                                hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                                            >
+                                                Order now
+                                                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                                            </Link>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-
-                        </div>
-                    </SwiperSlide>
-                    <SwiperSlide>
-                        <div className="relative min-h-[70vh] lg:min-h-[85vh] flex items-center">
-
-                            <Image
-                                src="/teast.png"
-                                alt="test"
-                                fill
-                                className="object-cover"
-                                priority
-                            />
-
-                            <div className="absolute inset-0 bg-black/40"/>
-
-                            <div className="relative z-20 container mx-auto px-4">
-                                <div className="flex items-center">
-                                    <div className="flex flex-col space-y-6 w-full md:w-2/3">
-                                        <h1 className={`${raleway.className} text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold`}>
-                                            A Taste of Perfection in Every Bite
-                                        </h1>
-
-                                        <p className={`${manrope.className} text-white text-sm sm:text-lg lg:text-xl max-w-[600px]`}>
-                                            A boutique bakery offering thoughtfully made cakes and pastries — for
-                                            morning coffee or meaningful celebrations.
-                                        </p>
-
-                                        <Link
-                                            href="/menu"
-                                            className="group inline-flex w-fit items-center gap-3 px-6 py-3 rounded-full
-                                main-button-color text-white text-lg font-medium shadow-md
-                                hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-                                        >
-                                            Order now
-                                            <ArrowRight
-                                                className="w-5 h-5 transition-transform group-hover:translate-x-1"/>
-                                        </Link>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </SwiperSlide>
+                        </SwiperSlide>
+                    ))}
                 </Swiper>
             </div>
 
