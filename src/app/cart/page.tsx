@@ -1,17 +1,19 @@
 "use client";
 
 import {manrope, quicksand, raleway, sora} from "@/app/fonts";
-import { Button } from "@/components/ui/button";
-import React, { useEffect, useState } from "react";
+import {Button} from "@/components/ui/button";
+import React, {useEffect, useState} from "react";
 import Image from "next/image";
-import { useCart } from "@/app/context/CartContext";
+import {useCart} from "@/app/context/CartContext";
 import Link from "next/link";
 import {FaMinus, FaPlus, FaRegTrashCan} from "react-icons/fa6";
-import { useRouter } from "next/navigation";
+import {useRouter} from "next/navigation";
+import GuestAddressInput from "@/components/GuestAddressInput";
+
 
 const Cart = () => {
-    const SHOP_COORDS = { lat: 51.518648926574, lng: -0.16809783068325745 };
-    const { cart, removeFromCart, clearCart, updateQuantity } = useCart();
+    const SHOP_COORDS = {lat: 51.518648926574, lng: -0.16809783068325745};
+    const {cart, removeFromCart, clearCart, updateQuantity} = useCart();
     const [customMessages, setCustomMessages] = useState<{ [key: string]: string }>({});
     const [showInput, setShowInput] = useState<{ [key: string]: boolean }>({});
     const [orderType, setOrderType] = useState<"delivery" | "collect">("delivery");
@@ -19,15 +21,22 @@ const Cart = () => {
     const [selectedAddress, setSelectedAddress] = useState<string | "">("");
     const [deliveryFee, setDeliveryFee] = useState(0);
     const router = useRouter();
+    const [isGuest, setIsGuest] = useState(false);
+    const [guestData, setGuestData] = useState({
+        name: "",
+        email: "",
+        phone: "",
+        address: "",
+    });
 
     const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
     const toggleCustomMessage = (key: string) => {
-        setShowInput(prev => ({ ...prev, [key]: !prev[key] }));
+        setShowInput(prev => ({...prev, [key]: !prev[key]}));
     };
 
     const handleInputChange = (key: string, value: string) => {
-        setCustomMessages(prev => ({ ...prev, [key]: value }));
+        setCustomMessages(prev => ({...prev, [key]: value}));
     };
 
     const getDistanceInMiles = (lat1: number, lon1: number, lat2: number, lon2: number) => {
@@ -50,7 +59,7 @@ const Cart = () => {
             const data = await res.json();
             if (data.features && data.features.length > 0) {
                 const [lon, lat] = data.features[0].geometry.coordinates;
-                return { lat, lon };
+                return {lat, lon};
             }
         } catch (err) {
             console.error("Photon error:", err);
@@ -66,7 +75,7 @@ const Cart = () => {
         let extraAddrs: string[] = [];
 
         fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/check/me`, {
-            headers: { Authorization: `Bearer ${token}` },
+            headers: {Authorization: `Bearer ${token}`},
         })
             .then(res => res.json())
             .then((data) => {
@@ -75,7 +84,7 @@ const Cart = () => {
             .catch(console.error);
 
         fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user-addresses`, {
-            headers: { Authorization: `Bearer ${token}` },
+            headers: {Authorization: `Bearer ${token}`},
         })
             .then(res => res.json())
             .then((data: { address: string }[]) => (extraAddrs = data.map(a => a.address)))
@@ -110,9 +119,8 @@ const Cart = () => {
     const handleCheckout = async () => {
         const token = localStorage.getItem("token");
 
-        // если токена вообще нет — сразу на логин
         if (!token) {
-            router.push("/login");
+            setIsGuest(true);
             return;
         }
 
@@ -126,12 +134,7 @@ const Cart = () => {
                         Authorization: `Bearer ${token}`,
                     },
                     body: JSON.stringify({
-                        cart: cart.map(item => ({
-                            ...item,
-                            image: item.main_image.startsWith("http")
-                                ? item.main_image
-                                : `${process.env.NEXT_PUBLIC_API_URL}${item.main_image}`,
-                        })),
+                        cart,
                         deliveryFee,
                         customMessageFee,
                         orderType,
@@ -141,30 +144,56 @@ const Cart = () => {
                 }
             );
 
-            // 👇 ВОТ САМОЕ ВАЖНОЕ
             if (res.status === 401) {
-                localStorage.removeItem("token"); // чистим мусорный токен
-                router.push("/login");
-                return;
-            }
-
-            if (!res.ok) {
-                console.error("Checkout error:", res.status);
+                localStorage.removeItem("token");
+                setIsGuest(true);
                 return;
             }
 
             const data = await res.json();
-
-            if (data.url) {
-                window.location.href = data.url;
-            } else {
-                console.error("Stripe session creation failed:", data);
-            }
+            if (data.url) window.location.href = data.url;
         } catch (err) {
             console.error(err);
-            router.push("/login");
         }
     };
+
+    const handleGuestCheckout = async () => {
+        if (!guestData.email || !guestData.name) {
+            alert("Please fill required fields");
+            return;
+        }
+
+        if (orderType === "delivery" && !guestData.address) {
+            alert("Please select delivery address");
+            return;
+        }
+
+        try {
+            const res = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/api/create-checkout-session/guest`,
+                {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({
+                        cart,
+                        guest: guestData,
+                        deliveryFee,
+                        customMessageFee,
+                        orderType,
+                        total: grandTotal,
+                    }),
+                }
+            );
+
+            const data = await res.json();
+            if (data.url) {
+                window.location.href = data.url;
+            }
+        } catch (err) {
+            console.error("Guest checkout error:", err);
+        }
+    };
+
 
     if (cart.length === 0) {
         return (
@@ -187,7 +216,8 @@ const Cart = () => {
                             </h6>
 
                             <div className="flex items-center py-4 md:justify-center max-w-96 w-full">
-                                <Link href="/menu" className="border-2 bg-white text-center main-text-color w-full rounded-full font-bold py-3 text-lg md:text-xl cursor-pointer">
+                                <Link href="/menu"
+                                      className="border-2 bg-white text-center main-text-color w-full rounded-full font-bold py-3 text-lg md:text-xl cursor-pointer">
                                     Order Now
                                 </Link>
                             </div>
@@ -238,7 +268,8 @@ const Cart = () => {
                                                     >
                                                         <FaMinus/>
                                                     </button>
-                                                    <div className="w-10 h-8 text-center bg-white flex items-center justify-center">
+                                                    <div
+                                                        className="w-10 h-8 text-center bg-white flex items-center justify-center">
                                                         <p className={`${manrope.className}`}>{item.quantity}</p></div>
                                                     <button
                                                         className="px-3 py-1 contact-color cursor-pointer text-green-800 h-8"
@@ -327,6 +358,7 @@ const Cart = () => {
                             )}
                         </div>
                     </div>
+
                     <div className="mt-10 flex flex-col items-end space-y-2">
                         <p className={`${manrope.className} font-semibold lg:text-lg`}>Price: £{total}</p>
                         {orderType === "delivery" &&
@@ -339,15 +371,105 @@ const Cart = () => {
                         <div className="flex space-x-4">
                             <Button
                                 className={`${manrope.className} border-2 main-border-color main-block-color cursor-pointer main-text-color`}
-                                variant="outline" onClick={clearCart}>Clear Cart</Button>
+                                variant="outline"
+                                onClick={clearCart}
+                            >
+                                Clear Cart
+                            </Button>
+
                             <Button
                                 className={`${manrope.className} main-button-color text-white cursor-pointer hover:bg-[#833B45]`}
-                                onClick={handleCheckout}>Checkout</Button>
+                                onClick={handleCheckout}
+                            >
+                                Checkout
+                            </Button>
+
+                            <Button
+                                className={`${manrope.className} border-2 main-border-color cursor-pointer`}
+                                variant="outline"
+                                onClick={() => setIsGuest(true)}
+                            >
+                                Pay as guest
+                            </Button>
                         </div>
+
                     </div>
                 </div>
             </div>
 
+            {isGuest && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+                    <div
+                        className="bg-white rounded-xl shadow-lg w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+                        <div className="p-6 overflow-y-auto flex-1">
+                            <h3 className={`${raleway.className} text-xl font-bold text-center mb-4`}>
+                                Guest checkout
+                            </h3>
+
+                            <form
+                                onSubmit={(e) => {
+                                    e.preventDefault();
+                                    handleGuestCheckout();
+                                }}
+                                className="space-y-3"
+                            >
+                                <input
+                                    placeholder="Full name"
+                                    className={manrope.className}
+                                    type="text"
+                                    value={guestData.name}
+                                    onChange={e => setGuestData({...guestData, name: e.target.value})}
+                                    required
+                                />
+
+                                <input
+                                    type="email"
+                                    placeholder="Email"
+                                    className={manrope.className}
+                                    value={guestData.email}
+                                    onChange={e => setGuestData({...guestData, email: e.target.value})}
+                                    required
+                                />
+
+                                <input
+                                    placeholder="Phone"
+                                    type="text"
+                                    className={manrope.className}
+                                    value={guestData.phone}
+                                    onChange={e => setGuestData({...guestData, phone: e.target.value})}
+                                    required
+                                />
+
+                                {orderType === "delivery" && (
+                                    <GuestAddressInput
+                                        guestData={guestData}
+                                        setGuestData={setGuestData}
+                                    />
+                                )}
+
+                                <div className="flex space-x-2 p-4">
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        className="w-fit"
+                                        onClick={() => setIsGuest(false)}
+                                    >
+                                        Cancel
+                                    </Button>
+
+                                    <Button
+                                        type="submit"
+                                        form="guest-form"
+                                        className="w-fit main-button-color text-white"
+                                    >
+                                        Pay
+                                    </Button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            )}
 
         </div>
     );
