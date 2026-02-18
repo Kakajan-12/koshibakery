@@ -8,7 +8,7 @@ type OpenTime = {
 };
 
 async function getOpenTimes(): Promise<OpenTime[]> {
-    const res = await fetch("http://localhost:3001/api/open-time", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/open-time`, {
         cache: "no-store",
     });
 
