@@ -1,7 +1,7 @@
 "use client";
 import {useEffect, useState} from "react";
 import Image from "next/image";
-import {quicksand, raleway} from "@/app/fonts";
+import {raleway} from "@/app/fonts";
 import {useCategory} from "@/app/context/CategoryContext";
 import {Navigation} from "swiper/modules";
 import {Swiper, SwiperSlide} from "swiper/react";

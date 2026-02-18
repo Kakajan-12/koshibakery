@@ -1,7 +1,7 @@
 "use client";
 import React, {useEffect, useRef, useState} from "react";
 import Image from "next/image";
-import {manrope, quicksand, raleway, sora, workSans} from "@/app/fonts";
+import {manrope, raleway, workSans} from "@/app/fonts";
 import {FaPoundSign} from "react-icons/fa";
 import {SortOption} from "@/lib/sorts"
 import {useRouter} from "next/navigation";

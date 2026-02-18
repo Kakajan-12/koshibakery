@@ -1,7 +1,7 @@
 'use client';
 
 import {useEffect, useState} from "react";
-import {manrope, quicksand, raleway, sora} from "@/app/fonts";
+import {manrope, raleway, sora} from "@/app/fonts";
 import {IoLocationOutline} from "react-icons/io5";
 import {FiPhone, FiFacebook, FiLinkedin} from "react-icons/fi";
 import {MdOutlineMail} from "react-icons/md";

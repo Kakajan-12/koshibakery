@@ -33,7 +33,7 @@ export default function GuestAddressInput({ guestData, setGuestData }: any) {
                 placeholder="Delivery address"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className={manrope.className}
+                className={`${manrope.className} border main-border-color rounded p-2 w-full`}
                 required
             />
 
