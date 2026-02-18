@@ -1,4 +1,4 @@
-import {manrope, quicksand, raleway, sora} from "@/app/fonts";
+import {manrope, raleway} from "@/app/fonts";
 import Image from "next/image";
 
 type OpenTime = {

@@ -1,7 +1,7 @@
 'use client'
 
 import React, {useEffect, useState} from "react";
-import {manrope, quicksand, raleway, sora} from "@/app/fonts";
+import {manrope, raleway} from "@/app/fonts";
 import {FaPoundSign, FaRegHeart} from "react-icons/fa";
 import Image from "next/image";
 import Categories from "@/components/menu/Categories";

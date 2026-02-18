@@ -40,28 +40,23 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     }, [cart, initialized]);
 
 
-    // ✅ Добавляем товар
     const addToCart = (item: Omit<CartItem, "quantity">) => {
         setCart((prev) => {
-            // Находим точно такой же вариант (id + variantName)
             const existingIndex = prev.findIndex(
                 (p) => p.id === item.id && p.variantName === item.variantName
             );
 
-            // Если уже есть — увеличиваем количество
             if (existingIndex !== -1) {
                 const updated = [...prev];
                 updated[existingIndex].quantity += 1;
                 return updated;
             }
 
-            // Иначе добавляем новый вариант
             return [...prev, { ...item, quantity: 1 }];
         });
     };
 
 
-    // ✅ Обновляем количество по id + variantName
     const updateQuantity = (id: number, variantName: string, quantity: number) => {
         setCart((prev) =>
             prev.map((item) =>
@@ -72,7 +67,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         );
     };
 
-    // ✅ Удаляем строго по id + variantName
     const removeFromCart = (id: number, variantName?: string) => {
         setCart((prev) =>
             prev.filter(
