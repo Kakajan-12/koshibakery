@@ -7,10 +7,9 @@ import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import {manrope} from "@/app/fonts";
 
 export default function CustomOrderPage() {
-    const [orderType, setOrderType] = useState<"standard" | "custom">("standard");
-
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
@@ -35,14 +34,11 @@ export default function CustomOrderPage() {
             formData.append("name", name);
             formData.append("email", email);
             formData.append("phone", phone);
-            formData.append("orderType", orderType);
-            if (orderType === "custom") {
-                formData.append("date", date);
-                formData.append("time", time);
-                formData.append("size", size);
-                formData.append("details", details);
-                if (referenceFile) formData.append("referenceFile", referenceFile);
-            }
+            formData.append("date", date);
+            formData.append("time", time);
+            formData.append("size", size);
+            formData.append("details", details);
+            if (referenceFile) formData.append("referenceFile", referenceFile);
 
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/custom-order`, {
                 method: "POST",
@@ -74,10 +70,10 @@ export default function CustomOrderPage() {
         <div className="flex justify-center pt-36 pb-12">
             <form
                 onSubmit={handleSubmit}
-                className="w-full max-w-xl space-y-4 p-6 border rounded-lg bg-white shadow-md relative"
+                className={`${manrope.className} w-full max-w-xl space-y-4 p-6 border rounded-lg bg-white shadow-md relative`}
             >
-                <h1 className="text-2xl font-bold text-center">Custom order form</h1>
-                <p className="text-center text-gray-600">
+                <h1 className={`${manrope.className} text-2xl font-bold text-center`}>Custom order form</h1>
+                <p className={`${manrope.className} text-center text-gray-600`}>
                     You can submit a standard inquiry or a custom order for cakes, pastries, etc.
                 </p>
 
@@ -87,6 +83,7 @@ export default function CustomOrderPage() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
+                    className={`${manrope.className} w-full max-w-xl space-y-4`}
                 />
                 <Input
                     type="email"
@@ -94,14 +91,15 @@ export default function CustomOrderPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    className={`${manrope.className} w-full max-w-xl space-y-4`}
                 />
                 <Input
                     type="text"
                     placeholder="Phone (optional)"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
+                    className={`${manrope.className} w-full max-w-xl space-y-4`}
                 />
-
 
                 <div className="space-y-3 mt-2">
                     <div className="flex flex-col space-y-2">
@@ -113,12 +111,10 @@ export default function CustomOrderPage() {
                                 }}
                                 dateFormat="yyyy-MM-dd"
                                 minDate={new Date()}
-                                className="w-full px-3 py-2 border rounded-lg cursor-pointer selection-none"
-                                onChangeRaw={(e) => e?.preventDefault()}
+                                className={`${manrope.className} w-full px-3 py-2 border rounded-lg cursor-pointer selection-none`}
                                 placeholderText="Date Required"
                                 required
                             />
-
 
                             <DatePicker
                                 selected={time ? new Date(`1970-01-01T${time}`) : null}
@@ -130,29 +126,31 @@ export default function CustomOrderPage() {
                                 timeIntervals={30}
                                 timeCaption="Time"
                                 dateFormat="HH:mm"
-                                className="w-full px-3 py-2 border rounded-lg cursor-pointer selection-none"
-                                onChangeRaw={(e) => e?.preventDefault()}
+                                className={`${manrope.className}w-full px-3 py-2 border rounded-lg cursor-pointer selection-none`}
                                 placeholderText="Time of delivery"
                                 required
                             />
                         </div>
-
-
                     </div>
+
                     <Input
                         type="text"
                         placeholder="Size (e.g., 6-inch, 1kg)"
                         value={size}
                         onChange={(e) => setSize(e.target.value)}
                         required
+                        className={manrope.className}
                     />
+
                     <Textarea
                         placeholder="Describe your custom order (flavor, design, special requests)"
                         value={details}
                         onChange={(e) => setDetails(e.target.value)}
                         rows={4}
                         required
+                        className={manrope.className}
                     />
+
                     <div>
                         <label className="block text-sm font-medium mb-1">Upload reference image (optional)</label>
                         <input
@@ -160,15 +158,17 @@ export default function CustomOrderPage() {
                             ref={fileInputRef}
                             onChange={(e) => setReferenceFile(e.target.files?.[0] || null)}
                             accept="image/*"
-                            className="w-full border p-2 rounded-md"
+                            className={`${manrope.className} w-full border p-2 rounded-md`}
                         />
                     </div>
                 </div>
 
-
-                <Button type="submit"
-                        className="rounded-full w-full mt-2 main-button-color text-white main-border-color cursor-pointer">Submit
-                    Order</Button>
+                <Button
+                    type="submit"
+                    className="rounded-full w-full mt-2 main-button-color text-white main-border-color cursor-pointer"
+                >
+                    Submit Order
+                </Button>
 
                 {showModal && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/50">
