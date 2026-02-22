@@ -25,9 +25,20 @@ const Contact: React.FC = () => {
     const [message, setMessage] = useState('');
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const mapElement = useMemo(() => {
-        if (!contact?.map) return <p className="text-gray-500 text-center">Map not available</p>;
+        if (!contact?.map) {
+            return (
+                <p className="text-gray-500 text-center">
+                    Map not available
+                </p>
+            );
+        }
 
-        return <div className="w-full h-full" dangerouslySetInnerHTML={{ __html: contact.map }} />;
+        return (
+            <div
+                className="w-full h-full"
+                dangerouslySetInnerHTML={{ __html: contact.map }}
+            />
+        );
     }, [contact?.map]);
 
     useEffect(() => {
@@ -72,6 +83,7 @@ const Contact: React.FC = () => {
         }
     };
 
+
     return (
         <div className="my-container mx-auto pt-24">
             <div className="container mx-auto px-4">
@@ -101,9 +113,11 @@ const Contact: React.FC = () => {
                     ) : (
                         <div className="flex flex-col xl:flex-row xl:space-x-6 space-y-4 py-8">
                             <div className="flex flex-col justify-center space-y-3 xl:w-1/2">
-                                <div className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-2">
-                                    <div className="flex contact-color py-2 px-3 rounded-md space-x-2 xl:h-full w-full items-center">
-                                        <MdOutlineMail className="w-12 h-12 md:w-16 md:h-16 flex-shrink-0" />
+                                <div
+                                    className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-2">
+                                    <div
+                                        className="flex contact-color py-2 px-3 rounded-md space-x-2 xl:h-full w-full items-center">
+                                        <MdOutlineMail className="w-12 h-12 md:w-16 md:h-16 flex-shrink-0"/>
                                         <div className="flex flex-col justify-center">
                                             <div
                                                 className={`${sora.className} font-bold text-lg md:text-xl lg:text-2xl`}
@@ -127,8 +141,9 @@ const Contact: React.FC = () => {
                                         </div>
                                     </div>
 
-                                    <div className="flex contact-color py-2 px-3 rounded-md space-x-2 xl:h-full w-full items-center">
-                                        <FiPhone className="w-10 h-10 md:w-14 md:h-14 flex-shrink-0" />
+                                    <div
+                                        className="flex contact-color py-2 px-3 rounded-md space-x-2 xl:h-full w-full items-center">
+                                        <FiPhone className="w-10 h-10 md:w-14 md:h-14 flex-shrink-0"/>
                                         <div className="flex flex-col justify-center">
                                             <div
                                                 className={`${sora.className} font-bold text-lg md:text-xl lg:text-2xl`}
@@ -154,23 +169,18 @@ const Contact: React.FC = () => {
                                     </div>
                                 </div>
 
-                                {contact?.map ? (
-                                    <div className="relative w-full h-[250px] rounded-lg overflow-hidden">
-                                        <div
-                                            dangerouslySetInnerHTML={{ __html: contact.map }}
-                                            className="w-full h-full"
-                                        />
+                                <div className="relative w-full h-[250px] rounded-lg overflow-hidden">
+                                    {mapElement}
 
+                                    {contact?.map && (
                                         <a
                                             href="https://www.google.com/maps/dir/?api=1&destination=185+Edgware+Rd+London+W2+1ET"
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="absolute inset-0 z-10"
                                         />
-                                    </div>
-                                ) : (
-                                    <p className="text-gray-500 text-center">Map not available</p>
-                                )}
+                                    )}
+                                </div>
 
                             </div>
 

@@ -85,22 +85,42 @@ export default function Footer() {
                             </p>
 
                             <div className="hidden space-y-4 lg:block">
-                                <ContactItem icon={<IoLocationOutline className="w-5 flex-shrink-0"/>}
-                                             text={contact?.address}/>
-                                <ContactItem icon={<FiPhone className="w-5 flex-shrink-0"/>} text={contact?.phone}/>
-                                <ContactItem icon={<MdOutlineMail className="w-5 flex-shrink-0"/>}
-                                             text={contact?.mail}/>
+                                <ContactItem
+                                    icon={<IoLocationOutline className="w-5 flex-shrink-0" />}
+                                    text={contact?.address}
+                                    type="address"
+                                />
+                                <ContactItem
+                                    icon={<FiPhone className="w-5 flex-shrink-0" />}
+                                    text={contact?.phone}
+                                    type="phone"
+                                />
+                                <ContactItem
+                                    icon={<MdOutlineMail className="w-5 flex-shrink-0" />}
+                                    text={contact?.mail}
+                                    type="mail"
+                                />
                             </div>
                         </div>
 
                         <div className="flex justify-between flex-col-reverse md:flex-row">
                             <div className="flex flex-col justify-between space-y-4">
                                 <div className="space-y-2 lg:hidden">
-                                    <ContactItem icon={<IoLocationOutline className="w-5 flex-shrink-0"/>}
-                                                 text={contact?.address}/>
-                                    <ContactItem icon={<FiPhone className="w-5 flex-shrink-0"/>} text={contact?.phone}/>
-                                    <ContactItem icon={<MdOutlineMail className="w-5 flex-shrink-0"/>}
-                                                 text={contact?.mail}/>
+                                    <ContactItem
+                                        icon={<IoLocationOutline className="w-5 flex-shrink-0" />}
+                                        text={contact?.address}
+                                        type="address"
+                                    />
+                                    <ContactItem
+                                        icon={<FiPhone className="w-5 flex-shrink-0" />}
+                                        text={contact?.phone}
+                                        type="phone"
+                                    />
+                                    <ContactItem
+                                        icon={<MdOutlineMail className="w-5 flex-shrink-0" />}
+                                        text={contact?.mail}
+                                        type="mail"
+                                    />
                                 </div>
 
                                 <div className="flex space-x-3 lg:hidden">
@@ -152,11 +172,56 @@ export default function Footer() {
     );
 }
 
-function ContactItem({icon, text}: { icon: React.ReactNode; text?: string }) {
+function ContactItem({
+                         icon,
+                         text,
+                         type,
+                     }: {
+    icon: React.ReactNode;
+    text?: string;
+    type?: "address" | "phone" | "mail";
+}) {
+    if (!text) {
+        return (
+            <div className="flex items-start space-x-2">
+                <span className="text-white flex-shrink-0">{icon}</span>
+                <p className={`${manrope.className} text-white text-sm`}>-</p>
+            </div>
+        );
+    }
+
+    let href: string | undefined;
+
+    if (type === "phone") {
+        href = `tel:${text}`;
+    }
+
+    if (type === "mail") {
+        href = `mailto:${text}`;
+    }
+
+    if (type === "address") {
+        href = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(text)}`;
+    }
+
     return (
         <div className="flex items-start space-x-2">
             <span className="text-white flex-shrink-0">{icon}</span>
-            <p className={`${manrope.className} text-white text-sm`}>{text || "-"}</p>
+
+            {href ? (
+                <a
+                    href={href}
+                    target={type === "address" ? "_blank" : undefined}
+                    rel={type === "address" ? "noopener noreferrer" : undefined}
+                    className={`${manrope.className} text-white text-sm hover:underline`}
+                >
+                    {text}
+                </a>
+            ) : (
+                <p className={`${manrope.className} text-white text-sm`}>
+                    {text}
+                </p>
+            )}
         </div>
     );
 }

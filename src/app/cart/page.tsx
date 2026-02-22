@@ -214,8 +214,15 @@ const Cart = () => {
         checkAuthAndFetchAddresses();
     }, []);
 
+    // Расчет доставки ТОЛЬКО для авторизованных пользователей
     useEffect(() => {
-        if (orderType !== "delivery" || !selectedAddress) {
+        // Не рассчитываем доставку для гостей
+        if (isGuest) {
+            setDeliveryFee(0);
+            return;
+        }
+
+        if (orderType !== "delivery" || !selectedAddress || !isAuthorized) {
             setDeliveryFee(0);
             return;
         }
@@ -243,7 +250,7 @@ const Cart = () => {
         };
 
         calculateDeliveryFee();
-    }, [selectedAddress, orderType]);
+    }, [selectedAddress, orderType, isAuthorized, isGuest]);
 
     useEffect(() => {
         if (orderType === "collect") {
@@ -260,14 +267,21 @@ const Cart = () => {
         }
     }, [orderType]);
 
+    // Убираем расчет доставки для гостей при изменении адреса
     useEffect(() => {
-        if (orderType === "delivery" && guestAddress.addressLine1 && guestAddress.city && validateCity(guestAddress.city)) {
+        // Для гостей не рассчитываем доставку
+        if (isGuest) {
+            setDeliveryFee(0);
+            return;
+        }
+
+        if (orderType === "delivery" && guestAddress.addressLine1 && guestAddress.city && validateCity(guestAddress.city) && isAuthorized) {
             const fullAddress = formatFullAddress(guestAddress);
             calculateDeliveryFeeFromAddress(fullAddress);
         } else {
             setDeliveryFee(0);
         }
-    }, [guestAddress]);
+    }, [guestAddress, isGuest, isAuthorized]);
 
     const calculateDeliveryFeeFromAddress = async (fullAddress: string) => {
         try {
@@ -293,7 +307,9 @@ const Cart = () => {
 
     const customMessageCount = Object.values(showInput).filter(Boolean).length;
     const customMessageFee = customMessageCount * 10;
-    const grandTotal = total + (orderType === "delivery" ? deliveryFee : 0) + customMessageFee;
+
+    // Обновляем расчет итоговой суммы для гостей (без стоимости доставки)
+    const grandTotal = total + customMessageFee + (isAuthorized && !isGuest && orderType === "delivery" ? deliveryFee : 0);
 
     const handleCheckout = async () => {
         const token = localStorage.getItem("token");
@@ -376,10 +392,10 @@ const Cart = () => {
                             ...guestData,
                             address: fullAddress
                         },
-                        deliveryFee,
+                        deliveryFee: 0, // Не передаем стоимость доставки для гостей
                         customMessageFee,
                         orderType,
-                        total: grandTotal,
+                        total: total + customMessageFee, // Итоговая сумма без доставки
                     }),
                 }
             );
@@ -749,81 +765,81 @@ const Cart = () => {
                                         )}
 
                                         {orderType === "collect" && (
-                                         <div>
-                                             <div className="flex flex-col justify-center space-y-3">
-                                                 <div className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-2">
-                                                     <div className="flex contact-color py-2 px-3 rounded-md space-x-2 xl:h-full w-full items-center">
-                                                         <MdOutlineMail className="w-12 h-12 md:w-16 md:h-16 flex-shrink-0" />
-                                                         <div className="flex flex-col justify-center">
-                                                             <div
-                                                                 className={`${sora.className} font-bold text-lg md:text-xl lg:text-2xl`}
-                                                             >
-                                                                 E-mail
-                                                             </div>
-                                                             {contact?.mail ? (
-                                                                 <a
-                                                                     href={`mailto:${contact.mail}`}
-                                                                     className={`${quicksand.className} text-md font-light md:text-lg lg:text-xl`}
-                                                                 >
-                                                                     {contact.mail}
-                                                                 </a>
-                                                             ) : (
-                                                                 <p
-                                                                     className={`${quicksand.className} text-md font-light md:text-lg lg:text-xl`}
-                                                                 >
-                                                                     —
-                                                                 </p>
-                                                             )}
-                                                         </div>
-                                                     </div>
+                                            <div>
+                                                <div className="flex flex-col justify-center space-y-3">
+                                                    <div className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-2">
+                                                        <div className="flex contact-color py-2 px-3 rounded-md space-x-2 xl:h-full w-full items-center">
+                                                            <MdOutlineMail className="w-12 h-12 md:w-16 md:h-16 flex-shrink-0" />
+                                                            <div className="flex flex-col justify-center">
+                                                                <div
+                                                                    className={`${sora.className} font-bold text-lg md:text-xl lg:text-2xl`}
+                                                                >
+                                                                    E-mail
+                                                                </div>
+                                                                {contact?.mail ? (
+                                                                    <a
+                                                                        href={`mailto:${contact.mail}`}
+                                                                        className={`${quicksand.className} text-md font-light md:text-lg lg:text-xl`}
+                                                                    >
+                                                                        {contact.mail}
+                                                                    </a>
+                                                                ) : (
+                                                                    <p
+                                                                        className={`${quicksand.className} text-md font-light md:text-lg lg:text-xl`}
+                                                                    >
+                                                                        —
+                                                                    </p>
+                                                                )}
+                                                            </div>
+                                                        </div>
 
-                                                     <div className="flex contact-color py-2 px-3 rounded-md space-x-2 xl:h-full w-full items-center">
-                                                         <FiPhone className="w-10 h-10 md:w-14 md:h-14 flex-shrink-0" />
-                                                         <div className="flex flex-col justify-center">
-                                                             <div
-                                                                 className={`${sora.className} font-bold text-lg md:text-xl lg:text-2xl`}
-                                                             >
-                                                                 Phone
-                                                             </div>
-                                                             {contact?.phone ? (
-                                                                 <a
-                                                                     href={`tel:${contact.phone}`}
-                                                                     className={`${quicksand.className} text-md font-light md:text-lg lg:text-xl`}
-                                                                 >
-                                                                     {contact.phone}
-                                                                 </a>
-                                                             ) : (
-                                                                 <p
-                                                                     className={`${quicksand.className} text-md font-light md:text-lg lg:text-xl`}
-                                                                 >
-                                                                     —
-                                                                 </p>
-                                                             )}
+                                                        <div className="flex contact-color py-2 px-3 rounded-md space-x-2 xl:h-full w-full items-center">
+                                                            <FiPhone className="w-10 h-10 md:w-14 md:h-14 flex-shrink-0" />
+                                                            <div className="flex flex-col justify-center">
+                                                                <div
+                                                                    className={`${sora.className} font-bold text-lg md:text-xl lg:text-2xl`}
+                                                                >
+                                                                    Phone
+                                                                </div>
+                                                                {contact?.phone ? (
+                                                                    <a
+                                                                        href={`tel:${contact.phone}`}
+                                                                        className={`${quicksand.className} text-md font-light md:text-lg lg:text-xl`}
+                                                                    >
+                                                                        {contact.phone}
+                                                                    </a>
+                                                                ) : (
+                                                                    <p
+                                                                        className={`${quicksand.className} text-md font-light md:text-lg lg:text-xl`}
+                                                                    >
+                                                                        —
+                                                                    </p>
+                                                                )}
 
-                                                         </div>
-                                                     </div>
-                                                 </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
 
-                                                 {contact?.map ? (
-                                                     <div className="relative w-full h-[250px] rounded-lg overflow-hidden">
-                                                         <div
-                                                             dangerouslySetInnerHTML={{ __html: contact.map }}
-                                                             className="w-full h-full"
-                                                         />
+                                                    {contact?.map ? (
+                                                        <div className="relative w-full h-[250px] rounded-lg overflow-hidden">
+                                                            <div
+                                                                dangerouslySetInnerHTML={{ __html: contact.map }}
+                                                                className="w-full h-full"
+                                                            />
 
-                                                         <a
-                                                             href="https://www.google.com/maps/dir/?api=1&destination=185+Edgware+Rd+London+W2+1ET"
-                                                             target="_blank"
-                                                             rel="noopener noreferrer"
-                                                             className="absolute inset-0 z-10"
-                                                         />
-                                                     </div>
-                                                 ) : (
-                                                     <p className="text-gray-500 text-center">Map not available</p>
-                                                 )}
+                                                            <a
+                                                                href="https://www.google.com/maps/dir/?api=1&destination=185+Edgware+Rd+London+W2+1ET"
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="absolute inset-0 z-10"
+                                                            />
+                                                        </div>
+                                                    ) : (
+                                                        <p className="text-gray-500 text-center">Map not available</p>
+                                                    )}
 
-                                             </div>
-                                         </div>
+                                                </div>
+                                            </div>
                                         )}
 
                                         <div className="flex justify-end space-x-2 p-4">
@@ -851,10 +867,20 @@ const Cart = () => {
 
                     <div className="mt-10 flex flex-col items-end space-y-2">
                         <p className={`${manrope.className} font-semibold lg:text-lg`}>Price: £{total}</p>
-                        {orderType === "delivery" && deliveryFee > 0 && (
-                            <p className={`${manrope.className} font-semibold lg:text-lg`}>
-                                Delivery: £{deliveryFee.toFixed(2)}
-                            </p>
+
+                        {/* Изменяем отображение доставки для гостей */}
+                        {orderType === "delivery" && (
+                            isGuest ? (
+                                <p className={`${manrope.className} text-sm italic text-gray-600 max-w-md text-right`}>
+                                    Delivery fees to be confirmed via email address given or phone number as fees may differ based on distance.
+                                </p>
+                            ) : (
+                                deliveryFee > 0 && (
+                                    <p className={`${manrope.className} font-semibold lg:text-lg`}>
+                                        Delivery: £{deliveryFee.toFixed(2)}
+                                    </p>
+                                )
+                            )
                         )}
 
                         {customMessageFee > 0 && (

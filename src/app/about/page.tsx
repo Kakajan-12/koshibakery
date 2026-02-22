@@ -23,8 +23,8 @@ async function getOpenTimes(): Promise<OpenTime[]> {
 const About = async () => {
     const openTimes = await getOpenTimes();
     return (
-        <div className="flex flex-col space-y-6">
-            <div className="my-container mx-auto mt-[60px] main-block-color py-10 sm:py-0">
+        <div className="flex flex-col">
+            <div className="my-container main-block-color py-10 sm:py-0">
                 <div className="container mx-auto px-4">
                     <div className="flex items-center lg:max-h-screen">
                         <div className="hidden sm:block w-1/3">
@@ -55,70 +55,75 @@ const About = async () => {
 
                 </div>
             </div>
-            <div className="container mx-auto px-4">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 pb-14 items-stretch">
-                    <div className=" h-[400px] lg:h-full">
-                        <div className="relative w-full h-full rounded-lg overflow-hidden shadow-xl">
-                            <Image
-                                src="/images/about.jpg"
-                                alt="Koşi Bakery interior with delicious pastries"
-                                fill
-                                className="object-cover"
-                                priority
-                                sizes="(max-width: 1024px) 100vw, 50vw"
-                            />
-                            <div
-                                className="absolute inset-0 bg-gradient-to-r from-black/10 to-transparent lg:bg-gradient-to-l"></div>
-                        </div>
-                    </div>
-
-                    <div className="flex flex-col justify-center">
-                        <div
-                            className="rounded-md main-block-color py-12 px-8 lg:px-12 space-y-6 lg:space-y-8 h-full flex flex-col justify-center">
-                            <div className="space-y-4">
-                                <h1 className={`${raleway.className} text-3xl lg:text-5xl font-bold text-gray-900`}>
-                                    Koşi bakery
-                                </h1>
-                                <div className="space-y-4">
-                                    <p className={`${manrope.className} text-base lg:text-lg text-gray-700 leading-relaxed`}>
-                                        At Koşi Bakery, we serve more than just pastries — we offer a story in every
-                                        bite. From elegant patisserie
-                                        items to rustic favourites and modern classics, our menu reflects both our
-                                        Turkmen heritage and the multicultural
-                                        spirit of London.
-                                    </p>
-                                    <p className={`${manrope.className} text-base lg:text-lg text-gray-700 leading-relaxed`}>
-                                        Whether you're visiting for a sweet treat, a custom cake, or something truly
-                                        unique, Koşi Bakery
-                                        is your home for heartfelt, handcrafted baking.
-                                    </p>
-                                </div>
+            <div className="my-container main-background-color">
+                <div className="container mx-auto px-4 pt-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 pb-14 items-stretch">
+                        <div className="h-[400px] lg:h-full">
+                            <div className="relative w-full h-full rounded-lg overflow-hidden shadow-xl">
+                                <Image
+                                    src="/images/about.webp"
+                                    alt="Koşi Bakery interior with delicious pastries"
+                                    fill
+                                    className="object-cover"
+                                    priority
+                                    sizes="(max-width: 1024px) 100vw, 50vw"
+                                />
+                                <div
+                                    className="absolute inset-0 bg-gradient-to-r from-black/10 to-transparent lg:bg-gradient-to-l"></div>
                             </div>
+                        </div>
 
-                            <div className="space-y-4 pt-4">
-                                <h2 className={`${manrope.className} text-xl lg:text-2xl font-bold text-gray-900`}>
-                                    Opening hours:
-                                </h2>
-                                <div className="space-y-3">
-                                    {openTimes.map((item) => (
-                                        <div
-                                            key={item.id}
-                                            className="flex justify-between items-center pb-2"
-                                        >
-                                            <span className={`${manrope.className} text-base lg:text-lg font-medium text-gray-800`}>
+                        <div className="flex flex-col justify-center">
+                            <div
+                                className="rounded-md main-block-color py-12 px-8 lg:px-12 space-y-6 lg:space-y-8 h-full flex flex-col justify-center">
+                                <div className="space-y-4">
+                                    <h1 className={`${raleway.className} text-3xl lg:text-5xl font-bold text-gray-900`}>
+                                        Koşi bakery
+                                    </h1>
+                                    <div className="space-y-4">
+                                        <p className={`${manrope.className} text-base lg:text-lg text-gray-700 leading-relaxed`}>
+                                            At Koşi Bakery, we serve more than just pastries — we offer a story in every
+                                            bite. From elegant patisserie
+                                            items to rustic favourites and modern classics, our menu reflects both our
+                                            Turkmen heritage and the multicultural
+                                            spirit of London.
+                                        </p>
+                                        <p className={`${manrope.className} text-base lg:text-lg text-gray-700 leading-relaxed`}>
+                                            Whether you're visiting for a sweet treat, a custom cake, or something truly
+                                            unique, Koşi Bakery
+                                            is your home for heartfelt, handcrafted baking.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-4 pt-4">
+                                    <h2 className={`${manrope.className} text-xl lg:text-2xl font-bold text-gray-900`}>
+                                        Opening hours:
+                                    </h2>
+                                    <div className="space-y-3">
+                                        {openTimes.map((item) => (
+                                            <div
+                                                key={item.id}
+                                                className="flex justify-between items-center pb-2"
+                                            >
+                                            <span
+                                                className={`${manrope.className} text-base lg:text-lg font-medium text-gray-800`}>
                                               {item.days}
                                             </span>
-                                            <span className={`${manrope.className} text-base lg:text-lg font-semibold text-gray-900`}>
+                                                <span
+                                                    className={`${manrope.className} text-base lg:text-lg font-semibold text-gray-900`}>
                                               {item.times}
                                             </span>
-                                        </div>
-                                    ))}
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
         </div>
 
 

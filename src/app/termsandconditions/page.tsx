@@ -2,6 +2,7 @@
 
 import {GoPlus} from "react-icons/go";
 import React, {useState} from "react";
+import {manrope} from "@/app/fonts";
 
 const Terms = () => {
     const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -242,22 +243,26 @@ const Terms = () => {
 
 
     return (
-        <div className="container mx-auto px-4">
-            <div className="py-24">
+        <div className="container mx-auto px-4 pt-28">
+            <div className="main-block-color py-8 rounded-lg">
                 <div className="text-center text-xl sm:text-2xl lg:text-3xl xl:text-4xl">
                     Terms and conditions
                 </div>
                 <div className="max-w-[950px] mx-auto space-y-2">
-                    <p className="text-md xl:text-lg">
-                        Please read these terms and conditions (the "Terms and Conditions") carefully before using this
-                        website. By using this website/placing an order you (as website user and / or customer) agree to
-                        be bound by the Terms and Conditions set out below. Please ensure you have also read the Privacy
+                    <p className={`${manrope.className} text-md xl:text-lg`}>
+                        Please read these terms and conditions (the "Terms and Conditions") carefully before using
+                        this
+                        website. By using this website/placing an order you (as website user and / or customer)
+                        agree to
+                        be bound by the Terms and Conditions set out below. Please ensure you have also read the
+                        Privacy
                         Policy. Any questions or complaints regarding our service or terms and conditions, please
                         contact us at: <span className="font-bold">cakesjandk@gmail.com</span> or on <span
-                        className="font-bold">15369008</span>
+                        className="font-bold">+44 7342 978654</span>
                     </p>
-                    <p>
-                        Please note that all card transactions processed on our shop page are handled securely by Stripe
+                    <p className={`${manrope.className} text-md xl:text-lg`}>
+                        Please note that all card transactions processed on our shop page are handled securely by
+                        Stripe
                         (For T's & C's see 8.0)
                     </p>
 
@@ -267,7 +272,7 @@ const Terms = () => {
                                 onClick={() => toggleAccordion(index)}
                                 className="w-full flex justify-between items-center px-4 py-3 cursor-pointer text-left"
                             >
-                                <span className="text-lg md:text-xl font-medium">{item.title}</span>
+                                <span className={`${manrope.className} text-lg md:text-xl font-medium`}>{item.title}</span>
                                 <GoPlus
                                     className={`transform transition-transform duration-300 text-[#264D30] ${
                                         openIndex === index ? "rotate-45" : ""
@@ -283,7 +288,7 @@ const Terms = () => {
                                 }}
                             >
                                 <div
-                                    className="px-4 pb-4 text-sm md:text-base text-gray-600 space-y-3"
+                                    className={`${manrope.className} px-4 pb-4 text-sm md:text-base text-gray-600 space-y-3`}
                                     dangerouslySetInnerHTML={{__html: item.content}}
                                 />
                             </div>
@@ -292,6 +297,7 @@ const Terms = () => {
                 </div>
             </div>
         </div>
+
     )
 }
 

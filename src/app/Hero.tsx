@@ -38,13 +38,13 @@ export default function Hero() {
                 <Swiper
                     modules={[Pagination, Autoplay]}
                     pagination={{clickable: true}}
-                    autoplay={{delay: 5000}}
+                    autoplay={{delay: 3000}}
                     loop
                     className="hero-swiper main-background-color"
                 >
                     {slides.map(slide => (
                         <SwiperSlide key={slide.id}>
-                            <div className="relative min-h-[70vh] lg:min-h-[85vh] flex items-center">
+                            <div className="relative min-h-[70vh] lg:min-h-[95vh] flex items-center">
                                 <Image
                                     src={`${process.env.NEXT_PUBLIC_API_URL}/${slide.image.replace(/\\/g, "/")}`}
                                     alt={slide.title}
