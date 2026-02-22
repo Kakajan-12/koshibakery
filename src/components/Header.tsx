@@ -1,6 +1,6 @@
 "use client";
 
-import {useState, useEffect} from "react";
+import {useState} from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {FiShoppingCart} from "react-icons/fi";
@@ -10,22 +10,11 @@ import { useCart } from "@/app/context/CartContext";
 
 export default function Header() {
     const [menuOpen, setMenuOpen] = useState(false);
-    const [scrolled, setScrolled] = useState(false);
     const { cart } = useCart();
-
-    useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 50);
-        };
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
 
     return (
         <header
-            className={`w-full fixed top-0 z-50 transition-all duration-300 transition-shadow transition-colors bg-white ${
-                scrolled ? "bg-white shadow-md" : "bg-transparent shadow-none"
-            }`}
+            className={`w-full fixed top-0 z-50 bg-white shadow-md`}
         >
             <div
                 className="container mx-auto px-4 py-2 flex items-center justify-between border-b border-black md:border-none">
@@ -34,7 +23,7 @@ export default function Header() {
                     className="flex items-center gap-2 font-bold text-gray-900"
                 >
                     <Image src="/icon.svg" alt="Logo" width={50} height={50}
-                           className="w-20 lg:w-30"/>
+                           className="w-20"/>
                 </Link>
 
                 <nav className="hidden md:flex space-x-6">
@@ -46,12 +35,12 @@ export default function Header() {
                 </nav>
 
                 <div className="flex items-center gap-4">
-                    <Link href="/profile"><BsPerson className="w-8 h-8 cursor-pointer"/></Link>
+                    <Link href="/profile"><BsPerson className="w-6 h-6 cursor-pointer"/></Link>
                     <Link href="/cart" className="relative">
-                        <FiShoppingCart className="w-6 h-6 cursor-pointer"/>
+                        <FiShoppingCart className="w-5 h-5 cursor-pointer"/>
                         {cart.length > 0 && (
                             <span
-                                className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2 py-0.5">
+                                className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5">
             {cart.length}
           </span>
                         )}

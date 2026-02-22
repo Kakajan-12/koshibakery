@@ -18,6 +18,8 @@ interface Slider {
     image: string
     title: string
     text: string
+    link: string
+    link_text: string
 }
 
 export default function Hero() {
@@ -67,12 +69,12 @@ export default function Hero() {
                                             </p>
 
                                             <Link
-                                                href="/menu"
-                                                className="group inline-flex w-fit items-center gap-3 px-6 py-3 rounded-full
+                                                href={slide.link}
+                                                className={`${manrope.className} group inline-flex w-fit items-center gap-3 px-6 py-3 rounded-full
                                                 main-button-color text-white text-lg font-medium shadow-md
-                                                hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                                                hover:shadow-xl transition-all duration-300 hover:-translate-y-1`}
                                             >
-                                                Order now
+                                                {slide.link_text}
                                                 <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                                             </Link>
                                         </div>

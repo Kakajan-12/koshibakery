@@ -9,13 +9,17 @@ import {raleway} from "@/app/fonts";
 
 export const metadata: Metadata = {
     title: {
-        default: "Koshi Bakery",
-        template: "%s | Koshi Bakery",
+        default: "Koşi Bakery",
+        template: "%s | Koşi Bakery",
     },
-    description: "Fresh pastries, breads, and desserts from Koshi Bakery.",
+    description: "Fresh pastries, breads, and desserts from Koşi Bakery.",
     icons: {
         icon: [
-            {url: "/icon.svg", type: "image/svg+xml"},
+            { url: "/favicon.ico" },
+            { url: "/icon.svg", type: "image/svg+xml" },
+        ],
+        apple: [
+            { url: "/logo.png" },
         ],
     },
 };
