@@ -73,9 +73,6 @@ export default function CustomOrderPage() {
                 className={`${manrope.className} w-full max-w-xl space-y-4 p-6 border rounded-lg bg-white shadow-md relative`}
             >
                 <h1 className={`${manrope.className} text-2xl font-bold text-center`}>Custom order form</h1>
-                <p className={`${manrope.className} text-center text-gray-600`}>
-                    You can submit a standard inquiry or a custom order for cakes, pastries, etc.
-                </p>
 
                 <Input
                     type="text"
