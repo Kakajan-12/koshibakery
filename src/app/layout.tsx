@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import {CategoryProvider} from "@/app/context/CategoryContext";
 import {CartProvider} from "@/app/context/CartContext";
+import {AuthProvider} from "@/app/context/AuthContext";
 import {raleway} from "@/app/fonts";
 
 export const metadata: Metadata = {
@@ -32,6 +33,7 @@ export default function RootLayout({
     return (
         <html lang="en">
         <body className={`${raleway.className} main-background-color`}>
+        <AuthProvider>
         <CategoryProvider>
             <CartProvider>
                 <Header />
@@ -39,6 +41,7 @@ export default function RootLayout({
                 <Footer />
             </CartProvider>
         </CategoryProvider>
+        </AuthProvider>
         <Toaster richColors position="top-right" />
         </body>
         </html>

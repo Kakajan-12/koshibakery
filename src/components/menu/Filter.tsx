@@ -1,9 +1,7 @@
 "use client";
 import {useEffect, useState} from "react";
-import {FaSearch} from "react-icons/fa";
-import {FiSliders} from "react-icons/fi";
+import {ArrowUpDown, Check, ChevronDown, Search, SlidersHorizontal, X} from "lucide-react";
 
-import {Button} from "@/components/ui/button";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -13,14 +11,15 @@ import {
 import {
     Dialog,
     DialogContent,
+    DialogDescription,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import {Input} from "@/components/ui/input";
 import {Slider} from "@/components/ui/slider";
 import {SortOption} from "@/lib/sorts"
-import {inter, manrope, raleway} from "@/app/fonts";
+import {manrope, raleway} from "@/app/fonts";
+import {Skeleton} from "@/components/ui/skeleton";
 
 type AvailabilityOption = "all" | "in-stock" | "pre-order";
 
@@ -44,6 +43,28 @@ interface ProductType {
     type_name: string;
 }
 
+// short — подпись на кнопке (коротко, чтобы влезала на телефоне), label — в списке
+const SORT_OPTIONS: { value: SortOption; label: string; short: string }[] = [
+    {value: "all", label: "Recommended", short: "Recommended"},
+    {value: "price-low", label: "Price: Low to High", short: "Price ↑"},
+    {value: "price-high", label: "Price: High to Low", short: "Price ↓"},
+    {value: "alphabetical", label: "Alphabetical: A–Z", short: "A–Z"},
+];
+
+const AVAILABILITY_OPTIONS: { value: AvailabilityOption; label: string }[] = [
+    {value: "all", label: "All"},
+    {value: "in-stock", label: "In stock"},
+    {value: "pre-order", label: "Pre-order"},
+];
+
+// Общий вид кнопок панели: белая «пилюля» той же высоты, что и поиск
+const PILL = `${manrope.className} group inline-flex items-center justify-center gap-2 h-12 px-5 rounded-full bg-white
+    text-sm font-medium text-[#12100F] ring-1 ring-[#B8485B]/15 shadow-sm cursor-pointer transition
+    hover:ring-[#B8485B]/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8485B]/50
+    data-[state=open]:ring-[#B8485B]/50`;
+
+const SECTION_TITLE = `${manrope.className} text-xs font-semibold uppercase tracking-[0.14em] text-[#6F5E53]`;
+
 export default function FilterBar({
                                       sort,
                                       setSort,
@@ -60,6 +81,36 @@ export default function FilterBar({
                                   }: FilterBarProps) {
     const [types, setTypes] = useState<ProductType[]>([]);
     const [loadingTypes, setLoadingTypes] = useState(false);
+
+    // Окно фильтров работает с черновиком: выбор применяется к списку только по «Show results»,
+    // а закрытие окна (крестик, Esc, клик мимо) его отменяет
+    const [filtersOpen, setFiltersOpen] = useState(false);
+    const [draftType, setDraftType] = useState<number | null>(selectedType);
+    const [draftAvailability, setDraftAvailability] = useState<AvailabilityOption>(availability);
+    const [draftPrice, setDraftPrice] = useState<[number, number]>(priceRange);
+
+    const onFiltersOpenChange = (open: boolean) => {
+        if (open) {
+            // Каждый раз начинаем с того, что сейчас применено
+            setDraftType(selectedType);
+            setDraftAvailability(availability);
+            setDraftPrice(priceRange);
+        }
+        setFiltersOpen(open);
+    };
+
+    const applyFilters = () => {
+        setSelectedType(draftType);
+        setAvailability(draftAvailability);
+        setPriceRange(draftPrice);
+        setFiltersOpen(false);
+    };
+
+    const resetDraft = () => {
+        setDraftType(null);
+        setDraftAvailability("all");
+        setDraftPrice([0, maxPrice]);
+    };
 
     useEffect(() => {
         const fetchTypes = async () => {
@@ -81,181 +132,287 @@ export default function FilterBar({
         fetchTypes();
     }, []);
 
-    const sortOptions: { value: SortOption; label: string }[] = [
-        {value: "all", label: "All"},
-        {value: "price-low", label: "Price: Low to High"},
-        {value: "price-high", label: "Price: High to Low"},
-        {value: "alphabetical", label: "Alphabetical: A-Z"},
-    ];
+    const currentSort = SORT_OPTIONS.find((o) => o.value === sort) ?? SORT_OPTIONS[0];
+    const typeName = types.find((t) => t.id === selectedType)?.type_name;
+    const priceFiltered = priceRange[0] > 0 || priceRange[1] < maxPrice;
 
+    // Выбранные фильтры — чипами под панелью; крестик на чипе снимает только его
+    const activeFilters = [
+        selectedType !== null && {key: "type", label: typeName ?? "Occasion", clear: () => setSelectedType(null)},
+        availability !== "all" && {
+            key: "availability",
+            label: AVAILABILITY_OPTIONS.find((o) => o.value === availability)?.label ?? availability,
+            clear: () => setAvailability("all"),
+        },
+        priceFiltered && {
+            key: "price",
+            label: `£${priceRange[0]} – £${priceRange[1]}`,
+            clear: () => setPriceRange([0, maxPrice]),
+        },
+    ].filter(Boolean) as { key: string; label: string; clear: () => void }[];
 
     return (
-        <div className="container mx-auto px-4 py-6 space-y-4">
-            <div className="flex items-center w-full bg-white shadow-sm rounded-full overflow-hidden">
-                <div className="px-3 text-gray-400">
-                    <FaSearch/>
+        <div className="container mx-auto px-4 py-6 space-y-3">
+            <div className="flex flex-col md:flex-row gap-3">
+                <div className="relative flex-1">
+                    <Search
+                        aria-hidden="true"
+                        className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#B8485B]/70"
+                    />
+                    <input
+                        type="search"
+                        aria-label="Search products"
+                        placeholder="Search cakes, biscuits…"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className={`${manrope.className} w-full h-12 pl-12 pr-12 rounded-full bg-white text-sm md:text-base text-[#12100F]
+                                    placeholder:text-gray-400 ring-1 ring-[#B8485B]/15 shadow-sm outline-none transition
+                                    focus:ring-2 focus:ring-[#B8485B]/50 focus:shadow-md
+                                    [&::-webkit-search-cancel-button]:appearance-none`}
+                    />
+                    {search && (
+                        <button
+                            type="button"
+                            aria-label="Clear search"
+                            onClick={() => setSearch("")}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center
+                                       text-gray-500 cursor-pointer transition-colors hover:bg-[#B8485B]/10 hover:text-[#B8485B]"
+                        >
+                            <X className="w-4 h-4"/>
+                        </button>
+                    )}
                 </div>
-                <input
-                    type="text"
-                    placeholder="Cakes..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className={`${manrope.className} flex-1 p-3 outline-none text-sm md:text-md`}
-                />
 
-            </div>
-
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <span className={`${raleway.className} text-color text-md sm:text-lg font-bold`}>Sort By:</span>
-
+                <div className="grid grid-cols-2 md:flex gap-3">
                     <DropdownMenu modal={false}>
                         <DropdownMenuTrigger asChild>
-                            <Button
-                                variant="outline"
-                                className={`${inter.className} min-w-[160px] justify-between shadow-sm cursor-pointer main-block-color`}
-                            >
-                                {sortOptions.find((o) => o.value === sort)?.label}
-                            </Button>
+                            {/* min-w: подписи сортировки разной длины — без него поле поиска «прыгало» при смене */}
+                            <button type="button" className={`${PILL} md:min-w-52 lg:min-w-60`} aria-label={`Sort: ${currentSort.label}`}>
+                                <ArrowUpDown className="w-4 h-4 text-[#B8485B]" aria-hidden="true"/>
+                                <span className="hidden lg:inline text-gray-500">Sort:</span>
+                                <span className="truncate">{currentSort.short}</span>
+                                <ChevronDown
+                                    aria-hidden="true"
+                                    className="w-4 h-4 text-gray-400 transition-transform group-data-[state=open]:rotate-180"
+                                />
+                            </button>
                         </DropdownMenuTrigger>
 
-                        <DropdownMenuContent align="start" className={`${inter.className} w-[160px] cursor-pointer`}>
-                            {sortOptions.map((o) => (
-                                <DropdownMenuItem key={o.value} onClick={() => setSort(o.value)} className={"cursor-pointer"}>
-                                    {o.label}
-                                </DropdownMenuItem>
-                            ))}
+                        <DropdownMenuContent align="end" sideOffset={8} className={`${manrope.className} w-60 rounded-xl p-1.5`}>
+                            {SORT_OPTIONS.map((o) => {
+                                const active = o.value === sort;
+                                return (
+                                    <DropdownMenuItem
+                                        key={o.value}
+                                        onClick={() => setSort(o.value)}
+                                        className={`flex items-center justify-between rounded-lg px-3 py-2 cursor-pointer
+                                                    focus:bg-[#B8485B]/10 focus:text-[#B8485B]
+                                                    ${active ? "text-[#B8485B] font-semibold" : ""}`}
+                                    >
+                                        {o.label}
+                                        {active && <Check className="w-4 h-4 text-[#B8485B]" aria-hidden="true"/>}
+                                    </DropdownMenuItem>
+                                );
+                            })}
                         </DropdownMenuContent>
                     </DropdownMenu>
-                </div>
 
-                <Dialog>
-                    <DialogTrigger asChild>
-                        <Button variant="ghost" size="icon" className="border cursor-pointer main-block-color">
-                            <FiSliders/>
-                        </Button>
-                    </DialogTrigger>
+                    <Dialog open={filtersOpen} onOpenChange={onFiltersOpenChange}>
+                        <DialogTrigger asChild>
+                            <button
+                                type="button"
+                                className={PILL}
+                                aria-label={activeFilters.length ? `Filters, ${activeFilters.length} active` : "Filters"}
+                            >
+                                <SlidersHorizontal className="w-4 h-4 text-[#B8485B]" aria-hidden="true"/>
+                                Filters
+                                {activeFilters.length > 0 && (
+                                    <span
+                                        aria-hidden="true"
+                                        className="min-w-5 h-5 px-1.5 rounded-full bg-[#B8485B] text-white text-[11px] font-semibold
+                                                   flex items-center justify-center leading-none"
+                                    >
+                                        {activeFilters.length}
+                                    </span>
+                                )}
+                            </button>
+                        </DialogTrigger>
 
-                    <DialogContent className="max-w-sm pt-10">
-                        <DialogHeader>
-                            <DialogTitle className="flex justify-between items-center">
-                                <span className={`${raleway.className} font-bold`}>Filter</span>
-                                <button
-                                    onClick={resetFilters}
-                                    className={`${manrope.className} text-sm text-blue-500 cursor-pointer`}
-                                >
-                                    Reset all
-                                </button>
-                            </DialogTitle>
-                        </DialogHeader>
+                        <DialogContent className="sm:max-w-md p-0 gap-0 overflow-hidden rounded-2xl">
+                            <DialogHeader className="px-6 pt-6 pb-4 border-b border-[#B8485B]/10 text-left">
+                                <DialogTitle className={`${raleway.className} text-xl font-bold text-[#12100F]`}>
+                                    Filters
+                                </DialogTitle>
+                                <DialogDescription className={`${manrope.className} text-sm text-[#6F5E53]`}>
+                                    Narrow down the menu to find your treat.
+                                </DialogDescription>
+                            </DialogHeader>
 
-
-                        <div className="space-y-6">
-
-                            <div className="space-y-2">
-                                <p className={`${raleway.className} text-sm text-gray-500`}>Occasion</p>
-                                <div className="grid grid-cols-2 gap-2">
-                                    {loadingTypes && <p className="col-span-2 text-sm text-gray-400">Loading...</p>}
-                                    {!loadingTypes &&
-                                        types.map((t) => (
-                                            <Button
-                                                key={t.id}
-                                                variant="outline"
-                                                onClick={() =>
-                                                    setSelectedType(selectedType === t.id ? null : t.id)
-                                                }
-                                                className={`${manrope.className} justify-center transition-colors rounded-3xl cursor-pointer
-              ${
-                                                    selectedType === t.id
-                                                        ? "main-button-color text-white hover:main-button-color hover:text-white"
-                                                        : "bg-[#F2F4F7] text-gray-700 hover:bg-gray-100"
-                                                }`}
-                                            >
-                                                {t.type_name}
-                                            </Button>
+                            <div className="px-6 py-5 space-y-7 max-h-[60vh] overflow-y-auto">
+                                <section className="space-y-3">
+                                    <h3 className={SECTION_TITLE}>Occasion</h3>
+                                    <div className="flex flex-wrap gap-2">
+                                        {loadingTypes && Array.from({length: 4}).map((_, i) => (
+                                            <Skeleton key={i} className="h-9 w-24 rounded-full"/>
                                         ))}
-                                </div>
-                            </div>
+                                        {!loadingTypes && types.map((t) => {
+                                            const active = draftType === t.id;
+                                            return (
+                                                <button
+                                                    key={t.id}
+                                                    type="button"
+                                                    aria-pressed={active}
+                                                    onClick={() => setDraftType(active ? null : t.id)}
+                                                    className={`${manrope.className} inline-flex items-center gap-1.5 h-9 px-4 rounded-full text-sm
+                                                                cursor-pointer transition-colors focus-visible:outline-none
+                                                                focus-visible:ring-2 focus-visible:ring-[#B8485B]/50
+                                                                ${active
+                                                        ? "bg-[#B8485B] text-white shadow-sm"
+                                                        : "bg-[#F6EEEC] text-[#12100F] hover:bg-[#B8485B]/15"}`}
+                                                >
+                                                    {active && <Check className="w-3.5 h-3.5" aria-hidden="true"/>}
+                                                    {t.type_name}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </section>
 
-                            <div className="space-y-2">
-                                <p className={`${manrope.className} text-sm text-gray-500`}>Availability</p>
-                                <div className="space-y-2">
-                                    <label className={`${manrope.className} flex items-center gap-2 w-fit cursor-pointer`}>
-                                        <input
-                                            type="radio"
-                                            name="availability"
-                                            value="all"
-                                            checked={availability === "all"}
-                                            onChange={() => setAvailability("all")}
-                                        />
-                                        All
-                                    </label>
-                                    <label className={`${manrope.className} flex items-center gap-2 w-fit cursor-pointer`}>
-                                        <input
-                                            type="radio"
-                                            name="availability"
-                                            value="in-stock"
-                                            checked={availability === "in-stock"}
-                                            onChange={() => setAvailability("in-stock")}
-                                        />
-                                        In Stock
-                                    </label>
-                                    <label className={`${manrope.className} flex items-center gap-2 w-fit cursor-pointer`}>
-                                        <input
-                                            type="radio"
-                                            name="availability"
-                                            value="pre-order"
-                                            checked={availability === "pre-order"}
-                                            onChange={() => setAvailability("pre-order")}
-                                        />
-                                        Pre-order
-                                    </label>
-                                </div>
-                            </div>
+                                <section className="space-y-3">
+                                    <h3 className={SECTION_TITLE} id="availability-label">Availability</h3>
+                                    <div
+                                        role="radiogroup"
+                                        aria-labelledby="availability-label"
+                                        className="grid grid-cols-3 p-1 rounded-full bg-[#F6EEEC]"
+                                    >
+                                        {AVAILABILITY_OPTIONS.map((o) => {
+                                            const active = draftAvailability === o.value;
+                                            return (
+                                                <button
+                                                    key={o.value}
+                                                    type="button"
+                                                    role="radio"
+                                                    aria-checked={active}
+                                                    onClick={() => setDraftAvailability(o.value)}
+                                                    className={`${manrope.className} h-9 rounded-full text-sm cursor-pointer transition-all
+                                                                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8485B]/50
+                                                                ${active
+                                                        ? "bg-white text-[#B8485B] font-semibold shadow-sm"
+                                                        : "text-[#6F5E53] hover:text-[#12100F]"}`}
+                                                >
+                                                    {o.label}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </section>
 
+                                <section className="space-y-4">
+                                    <div className="flex items-baseline justify-between">
+                                        <h3 className={SECTION_TITLE}>Price</h3>
+                                        <span className={`${manrope.className} text-sm font-semibold text-[#12100F]`}>
+                                            £{draftPrice[0]} – £{draftPrice[1]}
+                                        </span>
+                                    </div>
 
-                            <div className="space-y-2">
-                                <p className={`${manrope.className} text-sm text-gray-500`}>Price</p>
-                                <div className="flex gap-2">
-                                    <Input
-                                        placeholder="Min"
-                                        type="number"
-                                        value={priceRange[0]}
-                                        onChange={(e) =>
-                                            setPriceRange([Number(e.target.value) || 0, priceRange[1]])
-                                        }
-                                        className={`${manrope.className} w-1/2`}
+                                    <Slider
+                                        value={draftPrice}
+                                        onValueChange={(val) => setDraftPrice(val as [number, number])}
+                                        min={0}
+                                        max={maxPrice}
+                                        step={1}
+                                        aria-label="Price range"
+                                        className="[&_[data-slot=slider-range]]:bg-[#B8485B] [&_[data-slot=slider-thumb]]:border-[#B8485B]"
                                     />
-                                    <Input
-                                        placeholder="Max"
-                                        type="number"
-                                        value={priceRange[1]}
-                                        onChange={(e) =>
-                                            setPriceRange([priceRange[0], Number(e.target.value) || 0])
-                                        }
-                                        className={`${manrope.className} w-1/2`}
-                                    />
-                                </div>
 
-                                <Slider
-                                    value={priceRange}
-                                    onValueChange={(val) => setPriceRange(val as [number, number])}
-                                    min={0}
-                                    max={maxPrice}
-                                    step={1}
-                                    className="[&_[data-slot=slider-range]]:bg-[#B8485B]"
-                                />
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <PriceInput
+                                            label="Min"
+                                            value={draftPrice[0]}
+                                            onChange={(v) => setDraftPrice([v, draftPrice[1]])}
+                                        />
+                                        <PriceInput
+                                            label="Max"
+                                            value={draftPrice[1]}
+                                            onChange={(v) => setDraftPrice([draftPrice[0], v])}
+                                        />
+                                    </div>
+                                </section>
                             </div>
 
-                            <DialogTrigger asChild>
-                                <Button variant="ghost" className="w-full main-button-color hover:main-button-color text-white hover:text-white cursor-pointer">
-                                    Save
-                                </Button>
-                            </DialogTrigger>
-                        </div>
-                    </DialogContent>
-                </Dialog>
+                            <div className="flex items-center gap-3 px-6 py-4 border-t border-[#B8485B]/10 bg-[#FBF7F6]">
+                                <button
+                                    type="button"
+                                    onClick={resetDraft}
+                                    className={`${manrope.className} h-11 px-5 rounded-full text-sm font-medium text-[#6F5E53] cursor-pointer
+                                                transition-colors hover:text-[#B8485B] hover:bg-[#B8485B]/10`}
+                                >
+                                    Reset
+                                </button>
+                                <button
+                                        type="button"
+                                        onClick={applyFilters}
+                                        className={`${manrope.className} flex-1 h-11 rounded-full main-button-color text-white text-sm
+                                                    font-semibold shadow-sm cursor-pointer transition hover:brightness-110
+                                                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8485B]/50
+                                                    focus-visible:ring-offset-2`}
+                                    >
+                                        Show results
+                                    </button>
+                            </div>
+                        </DialogContent>
+                    </Dialog>
+                </div>
             </div>
+
+            {activeFilters.length > 0 && (
+                <div className="flex flex-wrap items-center gap-2">
+                    {activeFilters.map((f) => (
+                        <button
+                            key={f.key}
+                            type="button"
+                            onClick={f.clear}
+                            aria-label={`Remove filter ${f.label}`}
+                            // Панель лежит на бордовом фоне — чипы белые, чтобы читались
+                            className={`${manrope.className} inline-flex items-center gap-1.5 h-8 pl-3 pr-2 rounded-full
+                                        bg-white text-[#B8485B] text-sm font-medium shadow-sm cursor-pointer transition-colors
+                                        hover:bg-[#F6EEEC]`}
+                        >
+                            {f.label}
+                            <X className="w-3.5 h-3.5" aria-hidden="true"/>
+                        </button>
+                    ))}
+                    <button
+                        type="button"
+                        onClick={resetFilters}
+                        className={`${manrope.className} link-underline ml-1 text-sm text-white/80 cursor-pointer hover:text-white`}
+                    >
+                        Clear all
+                    </button>
+                </div>
+            )}
         </div>
+    );
+}
+
+function PriceInput({label, value, onChange}: { label: string; value: number; onChange: (value: number) => void }) {
+    return (
+        <label className="block">
+            <span className={`${manrope.className} block mb-1 text-xs text-[#6F5E53]`}>{label}</span>
+            <span
+                className="flex items-center h-11 px-3 rounded-xl bg-white ring-1 ring-[#B8485B]/20 transition
+                           focus-within:ring-2 focus-within:ring-[#B8485B]/50">
+                <span className={`${manrope.className} text-sm text-gray-400`}>£</span>
+                <input
+                    type="number"
+                    inputMode="numeric"
+                    min={0}
+                    value={value}
+                    onChange={(e) => onChange(Number(e.target.value) || 0)}
+                    className={`${manrope.className} w-full pl-1.5 bg-transparent text-sm text-[#12100F] outline-none
+                                [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
+                />
+            </span>
+        </label>
     );
 }

@@ -1,12 +1,13 @@
 'use client';
 
 import {useEffect, useState} from "react";
-import {manrope, raleway, sora} from "@/app/fonts";
-import {IoLocationOutline} from "react-icons/io5";
-import {FiPhone, FiFacebook, FiLinkedin} from "react-icons/fi";
-import {MdOutlineMail} from "react-icons/md";
-import {FaInstagram, FaTiktok, FaWhatsapp } from "react-icons/fa6";
+import {manrope, raleway} from "@/app/fonts";
+import {Clock, Mail, MapPin, Phone} from "lucide-react";
+import {FiFacebook, FiLinkedin} from "react-icons/fi";
+import {FaInstagram, FaTelegram, FaTiktok, FaWhatsapp} from "react-icons/fa6";
 import {RiTwitterXLine} from "react-icons/ri";
+import {Skeleton} from "@/components/ui/skeleton";
+import {safeHref} from "@/lib/html";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -24,234 +25,224 @@ interface SocialLink {
     url: string;
 }
 
+interface OpenTime {
+    id: number;
+    days: string;
+    times: string;
+}
+
+const NAV = [
+    {href: "/", label: "Home"},
+    {href: "/menu", label: "Menu"},
+    {href: "/custom", label: "Custom order"},
+    {href: "/about", label: "About us"},
+    {href: "/contact", label: "Contact us"},
+];
+
+const HEADING = `${raleway.className} text-white font-bold text-base lg:text-lg mb-4`;
+const TEXT = `${manrope.className} text-sm text-white/80`;
+
+// Каждый блок грузится отдельно: если что-то не загрузилось, остальной футер на месте
+async function getJson<T>(path: string): Promise<T | null> {
+    try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${path}`, {cache: "no-store"});
+        if (!res.ok) throw new Error(`${path} responded ${res.status}`);
+        return await res.json();
+    } catch {
+        return null;
+    }
+}
+
 export default function Footer() {
     const [contact, setContact] = useState<Contact | null>(null);
     const [links, setLinks] = useState<SocialLink[]>([]);
+    const [hours, setHours] = useState<OpenTime[] | null>(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [contactRes, linksRes] = await Promise.all([
-                    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/contact`, {cache: "no-store"}),
-                    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/links`, {cache: "no-store"}),
-                ]);
-
-                if (!contactRes.ok || !linksRes.ok) throw new Error("Ошибка загрузки данных");
-
-                const contactData = await contactRes.json();
-                const linksData = await linksRes.json();
-
-                setContact(contactData[0]);
-                setLinks(linksData);
-            } catch (err: any) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
+        Promise.all([
+            getJson<Contact[]>("/api/contact"),
+            getJson<SocialLink[]>("/api/links"),
+            getJson<OpenTime[]>("/api/open-time"),
+        ]).then(([contactData, linksData, hoursData]) => {
+            setContact(contactData?.[0] ?? null);
+            setLinks(Array.isArray(linksData) ? linksData : []);
+            setHours(Array.isArray(hoursData) ? hoursData : null);
+            setLoading(false);
+        });
     }, []);
 
-    if (loading) return <div className="text-center py-10 text-white">Loading...</div>;
-    if (error) return <div className="text-center py-10 text-red-500">{error}</div>;
+    const address = contact?.address?.trim();
+    const phone = contact?.phone?.trim();
+    const email = contact?.mail?.trim();
 
     return (
-        <div className="my-container mx-auto py-10">
-            <Image src="/footer.png" alt="footer"
-                   width={900} height={300}
-                   className="w-full hidden sm:block"
-            />
-            <Image src="/mob-footer.png" alt="footer"
-                   width={900} height={300}
-                   className="w-full h-24 sm:hidden"
-            />
+        <footer className="my-container mx-auto pt-10">
+            <Image src="/footer.png" alt="" width={900} height={300} className="w-full hidden sm:block" aria-hidden="true"/>
+            <Image src="/mob-footer.png" alt="" width={900} height={300} className="w-full h-24 sm:hidden" aria-hidden="true"/>
+
             <div className="container mx-auto px-4">
-                <div className="py-10">
-                    <div className={`${raleway.className} text-white font-bold mb-3 text-xl md:text-2xl lg:text-3xl xl:text-4xl`}>
-                        Koşi bakery
+                <div className="grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1.3fr_1.1fr] lg:gap-12">
+                    {/* О пекарне и соцсети */}
+                    <div className="space-y-5">
+                        <Link href="/" className={`${raleway.className} inline-block text-3xl font-bold text-white`}>
+                            Koşi Bakery
+                        </Link>
+                        <p className={`${TEXT} max-w-xs leading-relaxed`}>
+                            Handcrafted cakes and patisserie, baked with love in central London since 2019.
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                            <SocialLinks links={links} loading={loading}/>
+                        </div>
                     </div>
 
-                    <div className="lg:flex lg:justify-between lg:space-x-4">
-                        <div className="mb-4 space-y-4 lg:w-2/3">
-                            <p className={`${manrope.className} text-white text-xs sm:text-sm md:text-md`}>
-                                The name “Koşi Bakery”
-                                carries personal significance. It originates from the small, culturally rich town of
-                                Koşi in
-                                Turkmenistan — the birthplace of our founder and the source of much of our culinary
-                                inspiration. We honour these roots by incorporating time-honoured recipes and techniques
-                                into many of our creations.
-                            </p>
+                    <nav aria-label="Footer">
+                        <h2 className={HEADING}>Explore</h2>
+                        <ul className="space-y-2.5">
+                            {NAV.map((item) => (
+                                <li key={item.href}>
+                                    <Link href={item.href} className={`${TEXT} link-underline hover:text-white transition-colors`}>
+                                        {item.label}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </nav>
 
-                            <div className="hidden space-y-4 lg:block">
-                                <ContactItem
-                                    icon={<IoLocationOutline className="w-5 flex-shrink-0" />}
-                                    text={contact?.address}
-                                    type="address"
-                                />
-                                <ContactItem
-                                    icon={<FiPhone className="w-5 flex-shrink-0" />}
-                                    text={contact?.phone}
-                                    type="phone"
-                                />
-                                <ContactItem
-                                    icon={<MdOutlineMail className="w-5 flex-shrink-0" />}
-                                    text={contact?.mail}
-                                    type="mail"
-                                />
+                    <div>
+                        <h2 className={HEADING}>Contact</h2>
+                        <ul className="space-y-3.5">
+                            <ContactItem
+                                icon={MapPin}
+                                text={address}
+                                href={address ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}` : undefined}
+                                external
+                                loading={loading}
+                            />
+                            <ContactItem icon={Phone} text={phone} href={phone ? `tel:${phone.replace(/\s+/g, "")}` : undefined} loading={loading}/>
+                            <ContactItem icon={Mail} text={email} href={email ? `mailto:${email}` : undefined} loading={loading}/>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h2 className={HEADING}>Opening hours</h2>
+                        {loading ? (
+                            <div className="space-y-3">
+                                <Skeleton tone="dark" className="h-4 w-full"/>
+                                <Skeleton tone="dark" className="h-4 w-4/5"/>
                             </div>
-                        </div>
-
-                        <div className="flex justify-between flex-col-reverse md:flex-row">
-                            <div className="flex flex-col justify-between space-y-4">
-                                <div className="space-y-2 lg:hidden">
-                                    <ContactItem
-                                        icon={<IoLocationOutline className="w-5 flex-shrink-0" />}
-                                        text={contact?.address}
-                                        type="address"
-                                    />
-                                    <ContactItem
-                                        icon={<FiPhone className="w-5 flex-shrink-0" />}
-                                        text={contact?.phone}
-                                        type="phone"
-                                    />
-                                    <ContactItem
-                                        icon={<MdOutlineMail className="w-5 flex-shrink-0" />}
-                                        text={contact?.mail}
-                                        type="mail"
-                                    />
-                                </div>
-
-                                <div className="flex space-x-3 lg:hidden">
-                                    <SocialLinks links={links}/>
-                                </div>
-                            </div>
-
-                            <div className="space-y-2 flex flex-col lg:w-full min-w-32 mb-2">
-                                <div className={`${sora.className} text-white font-semibold text-sm md:text-md lg:text-lg`}>Quick Links</div>
-                                <LinkItem href="/about">About Us</LinkItem>
-                                <LinkItem href="/contact">Contact Us</LinkItem>
-                                <LinkItem href="/menu">Menu</LinkItem>
-                                <LinkItem href="/">Main</LinkItem>
-
-                                <div className="hidden flex space-x-3 lg:flex">
-                                    <SocialLinks links={links}/>
-                                </div>
-                            </div>
-                        </div>
+                        ) : hours && hours.length > 0 ? (
+                            <dl className="space-y-3">
+                                {hours.map((h) => (
+                                    <div key={h.id} className="flex items-start gap-3">
+                                        <Clock className="w-4 h-4 shrink-0 mt-0.5 text-white/60" aria-hidden="true"/>
+                                        <div>
+                                            <dt className={TEXT}>{h.days}</dt>
+                                            <dd className={`${manrope.className} text-sm font-semibold text-white tabular-nums lining-nums`}>{h.times}</dd>
+                                        </div>
+                                    </div>
+                                ))}
+                            </dl>
+                        ) : (
+                            <p className={TEXT}>Please contact us for opening hours.</p>
+                        )}
                     </div>
                 </div>
 
-                <div className="flex flex-col md:flex-row justify-center items-center pb-2 md:space-x-4">
-                    <div className={`${raleway.className} text-white text-xs sm:text-sm`}>
-                        All rights reserved
+                <div className={`${manrope.className} flex flex-col items-center gap-3 border-t border-white/15 py-6 text-xs sm:text-sm text-white/70 md:flex-row md:justify-between`}>
+                    <p>© {new Date().getFullYear()} Koşi Bakery. All rights reserved.</p>
+                    <div className="flex items-center gap-4">
+                        <Link className="link-underline hover:text-white transition-colors" href="/termsandconditions">Terms &amp; Conditions</Link>
+                        <span aria-hidden="true" className="text-white/30">·</span>
+                        <Link className="link-underline hover:text-white transition-colors" href="/privacypolicy">Privacy Policy</Link>
                     </div>
-                    <div>
-                        <Link className={`${raleway.className} text-white text-xs sm:text-sm`} href="/termsandconditions">Terms and Conditions</Link>
-                    </div>
-                    <div>
-                        <Link  className={`${raleway.className} text-white text-xs sm:text-sm`} href="/privacypolicy">Privacy Policy</Link>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                        <p className="text-white text-xs sm:text-sm">Powered by</p>
-                        <Image src="/hebent_logo.svg" alt="hebent_logo" width={50} height={50} className="w-5"/>
+                    <div className="flex items-center gap-1.5">
+                        <span>Powered by</span>
+                        <Image src="/hebent_logo.svg" alt="" width={50} height={50} className="w-4" aria-hidden="true"/>
                         <Link
                             href="https://hebent.tech"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-sm md:text-base text-white"
+                            className="link-underline text-white hover:text-white"
                         >
                             Hebent Tech
                         </Link>
                     </div>
-
                 </div>
             </div>
-        </div>
+        </footer>
     );
 }
 
-function ContactItem({
-                         icon,
-                         text,
-                         type,
-                     }: {
-    icon: React.ReactNode;
+function ContactItem({icon: Icon, text, href, external, loading}: {
+    icon: React.ComponentType<{ className?: string }>;
     text?: string;
-    type?: "address" | "phone" | "mail";
+    href?: string;
+    external?: boolean;
+    loading?: boolean;
 }) {
-    if (!text) {
-        return (
-            <div className="flex items-start space-x-2">
-                <span className="text-white flex-shrink-0">{icon}</span>
-                <p className={`${manrope.className} text-white text-sm`}>-</p>
-            </div>
-        );
-    }
-
-    let href: string | undefined;
-
-    if (type === "phone") {
-        href = `tel:${text}`;
-    }
-
-    if (type === "mail") {
-        href = `mailto:${text}`;
-    }
-
-    if (type === "address") {
-        href = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(text)}`;
-    }
-
     return (
-        <div className="flex items-start space-x-2">
-            <span className="text-white flex-shrink-0">{icon}</span>
-
-            {href ? (
+        <li className="flex items-start gap-3">
+            <Icon className="w-4 h-4 shrink-0 mt-0.5 text-white/60" aria-hidden="true"/>
+            {loading ? (
+                <Skeleton tone="dark" className="h-4 w-40"/>
+            ) : !text ? (
+                <span className={TEXT}>—</span>
+            ) : href ? (
                 <a
                     href={href}
-                    target={type === "address" ? "_blank" : undefined}
-                    rel={type === "address" ? "noopener noreferrer" : undefined}
-                    className={`${manrope.className} text-white text-sm hover:underline`}
+                    target={external ? "_blank" : undefined}
+                    rel={external ? "noopener noreferrer" : undefined}
+                    className={`group ${TEXT} hover:text-white transition-colors`}
                 >
-                    {text}
+                    {/* Полоска на строчном span: у длинного адреса она идёт под каждой строкой текста */}
+                    <span className="link-underline">{text}</span>
                 </a>
             ) : (
-                <p className={`${manrope.className} text-white text-sm`}>
-                    {text}
-                </p>
+                <span className={TEXT}>{text}</span>
             )}
-        </div>
+        </li>
     );
 }
 
-function LinkItem({href, children}: { href: string; children: React.ReactNode }) {
-    return (
-        <Link href={href} className={`${manrope.className} text-white text-sm`}>
-            {children}
-        </Link>
-    );
-}
+const ICONS: Record<string, { icon: React.ReactNode; label: string }> = {
+    instagram: {icon: <FaInstagram size={18}/>, label: "Instagram"},
+    facebook: {icon: <FiFacebook size={18}/>, label: "Facebook"},
+    linkedin: {icon: <FiLinkedin size={18}/>, label: "LinkedIn"},
+    twitter: {icon: <RiTwitterXLine size={18}/>, label: "X"},
+    x: {icon: <RiTwitterXLine size={18}/>, label: "X"},
+    tiktok: {icon: <FaTiktok size={18}/>, label: "TikTok"},
+    whatsapp: {icon: <FaWhatsapp size={18}/>, label: "WhatsApp"},
+    telegram: {icon: <FaTelegram size={18}/>, label: "Telegram"},
+};
 
-function SocialLinks({links}: { links: SocialLink[] }) {
-    const iconMap: Record<string, React.ReactNode> = {
-        instagram: <FaInstagram color="#ffffff" size={20}/>,
-        facebook: <FiFacebook color="#ffffff" size={20}/>,
-        linkedin: <FiLinkedin color="#ffffff" size={20}/>,
-        twitter: <RiTwitterXLine color="#ffffff" size={20}/>,
-        x: <RiTwitterXLine color="#ffffff" size={20}/>,
-        tiktok: <FaTiktok color="#ffffff" size={20}/>,
-        whatsapp: <FaWhatsapp color="#ffffff" size={20}/>,
-    };
+function SocialLinks({links, loading}: { links: SocialLink[]; loading?: boolean }) {
+    if (loading) {
+        return <>{Array.from({length: 3}).map((_, i) => <Skeleton key={i} tone="dark" className="size-10 rounded-full"/>)}</>;
+    }
 
     return (
         <>
-            {links.map((item) => (
-                <Link key={item.id} href={item.url} target="_blank" rel="noopener noreferrer">
-                    {iconMap[item.icon.toLowerCase()] ?? null}
-                </Link>
-            ))}
+            {/* Ссылки из админки: javascript: и прочие небезопасные адреса, а также неизвестные иконки не выводим */}
+            {links
+                .filter((item) => safeHref(item.url) && ICONS[item.icon?.toLowerCase()])
+                .map((item) => {
+                    const {icon, label} = ICONS[item.icon.toLowerCase()];
+                    return (
+                        <Link
+                            key={item.id}
+                            href={safeHref(item.url)!}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={label}
+                            title={label}
+                            className="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center transition-colors
+                                       hover:bg-white hover:text-[#B8485B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+                        >
+                            {icon}
+                        </Link>
+                    );
+                })}
         </>
     );
 }

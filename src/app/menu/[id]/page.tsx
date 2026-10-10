@@ -1,14 +1,16 @@
 "use client";
 
+import {formatPrice} from "@/lib/price";
+import {htmlToText, isEmptyHtml, safeHtml} from "@/lib/html";
 import React, {useEffect, useState} from "react";
 import {useParams} from "next/navigation";
 import Image from "next/image";
-import {manrope, quicksand, raleway, sora} from "@/app/fonts";
-import {Button} from "@/components/ui/button";
-import {ChevronLeft, ChevronRight} from "lucide-react";
-import {FaPoundSign} from "react-icons/fa";
-import {GoPlus} from "react-icons/go";
+import {manrope, raleway} from "@/app/fonts";
+import {Check, ChevronDown, ChevronLeft, ChevronRight, Clock, ShoppingBag, Truck, Wheat} from "lucide-react";
 import {useCart} from "@/app/context/CartContext";
+import {Skeleton} from "@/components/ui/skeleton";
+import LoadError from "@/components/LoadError";
+import Link from "next/link";
 
 interface Allergen {
     id: number;
@@ -28,6 +30,8 @@ interface Product {
     product_desc: string;
     product_serves: string;
     product_ingredients: string;
+    product_availability: number | string;
+    category_name?: string | null;
     notice: string;
     delivery: string;
     allergens: Allergen[];
@@ -40,12 +44,54 @@ interface GalleryImage {
     product_id: number;
 }
 
+// Раскрывающийся блок с подробностями (состав, доставка)
+function DetailsSection({title, icon, open, onToggle, children}: {
+    title: string;
+    icon: React.ReactNode;
+    open: boolean;
+    onToggle: () => void;
+    children: React.ReactNode;
+}) {
+    return (
+        <div className="rounded-2xl bg-white ring-1 ring-[#B8485B]/10 overflow-hidden">
+            <button
+                type="button"
+                onClick={onToggle}
+                aria-expanded={open}
+                className="w-full flex items-center gap-3 px-5 py-4 text-left cursor-pointer transition-colors hover:bg-[#FBF7F6]
+                           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#B8485B]/50"
+            >
+                <span className="w-9 h-9 rounded-full bg-[#B8485B]/10 text-[#B8485B] flex items-center justify-center shrink-0">
+                    {icon}
+                </span>
+                <span className={`${raleway.className} flex-1 text-base xl:text-lg font-bold text-[#12100F]`}>{title}</span>
+                <ChevronDown
+                    aria-hidden="true"
+                    className={`w-5 h-5 text-[#B8485B] transition-transform duration-300 ${open ? "rotate-180" : ""}`}
+                />
+            </button>
+            <div
+                className="grid transition-[grid-template-rows] duration-300 ease-out"
+                style={{gridTemplateRows: open ? "1fr" : "0fr"}}
+            >
+                <div className="overflow-hidden">
+                    <div className={`${manrope.className} px-5 pb-5 pt-1 text-sm sm:text-base text-[#6F5E53] space-y-4`}>
+                        {children}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 const MenuItem = () => {
     const {id} = useParams();
     const [product, setProduct] = useState<Product | null>(null);
     const [gallery, setGallery] = useState<GalleryImage[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    // Увеличивается по кнопке «Try again» — запускает загрузку заново
+    const [attempt, setAttempt] = useState(0);
     const [current, setCurrent] = useState(0);
     const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
     const [isIngredientsOpen, setIsIngredientsOpen] = useState(false);
@@ -62,24 +108,20 @@ const MenuItem = () => {
             : false;
 
     const handleAddToCart = () => {
-        if (!product || !selectedVariant) return;
+        if (!product || !selectedVariant || isInCart) return;
 
-        const cartItem = {
+        addToCart({
             id: product.id,
             product_name: product.product_name,
             main_image: product.main_image,
             price: selectedVariant.price,
             variantName: selectedVariant.variant_name,
-        };
-
-        if (isInCart) {
-            removeFromCart(product.id, selectedVariant.variant_name);
-        } else {
-            addToCart(cartItem);
-        }
+        });
     };
 
-
+    const handleRemoveFromCart = () => {
+        if (product && selectedVariant) removeFromCart(product.id, selectedVariant.variant_name);
+    };
 
 
     useEffect(() => {
@@ -90,6 +132,12 @@ const MenuItem = () => {
                     `${process.env.NEXT_PUBLIC_API_URL}/api/product/${id}`,
                     {cache: "no-store"}
                 );
+                // 404 — товара нет (не ошибка сервера): ниже покажем «не найден», а не «не удалось загрузить»
+                if (res.status === 404) {
+                    setProduct(null);
+                    setError(null);
+                    return;
+                }
                 if (!res.ok) throw new Error("Failed to load product");
                 const data = await res.json();
 
@@ -99,6 +147,7 @@ const MenuItem = () => {
                 };
 
                 setProduct(formattedProduct);
+                setError(null);
 
                 if (formattedProduct.variants && formattedProduct.variants.length > 0) {
                     setSelectedVariant(formattedProduct.variants[0]);
@@ -111,7 +160,7 @@ const MenuItem = () => {
             }
         };
         fetchProduct();
-    }, [id]);
+    }, [id, attempt]);
 
     useEffect(() => {
         if (!id) return;
@@ -143,216 +192,331 @@ const MenuItem = () => {
     const next = () => setCurrent((prev) => (prev + 1) % gallery.length);
     const prev = () => setCurrent((prev) => (prev - 1 + gallery.length) % gallery.length);
 
-    if (loading) return <p className="text-center py-10">Loading...</p>;
-    if (error) return <p className="text-center text-red-500 py-10">{error}</p>;
-    if (!product) return <p className="text-center py-10">No product found</p>;
+    if (loading) {
+        return (
+            <div className="mt-24 my-container mx-auto" aria-busy="true" aria-label="Loading product">
+                <div className="container mx-auto px-4 pt-6 pb-16">
+                    <div className="main-block-color p-5 sm:p-8 rounded-3xl">
+                        <Skeleton className="h-4 w-48 mb-6"/>
+                        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
+                            <div>
+                                <Skeleton className="aspect-square w-full rounded-2xl"/>
+                                <div className="flex gap-3 mt-4">
+                                    {Array.from({length: 3}).map((_, i) => <Skeleton key={i} className="w-20 h-20 rounded-xl"/>)}
+                                </div>
+                            </div>
+                            <div className="space-y-4">
+                                <Skeleton className="h-4 w-24"/>
+                                <Skeleton className="h-10 w-3/4"/>
+                                <Skeleton className="h-9 w-28"/>
+                                <Skeleton className="h-4 w-full"/>
+                                <Skeleton className="h-4 w-5/6"/>
+                                <Skeleton className="h-16 w-full rounded-2xl"/>
+                                <div className="flex gap-3 pt-2">
+                                    <Skeleton className="h-14 w-28 rounded-2xl"/>
+                                    <Skeleton className="h-14 w-28 rounded-2xl"/>
+                                </div>
+                                <Skeleton className="h-14 w-full rounded-full"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+    // Ошибка и «не найден» — внутри обычной панели страницы, с отступом под фиксированную шапку
+    if (error || !product) {
+        return (
+            <div className="mt-24 my-container mx-auto">
+                <div className="container mx-auto px-4 pt-6 pb-20">
+                    <div className="main-block-color p-6 rounded-xl min-h-[400px] flex items-center justify-center">
+                        {error ? (
+                            <LoadError
+                                what="this product"
+                                onRetry={() => {
+                                    setError(null);
+                                    setLoading(true);
+                                    setAttempt((a) => a + 1);
+                                }}
+                            />
+                        ) : (
+                            <div className="text-center space-y-3 py-10">
+                                <p className={`${raleway.className} text-xl font-bold text-[#12100F]`}>Product not found</p>
+                                <p className={`${manrope.className} text-sm text-[#6F5E53]`}>
+                                    It may have been removed from the menu.
+                                </p>
+                                <Link href="/menu" className={`${manrope.className} link-underline text-sm font-semibold text-[#B8485B]`}>
+                                    Back to the menu
+                                </Link>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    const inStock = Number(product.product_availability) === 1;
+    const productName = htmlToText(product.product_name);
+    const hasIngredients = !isEmptyHtml(product.product_ingredients);
+    const hasAllergens = product.allergens && product.allergens.length > 0;
+    const hasDelivery = !isEmptyHtml(product.delivery);
+    const multipleImages = gallery.length > 1;
 
     return (
         <div className="mt-24 my-container mx-auto">
-            <div className="container mx-auto px-4 pt-6">
-                <div className="main-block-color p-6 rounded-xl">
-                    <div className="flex flex-col lg:flex-row lg:space-x-4">
-                        <div className="w-full">
-                            {gallery.length > 0 && (
+            <div className="container mx-auto px-4 pt-6 pb-16">
+                <div className="main-block-color p-5 sm:p-8 rounded-3xl">
+                    <nav aria-label="Breadcrumb" className={`${manrope.className} mb-6 text-sm text-[#6F5E53]`}>
+                        <ol className="flex flex-wrap items-center gap-1.5">
+                            <li><Link href="/menu" className="link-underline hover:text-[#B8485B]">Menu</Link></li>
+                            {product.category_name && (
                                 <>
-                                    <div className="relative overflow-hidden rounded-lg group">
-                                        <div className="aspect-[4/3] w-full relative overflow-hidden cursor-zoom-in">
-                                            <Image
-                                                src={gallery[current].image}
-                                                alt={`image-${current}`}
-                                                fill
-                                                sizes="(max-width: 768px) 100vw, 700px"
-                                                className="object-cover transition-transform duration-300 group-hover:scale-110"
-                                            />
-                                        </div>
-                                        <button
-                                            onClick={prev}
-                                            className="absolute top-1/2 left-2 -translate-y-1/2 bg-white/70 hover:bg-white rounded-full p-2 shadow transition"
-                                        >
-                                            <ChevronLeft className="w-5 h-5 text-gray-800"/>
-                                        </button>
-                                        <button
-                                            onClick={next}
-                                            className="absolute top-1/2 right-2 -translate-y-1/2 bg-white/70 hover:bg-white rounded-full p-2 shadow transition"
-                                        >
-                                            <ChevronRight className="w-5 h-5 text-gray-800"/>
-                                        </button>
-                                    </div>
-
-                                    <div className="flex justify-center mt-3 gap-2">
-                                        {gallery.map((img, index) => (
-                                            <div
-                                                key={index}
-                                                className={`relative w-16 h-16 rounded-md overflow-hidden cursor-pointer border-2 transition 
-                                        ${index === current ? "border-[#A16D89]" : "border-transparent"}`}
-                                                onClick={() => setCurrent(index)}
-                                            >
-                                                <Image
-                                                    src={img.image}
-                                                    alt={`thumb-${index}`}
-                                                    fill
-                                                    className="object-cover"
-                                                />
-                                            </div>
-                                        ))}
-                                    </div>
+                                    <li aria-hidden="true"><ChevronRight className="w-3.5 h-3.5"/></li>
+                                    <li>{product.category_name}</li>
                                 </>
                             )}
-                        </div>
-                        <div className="w-full">
-                            <div className="space-y-1 pt-4">
-                                <h1
-                                    className={`${raleway.className} text-2xl sm:text-3xl lg:text-4xl`}
-                                    dangerouslySetInnerHTML={{__html: product.product_name}}
-                                />
-                                <div className={`${manrope.className} text-sm sm:text-md text-[#6F5E53]`}
-                                     dangerouslySetInnerHTML={{__html: product.product_desc}}/>
-                                <div
-                                    className={`${manrope.className} text-sm sm:text-md text-red-800`}>{product.notice}</div>
-                                {/*<p className="text-sm text-gray-600">Serves: {product.product_serves}</p>*/}
-                            </div>
+                            <li aria-hidden="true"><ChevronRight className="w-3.5 h-3.5"/></li>
+                            <li aria-current="page" className="font-semibold text-[#12100F]">{productName}</li>
+                        </ol>
+                    </nav>
 
-                            <div className="flex items-center space-x-2 pt-2">
-                                <p className={`${raleway.className} text-lg sm:text-2xl font-bold`}>Size:</p>
-                                <div className="flex space-x-2">
-                                    {product.variants?.map((variant) => (
-                                        <Button
-                                            key={variant.id}
-                                            onClick={() => setSelectedVariant(variant)}
-                                            className={`${quicksand.className} rounded-full px-4 py-1 text-sm transition-colors cursor-pointer
-    ${
-                                                selectedVariant?.id === variant.id
-                                                    ? "main-button-color text-white hover:bg-[#A16D89]"
-                                                    : "bg-transparent border main-border-color variant-text-color hover:bg-[#B8485B] hover:!text-white"
-                                            }`}
+                    <div className="grid lg:grid-cols-2 gap-8 xl:gap-12 items-start">
+                        {/* Галерея: стрелки и счётчик — только если фото больше одного */}
+                        <div className="lg:sticky lg:top-28">
+                            <div className="relative aspect-square overflow-hidden rounded-2xl bg-white shadow-sm">
+                                {gallery.length > 0 && (
+                                    <Image
+                                        src={gallery[current].image}
+                                        alt={`${productName} — photo ${current + 1}`}
+                                        fill
+                                        priority
+                                        sizes="(max-width: 1024px) 100vw, 600px"
+                                        className="object-cover"
+                                    />
+                                )}
+                                {multipleImages && (
+                                    <>
+                                        <button
+                                            type="button"
+                                            onClick={prev}
+                                            aria-label="Previous photo"
+                                            className="absolute top-1/2 left-3 -translate-y-1/2 w-10 h-10 rounded-full bg-white/85 backdrop-blur-sm shadow-md
+                                                       flex items-center justify-center cursor-pointer transition hover:bg-white hover:scale-105"
                                         >
-                                            {variant.variant_name}
-                                        </Button>
-
-                                    ))}
-
-                                </div>
+                                            <ChevronLeft className="w-5 h-5 text-[#12100F]"/>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={next}
+                                            aria-label="Next photo"
+                                            className="absolute top-1/2 right-3 -translate-y-1/2 w-10 h-10 rounded-full bg-white/85 backdrop-blur-sm shadow-md
+                                                       flex items-center justify-center cursor-pointer transition hover:bg-white hover:scale-105"
+                                        >
+                                            <ChevronRight className="w-5 h-5 text-[#12100F]"/>
+                                        </button>
+                                        <span className={`${manrope.className} absolute bottom-3 right-3 px-2.5 py-1 rounded-full bg-black/55 text-white text-xs`}>
+                                            {current + 1} / {gallery.length}
+                                        </span>
+                                    </>
+                                )}
                             </div>
 
-                            {selectedVariant && (
-                                <div className="pt-2 flex items-center space-x-2">
-                                    <p className={`${manrope.className} text-md sm:text-lg`}>Price:</p>
+                            {multipleImages && (
+                                <div className="flex gap-3 mt-3 -mx-1.5 p-1.5 overflow-x-auto">
+                                    {gallery.map((img, index) => (
+                                        <button
+                                            key={index}
+                                            type="button"
+                                            onClick={() => setCurrent(index)}
+                                            aria-label={`Show photo ${index + 1}`}
+                                            aria-current={index === current}
+                                            className={`relative w-20 h-20 shrink-0 rounded-xl overflow-hidden cursor-pointer transition
+                                                ${index === current
+                                                ? "ring-2 ring-[#B8485B] ring-offset-2 ring-offset-[#F6EEEC]"
+                                                : "opacity-70 hover:opacity-100"}`}
+                                        >
+                                            <Image src={img.image} alt="" fill sizes="80px" className="object-cover"/>
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="space-y-6">
+                            <div className="space-y-3">
+                                <div className="flex flex-wrap items-center gap-3">
+                                    {product.category_name && (
+                                        <span className={`${manrope.className} text-xs uppercase tracking-[0.16em] text-[#B8485B]`}>
+                                            {product.category_name}
+                                        </span>
+                                    )}
+                                    <span
+                                        className={`${manrope.className} inline-flex items-center gap-1.5 h-7 px-3 rounded-full bg-white text-xs font-semibold shadow-sm ${
+                                            inStock ? "text-[#2F6B3F]" : "text-[#9A5B13]"
+                                        }`}
+                                    >
+                                        <span className={`w-1.5 h-1.5 rounded-full ${inStock ? "bg-[#3C9A57]" : "bg-[#D18A2C]"}`} aria-hidden="true"/>
+                                        {inStock ? "In stock" : "Pre-order"}
+                                    </span>
+                                </div>
+
+                                <h1
+                                    className={`${raleway.className} text-3xl sm:text-4xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-bold text-[#12100F] leading-tight`}
+                                    dangerouslySetInnerHTML={{__html: safeHtml(product.product_name)}}
+                                />
+
+                                {selectedVariant && (
+                                    <p className={`${manrope.className} text-2xl sm:text-3xl lg:text-2xl xl:text-3xl font-bold text-[#B8485B]`}>
+                                        £{formatPrice(selectedVariant.price)}
+                                    </p>
+                                )}
+
+                                {!isEmptyHtml(product.product_desc) && (
                                     <div
-                                        className={`${manrope.className} flex items-center text-md sm:text-lg font-bold`}
-                                    ><FaPoundSign size={14} className="font-normal"/>
-                                        {selectedVariant.price}
+                                        className={`${manrope.className} text-base sm:text-lg lg:text-base xl:text-lg text-[#6F5E53] leading-relaxed`}
+                                        dangerouslySetInnerHTML={{__html: safeHtml(product.product_desc)}}
+                                    />
+                                )}
+                            </div>
+
+                            {!isEmptyHtml(product.notice) && (
+                                <div className="flex items-start gap-3 rounded-2xl bg-[#FFF6E8] ring-1 ring-[#D18A2C]/25 p-4">
+                                    <Clock className="w-5 h-5 shrink-0 text-[#9A5B13] mt-0.5" aria-hidden="true"/>
+                                    <div
+                                        className={`${manrope.className} text-sm text-[#7A4A12]`}
+                                        dangerouslySetInnerHTML={{__html: safeHtml(product.notice)}}
+                                    />
+                                </div>
+                            )}
+
+                            {product.variants && product.variants.length > 0 && (
+                                <div className="space-y-3">
+                                    <p className={`${raleway.className} text-base font-bold text-[#12100F]`} id="size-label">
+                                        Size
+                                    </p>
+                                    <div role="radiogroup" aria-labelledby="size-label" className="flex flex-wrap gap-3">
+                                        {product.variants.map((variant) => {
+                                            const active = selectedVariant?.id === variant.id;
+                                            return (
+                                                <button
+                                                    key={variant.id}
+                                                    type="button"
+                                                    role="radio"
+                                                    aria-checked={active}
+                                                    onClick={() => setSelectedVariant(variant)}
+                                                    className={`${manrope.className} min-w-28 px-4 py-2.5 rounded-2xl text-left cursor-pointer transition
+                                                                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8485B]/50 ${
+                                                        active
+                                                            ? "bg-[#B8485B] text-white shadow-md"
+                                                            : "bg-white text-[#12100F] ring-1 ring-[#B8485B]/20 hover:ring-[#B8485B]/50"
+                                                    }`}
+                                                >
+                                                    <span className="block text-sm font-semibold">{variant.variant_name}</span>
+                                                    <span className={`block text-xs ${active ? "text-white/80" : "text-[#6F5E53]"}`}>
+                                                        £{formatPrice(variant.price)}
+                                                    </span>
+                                                </button>
+                                            );
+                                        })}
                                     </div>
                                 </div>
                             )}
-                            <div className="flex items-center py-4">
-                                <Button
-                                    onClick={handleAddToCart}
-                                    className={`${sora.className} border-2 w-full md:w-72 rounded-full font-bold py-3 text-md transition-colors cursor-pointer
-      ${
-                                        isInCart
-                                            ? "bg-red-600 text-white border-red-600 hover:bg-red-700"
-                                            : "bg-transparent main-text-color main-border-color hover:bg-transparent"
-                                    }`}
-                                >
-                                    {isInCart ? "Remove from Cart" : "Order Now"}
-                                </Button>
-                            </div>
 
-                        </div>
-                    </div>
-
-
-                    <div className="lg:flex lg:space-x-8 lg:justify-between pt-6">
-                        <div className="w-full">
-                            <div>
-                                <button
-                                    onClick={() => setIsIngredientsOpen(!isIngredientsOpen)}
-                                    className="w-full flex justify-between items-center px-4 py-3 border-b border-[#264D30] cursor-pointer"
-                                >
-                                    <div
-                                        className={`${raleway.className} text-left text-md sm:text-lg md:text-xl lg:text-2xl`}>
-                                        Ingredients and Allergens
-                                    </div>
-
-                                    <GoPlus
-                                        className={`transform transition-transform duration-300 text-[#833B45] ${
-                                            isIngredientsOpen ? "rotate-45" : ""
-                                        }`}
-                                        size={24}
-                                    />
-                                </button>
-
-                                <div
-                                    className={`overflow-hidden transition-[max-height] duration-500 ease-in-out`}
-                                    style={{
-                                        maxHeight: isIngredientsOpen ? "500px" : "0px",
-                                    }}
-                                >
-                                    <div className="px-4 py-3 space-y-3">
-                                        <div>
-                                            <p className={`${raleway.className} text-sm sm:text-md md:text-lg font-semibold`}>Ingredients:</p>
-                                            <p
-                                                className={`${raleway.className} text-sm sm:text-md md:text-lg text-grey-600`}
-                                                dangerouslySetInnerHTML={{__html: product.product_ingredients}}
-                                            />
+                            {/* Кнопка добавляет в корзину; когда товар уже там — показываем это и даём перейти в корзину */}
+                            {isInCart ? (
+                                <div className="space-y-3">
+                                    <div className="flex flex-col sm:flex-row gap-3">
+                                        <div
+                                            role="status"
+                                            className={`${manrope.className} flex-1 inline-flex items-center justify-center gap-2 h-12 xl:h-14 rounded-full
+                                                        bg-[#EAF5EC] text-[#2F6B3F] font-semibold`}
+                                        >
+                                            <Check className="w-5 h-5" aria-hidden="true"/>
+                                            Added to cart
                                         </div>
-
-                                        {product.allergens && product.allergens.length > 0 && (
-                                            <div>
-                                                <p className={`${raleway.className} text-sm sm:text-md md:text-lg font-semibold`}>Allergens:</p>
-                                                <ul className="list-disc pl-5">
-                                                    {product.allergens.map((a) => (
-                                                        <li key={a.id}
-                                                            className={`${raleway.className} text-sm sm:text-md`}>{a.name}</li>
-                                                    ))}
-                                                </ul>
-                                            </div>
-                                        )}
+                                        <Link
+                                            href="/cart"
+                                            className={`${manrope.className} flex-1 inline-flex items-center justify-center gap-2 h-12 xl:h-14 rounded-full
+                                                        main-button-color text-white font-semibold shadow-md transition hover:brightness-110
+                                                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8485B]/50 focus-visible:ring-offset-2`}
+                                        >
+                                            <ShoppingBag className="w-5 h-5" aria-hidden="true"/>
+                                            View cart
+                                        </Link>
                                     </div>
+                                    <button
+                                        type="button"
+                                        onClick={handleRemoveFromCart}
+                                        className={`${manrope.className} link-underline text-sm text-[#6F5E53] cursor-pointer hover:text-[#B8485B]`}
+                                    >
+                                        Remove from cart
+                                    </button>
                                 </div>
-                            </div>
-
-                            <div>
+                            ) : (
                                 <button
-                                    onClick={() => setIsDeliveryOpen(!isDeliveryOpen)}
-                                    className="w-full flex justify-between items-center px-4 py-3 border-b border-[#264D30] cursor-pointer"
+                                    type="button"
+                                    onClick={handleAddToCart}
+                                    disabled={!selectedVariant}
+                                    className={`${manrope.className} w-full inline-flex items-center justify-center gap-2 h-12 xl:h-14 rounded-full
+                                                main-button-color text-white text-base font-semibold shadow-md cursor-pointer transition
+                                                hover:brightness-110 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed
+                                                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8485B]/50 focus-visible:ring-offset-2`}
                                 >
-                                    <div
-                                        className={`${raleway.className} text-left text-md sm:text-lg md:text-xl lg:text-2xl`}>Delivery
-                                    </div>
-
-                                    <GoPlus
-                                        className={`transform transition-transform duration-300 text-[#833B45] ${
-                                            isDeliveryOpen ? "rotate-45" : ""
-                                        }`}
-                                        size={24}
-                                    />
+                                    <ShoppingBag className="w-5 h-5" aria-hidden="true"/>
+                                    Add to cart
+                                    {selectedVariant && <span className="opacity-80">· £{formatPrice(selectedVariant.price)}</span>}
                                 </button>
+                            )}
 
-                                <div
-                                    className={`overflow-hidden transition-[max-height] duration-500 ease-in-out`}
-                                    style={{
-                                        maxHeight: isDeliveryOpen ? "500px" : "0px",
-                                    }}
-                                >
-                                    <div className="px-4 py-3 space-y-3">
-                                        <p
-                                            className={`${raleway.className} text-sm sm:text-md md:text-lg text-gray-600`}
-                                            dangerouslySetInnerHTML={{__html: product.delivery}}
-                                        />
-                                    </div>
+                            {(hasIngredients || hasAllergens || hasDelivery) && (
+                                <div className="space-y-3 pt-2">
+                                    {(hasIngredients || hasAllergens) && (
+                                        <DetailsSection
+                                            title="Ingredients & allergens"
+                                            icon={<Wheat className="w-4 h-4"/>}
+                                            open={isIngredientsOpen}
+                                            onToggle={() => setIsIngredientsOpen(!isIngredientsOpen)}
+                                        >
+                                            {hasIngredients && (
+                                                <div dangerouslySetInnerHTML={{__html: safeHtml(product.product_ingredients)}}/>
+                                            )}
+                                            {hasAllergens && (
+                                                <div className="space-y-2">
+                                                    <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#12100F]">Contains</p>
+                                                    <div className="flex flex-wrap gap-2">
+                                                        {product.allergens.map((a) => (
+                                                            <span key={a.id} className="px-3 py-1 rounded-full bg-[#F6EEEC] text-sm text-[#12100F]">
+                                                                {a.name}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </DetailsSection>
+                                    )}
+
+                                    {hasDelivery && (
+                                        <DetailsSection
+                                            title="Delivery"
+                                            icon={<Truck className="w-4 h-4"/>}
+                                            open={isDeliveryOpen}
+                                            onToggle={() => setIsDeliveryOpen(!isDeliveryOpen)}
+                                        >
+                                            <div dangerouslySetInnerHTML={{__html: safeHtml(product.delivery)}}/>
+                                        </DetailsSection>
+                                    )}
                                 </div>
-                            </div>
+                            )}
                         </div>
                     </div>
 
                     <div
-                        className={`${raleway.className} mt-10 mb-6 text-center font-bold text-md md:text-2xl lg:text-3xl xl:text-5xl max-w-[900px] mx-auto pb-0 md:pb-14`}>Perfect
-                        for special occasions or as a luxurious treat for
-                        yourself.
+                        className={`${raleway.className} mt-16 mb-6 text-center font-bold text-xl md:text-2xl lg:text-3xl xl:text-4xl max-w-[900px] mx-auto text-[#12100F]`}>
+                        Perfect for special occasions or as a luxurious treat for yourself.
                     </div>
                     <div
-                        className="h-20 bg-repeat-x bg-bottom md:h-40 mt-6 mb-10 "
+                        className="h-20 bg-repeat-x bg-bottom md:h-40 mt-6"
                         style={{
                             backgroundImage: "url('/images/cookie1.webp')",
                             backgroundSize: "contain",

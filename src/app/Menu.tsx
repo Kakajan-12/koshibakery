@@ -8,11 +8,21 @@ import {IoIosArrowBack, IoIosArrowForward} from "react-icons/io";
 import {useEffect, useState} from "react";
 import {useCategory} from "@/app/context/CategoryContext";
 import {useRouter} from "next/navigation";
+import {Skeleton} from "@/components/ui/skeleton";
+import LoadError from "@/components/LoadError";
 
 export default function MainMenu() {
     const [menuItems, setMenuItems] = useState<{ name: string; image: string; id: number; }[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    // Увеличивается по кнопке «Try again» — запускает загрузку заново
+    const [attempt, setAttempt] = useState(0);
+
+    const retry = () => {
+        setError(null);
+        setLoading(true);
+        setAttempt((a) => a + 1);
+    };
 
     useEffect(() => {
         const fetchMenu = async () => {
@@ -39,21 +49,43 @@ export default function MainMenu() {
             }
         };
         fetchMenu();
-    }, []);
+    }, [attempt]);
 
 
     if (loading) {
         return (
-            <div className="container mx-auto px-4 py-10 text-center">
-                <p className={`${raleway.className} text-lg`}>Loading...</p>
+            <div className="container mx-auto px-6" aria-busy="true" aria-label="Loading menu">
+                <div className="main-block-color rounded-lg p-2">
+                    <div className="border-line rounded-lg p-8">
+                        <div className="py-5">
+                            <h6 className={`${raleway.className} main-text-color font-bold text-center text-xl sm:text-2xl md:text-3xl lg:text-4xl`}>Menu</h6>
+                            <Skeleton className="mx-auto mt-3 h-4 w-3/4 max-w-xl"/>
+                        </div>
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-[30px] lg:grid-cols-4 lg:gap-10 xl:grid-cols-5 xl:gap-[50px]">
+                            {Array.from({length: 5}).map((_, i) => (
+                                <Skeleton
+                                    key={i}
+                                    className={`h-44 rounded-none ${i >= 3 ? "hidden" : ""} ${i === 3 ? "lg:block" : ""} ${i === 4 ? "xl:block" : ""}`}
+                                />
+                            ))}
+                        </div>
+                        <div className="h-20"/>
+                    </div>
+                </div>
             </div>
         );
     }
 
+    // Рамка и заголовок блока остаются — без них главная «проваливалась» до голого бордового фона
     if (error) {
         return (
-            <div className="container mx-auto px-4 py-10 text-center">
-                <p className="text-red-500">{error}</p>
+            <div className="container mx-auto px-6">
+                <div className="main-block-color rounded-lg p-2">
+                    <div className="border-line rounded-lg p-8">
+                        <h6 className={`${raleway.className} main-text-color font-bold text-center text-xl sm:text-2xl md:text-3xl lg:text-4xl py-5`}>Menu</h6>
+                        <LoadError what="the menu" onRetry={retry}/>
+                    </div>
+                </div>
             </div>
         );
     }
@@ -138,15 +170,22 @@ function MenuCard({name, image, id}: { name: string; image: string; id: number; 
 
         <div
             onClick={handleClick}
-            className="relative py-5 px-3 h-44 md:w-full"
-            style={{
-                backgroundImage: `url(${image})`,
-                backgroundRepeat: "no-repeat",
-                backgroundSize: "cover",
-                backgroundPosition: "center center",
-            }}
+            className="group relative overflow-hidden py-5 px-3 h-44 md:w-full rounded-sm cursor-pointer
+                       transition-shadow duration-500 hover:shadow-lg"
         >
-            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-transparent"/>
+            {/* Картинка — отдельным слоем: при наведении приближается внутри карточки, а сама карточка
+                остаётся на месте и не наползает на соседние (края обрезает overflow-hidden) */}
+            <div
+                aria-hidden="true"
+                className="absolute inset-0 transition-transform duration-500 ease-out motion-safe:group-hover:scale-105"
+                style={{
+                    backgroundImage: `url(${image})`,
+                    backgroundRepeat: "no-repeat",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center center",
+                }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-transparent rounded-sm"/>
             <div
                 className={`${raleway.className} border-b-2 border-white w-fit z-20 relative text-white text-md md:text-2xl`}
             >

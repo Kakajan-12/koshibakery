@@ -1,5 +1,7 @@
 import {manrope, raleway} from "@/app/fonts";
 import Image from "next/image";
+import Link from "next/link";
+import {ArrowRight, CalendarHeart, Clock, Mail, MapPin, Navigation, Phone, Sparkles, Store} from "lucide-react";
 
 type OpenTime = {
     id: number;
@@ -7,126 +9,236 @@ type OpenTime = {
     times: string;
 };
 
-async function getOpenTimes(): Promise<OpenTime[]> {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/open-time`, {
-        cache: "no-store",
-    });
+type Contact = {
+    address?: string;
+    phone?: string;
+    mail?: string;
+};
 
-    if (!res.ok) {
-        throw new Error("Failed to fetch open times");
+// null — данные не загрузились. Страница всё равно открывается: часы и контакты — лишь её блоки
+async function getJson<T>(path: string): Promise<T | null> {
+    try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${path}`, {cache: "no-store"});
+        if (!res.ok) throw new Error(`${path} responded ${res.status}`);
+        return await res.json();
+    } catch (err) {
+        console.error(`Failed to fetch ${path}:`, err);
+        return null;
     }
-
-    return res.json();
 }
 
+// Только факты из текста о пекарне
+const FACTS = [
+    {icon: MapPin, label: "Central London"},
+    {icon: CalendarHeart, label: "Since 2019"},
+    {icon: Sparkles, label: "Time-honoured recipes"},
+];
+
+const SPECIALITIES = ["Elegant patisserie", "Rustic favourites", "Modern classics", "Custom cakes"];
+
+const EYEBROW = `${manrope.className} text-xs uppercase tracking-[0.18em] text-[#B8485B]`;
 
 const About = async () => {
-    const openTimes = await getOpenTimes();
+    const [openTimes, contacts] = await Promise.all([
+        getJson<OpenTime[]>("/api/open-time"),
+        getJson<Contact[]>("/api/contact"),
+    ]);
+    const contact = contacts?.[0];
+    const address = contact?.address?.trim();
+    const phone = contact?.phone?.trim();
+    const email = contact?.mail?.trim();
+
     return (
         <div className="flex flex-col">
-            <div className="my-container main-block-color py-10 sm:py-0">
+            {/* 1. Первый экран */}
+            <section className="my-container main-block-color pt-24 pb-8 lg:pt-14 lg:pb-0">
                 <div className="container mx-auto px-4">
-                    <div className="flex items-center lg:max-h-screen">
-                        <div className="hidden sm:block w-1/3">
-                            <Image src="/images/about_main.png" alt="about us" width={400} height={800}
-                                   className="w-fit h-full"/>
-                        </div>
-                        <div className="sm:w-2/3 space-y-4">
-                            <h6 className={`${raleway.className} text-3xl font-bold md:text-6xl lg:text-7xl xl:text-8xl text-center sm:text-left mb-2`}>About
-                                Us</h6>
-                            <p className={`${manrope.className} text-sm md:text-lg text-[#12100F]`}>We are a patisserie
-                                proudly located in the heart of central London, nestled on the vibrant and
-                                diverse Edgware Road. Established in 2019, Koşi Bakery was born from a deep passion for
-                                baking
-                                and a desire to share authentic flavours with our community. What started as a love for
-                                traditional sweets soon evolved into a thriving bakery where quality, creativity, and
-                                heritage
-                                come together.</p>
-                            <p className={`${manrope.className} text-sm md:text-lg text-[#12100F]`}>The name “Koşi
-                                Bakery” carries personal significance. It originates from the small, culturally
-                                rich town of Koşi in Turkmenistan — the birthplace of our founder and the source of much
-                                of
-                                our
-                                culinary inspiration. We honour these roots by incorporating time-honoured recipes and
-                                techniques into many of our creations.</p>
+                    <div className="grid items-center gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-16">
+                        <div className="hidden lg:flex justify-center">
+                            <Image
+                                // Увеличена нейросетью (Real-ESRGAN) из about_main.png 345×722 — исходник был мал для ретина-экранов
+                                src="/images/about_main.webp"
+                                alt="A tower of colourful macarons"
+                                width={760}
+                                height={1590}
+                                priority
+                                className="h-auto w-full max-w-[280px] xl:max-w-[320px] drop-shadow-xl"
+                            />
                         </div>
 
+                        <div className="space-y-6">
+                            <p className={EYEBROW}>Our story · London</p>
+                            <h1 className={`${raleway.className} text-4xl sm:text-5xl xl:text-6xl font-bold text-[#12100F] leading-tight`}>
+                                About Us
+                            </h1>
+                            <p className={`${manrope.className} text-base sm:text-lg xl:text-xl text-[#3B302B] leading-relaxed`}>
+                                We are a patisserie proudly located in the heart of central London, nestled on the vibrant
+                                and diverse Edgware Road. Established in 2019, Koşi Bakery was born from a deep passion for
+                                baking and a desire to share authentic flavours with our community. What started as a love
+                                for traditional sweets soon evolved into a thriving bakery where quality, creativity, and
+                                heritage come together.
+                            </p>
+
+                            <ul className="flex flex-wrap gap-3 pt-2">
+                                {FACTS.map(({icon: Icon, label}) => (
+                                    <li
+                                        key={label}
+                                        className={`${manrope.className} inline-flex items-center gap-2 h-10 px-4 rounded-full bg-white text-sm font-semibold text-[#12100F] shadow-sm`}
+                                    >
+                                        <Icon className="w-4 h-4 text-[#B8485B]" aria-hidden="true"/>
+                                        {label}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
                     </div>
-
                 </div>
-            </div>
-            <div className="my-container main-background-color">
-                <div className="container mx-auto px-4 pt-6">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 pb-14 items-stretch">
-                        <div className="h-[400px] lg:h-full">
-                            <div className="relative w-full h-full rounded-lg overflow-hidden shadow-xl">
-                                <Image
-                                    src="/images/about.webp"
-                                    alt="Koşi Bakery interior with delicious pastries"
-                                    fill
-                                    className="object-cover"
-                                    priority
-                                    sizes="(max-width: 1024px) 100vw, 50vw"
-                                />
-                                <div
-                                    className="absolute inset-0 bg-gradient-to-r from-black/10 to-transparent lg:bg-gradient-to-l"></div>
+            </section>
+
+            {/* 2. Откуда название + 3. что мы печём */}
+            <section className="my-container main-background-color py-14 lg:py-20">
+                <div className="container mx-auto px-4">
+                    <div className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-stretch">
+                        <div className="relative min-h-[360px] overflow-hidden rounded-3xl shadow-xl">
+                            <Image
+                                src="/images/about.webp"
+                                alt="Inside Koşi Bakery"
+                                fill
+                                className="object-cover"
+                                sizes="(max-width: 1024px) 100vw, 50vw"
+                            />
+                        </div>
+
+                        <div className="flex flex-col gap-6">
+                            <div className="rounded-3xl main-block-color p-8 lg:p-10">
+                                <p className={EYEBROW}>Our name</p>
+                                <h2 className={`${raleway.className} mt-2 text-2xl lg:text-3xl font-bold text-[#12100F]`}>
+                                    The story behind “Koşi”
+                                </h2>
+                                <blockquote className="mt-5 border-l-4 border-[#B8485B] pl-5">
+                                    <p className={`${manrope.className} text-base lg:text-lg text-[#3B302B] leading-relaxed`}>
+                                        The name “Koşi Bakery” carries personal significance. It originates from the
+                                        small, culturally rich town of Koşi in Turkmenistan — the birthplace of our founder
+                                        and the source of much of our culinary inspiration. We honour these roots by
+                                        incorporating time-honoured recipes and techniques into many of our creations.
+                                    </p>
+                                </blockquote>
+                            </div>
+
+                            <div className="rounded-3xl bg-white p-8 lg:p-10 shadow-sm">
+                                <p className={EYEBROW}>What we bake</p>
+                                <h2 className={`${raleway.className} mt-2 text-2xl lg:text-3xl font-bold text-[#12100F]`}>
+                                    A story in every bite
+                                </h2>
+                                <p className={`${manrope.className} mt-4 text-base lg:text-lg text-[#3B302B] leading-relaxed`}>
+                                    From elegant patisserie items to rustic favourites and modern classics, our menu
+                                    reflects both our Turkmen heritage and the multicultural spirit of London. Whether
+                                    you&apos;re visiting for a sweet treat, a custom cake, or something truly unique, Koşi
+                                    Bakery is your home for heartfelt, handcrafted baking.
+                                </p>
+                                <ul className="mt-5 flex flex-wrap gap-2">
+                                    {SPECIALITIES.map((s) => (
+                                        <li key={s} className={`${manrope.className} px-3 py-1.5 rounded-full bg-[#F6EEEC] text-sm text-[#12100F]`}>
+                                            {s}
+                                        </li>
+                                    ))}
+                                </ul>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </section>
 
-                        <div className="flex flex-col justify-center">
-                            <div
-                                className="rounded-md main-block-color py-12 px-8 lg:px-12 space-y-6 lg:space-y-8 h-full flex flex-col justify-center">
-                                <div className="space-y-4">
-                                    <h1 className={`${raleway.className} text-3xl lg:text-5xl font-bold text-gray-900`}>
-                                        Koşi bakery
-                                    </h1>
-                                    <div className="space-y-4">
-                                        <p className={`${manrope.className} text-base lg:text-lg text-gray-700 leading-relaxed`}>
-                                            At Koşi Bakery, we serve more than just pastries — we offer a story in every
-                                            bite. From elegant patisserie
-                                            items to rustic favourites and modern classics, our menu reflects both our
-                                            Turkmen heritage and the multicultural
-                                            spirit of London.
-                                        </p>
-                                        <p className={`${manrope.className} text-base lg:text-lg text-gray-700 leading-relaxed`}>
-                                            Whether you're visiting for a sweet treat, a custom cake, or something truly
-                                            unique, Koşi Bakery
-                                            is your home for heartfelt, handcrafted baking.
-                                        </p>
-                                    </div>
+            {/* 4. Приходите в гости */}
+            <section className="my-container main-background-color pb-16 lg:pb-24">
+                <div className="container mx-auto px-4">
+                    <div className="rounded-3xl main-block-color p-8 lg:p-12">
+                        <div className="grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
+                            <div className="space-y-5">
+                                <p className={EYEBROW}>Visit us</p>
+                                <h2 className={`${raleway.className} text-3xl lg:text-4xl font-bold text-[#12100F]`}>
+                                    Come and say hello
+                                </h2>
+                                <p className={`${manrope.className} text-base lg:text-lg text-[#3B302B]`}>
+                                    Drop in for something sweet, or order online and we&apos;ll have it ready for you.
+                                </p>
+
+                                <ul className={`${manrope.className} space-y-3 text-base text-[#12100F]`}>
+                                    {address && (
+                                        <li className="flex items-start gap-3">
+                                            <MapPin className="w-5 h-5 shrink-0 text-[#B8485B] mt-0.5" aria-hidden="true"/>
+                                            {address}
+                                        </li>
+                                    )}
+                                    {phone && (
+                                        <li className="flex items-center gap-3">
+                                            <Phone className="w-5 h-5 shrink-0 text-[#B8485B]" aria-hidden="true"/>
+                                            <a href={`tel:${phone.replace(/\s+/g, "")}`} className="link-underline">{phone}</a>
+                                        </li>
+                                    )}
+                                    {email && (
+                                        <li className="flex items-center gap-3">
+                                            <Mail className="w-5 h-5 shrink-0 text-[#B8485B]" aria-hidden="true"/>
+                                            <a href={`mailto:${email}`} className="link-underline">{email}</a>
+                                        </li>
+                                    )}
+                                </ul>
+
+                                <div className="flex flex-wrap gap-3 pt-3">
+                                    <Link
+                                        href="/menu"
+                                        className={`${manrope.className} group inline-flex items-center gap-2 h-12 px-6 rounded-full main-button-color text-white font-semibold shadow-md transition hover:brightness-110`}
+                                    >
+                                        <Store className="w-5 h-5" aria-hidden="true"/>
+                                        View menu
+                                        <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" aria-hidden="true"/>
+                                    </Link>
+                                    <Link
+                                        href="/custom"
+                                        className={`${manrope.className} inline-flex items-center gap-2 h-12 px-6 rounded-full bg-white text-[#B8485B] font-semibold ring-1 ring-[#B8485B]/30 transition hover:ring-[#B8485B]`}
+                                    >
+                                        Order a custom cake
+                                    </Link>
+                                    {address && (
+                                        <a
+                                            href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className={`${manrope.className} inline-flex items-center gap-2 h-12 px-6 rounded-full text-[#12100F] font-semibold transition hover:bg-white/60`}
+                                        >
+                                            <Navigation className="w-4 h-4 text-[#B8485B]" aria-hidden="true"/>
+                                            Get directions
+                                        </a>
+                                    )}
                                 </div>
+                            </div>
 
-                                <div className="space-y-4 pt-4">
-                                    <h2 className={`${manrope.className} text-xl lg:text-2xl font-bold text-gray-900`}>
-                                        Opening hours:
-                                    </h2>
-                                    <div className="space-y-3">
+                            <div className="rounded-2xl bg-white p-6 lg:p-8 shadow-sm self-start w-full">
+                                <h3 className={`${raleway.className} flex items-center gap-2 text-xl font-bold text-[#12100F]`}>
+                                    <Clock className="w-5 h-5 text-[#B8485B]" aria-hidden="true"/>
+                                    Opening hours
+                                </h3>
+                                {openTimes && openTimes.length > 0 ? (
+                                    <dl className={`${manrope.className} mt-5 divide-y divide-[#F0E6E3]`}>
                                         {openTimes.map((item) => (
-                                            <div
-                                                key={item.id}
-                                                className="flex justify-between items-center pb-2"
-                                            >
-                                            <span
-                                                className={`${manrope.className} text-base lg:text-lg font-medium text-gray-800`}>
-                                              {item.days}
-                                            </span>
-                                                <span
-                                                    className={`${manrope.className} text-base lg:text-lg font-semibold text-gray-900`}>
-                                              {item.times}
-                                            </span>
+                                            <div key={item.id} className="flex items-center justify-between gap-4 py-3">
+                                                <dt className="text-[#3B302B]">{item.days}</dt>
+                                                <dd className="font-semibold text-[#12100F] tabular-nums lining-nums">{item.times}</dd>
                                             </div>
                                         ))}
-                                    </div>
-                                </div>
+                                    </dl>
+                                ) : (
+                                    <p className={`${manrope.className} mt-5 text-[#6F5E53]`}>
+                                        Opening hours are temporarily unavailable. Please contact us or try again later.
+                                    </p>
+                                )}
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
+            </section>
         </div>
+    );
+};
 
-
-    )
-}
-export default About
+export default About;

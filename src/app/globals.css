@@ -113,14 +113,38 @@
     }
 }
 
+/* Карусель отзывов: лента и карточки двигаются за одно время по одной кривой (мягкий разгон и торможение).
+   Swiper берёт длительность из speed (Testimonials.tsx) — держать равной --testimonials-speed. */
+:root {
+    --testimonials-speed: 500ms;
+    --testimonials-ease: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.testimonials-swiper .swiper-wrapper {
+    transition-timing-function: var(--testimonials-ease);
+}
+
+/* Центральная карточка крупнее слайда и на средних экранах (~770–1000px) заходит на соседние.
+   Каждый слайд — свой слой (Swiper даёт ему transform), поэтому z-index карточки внутри не помогает:
+   правый слайд, идущий в разметке позже, рисовался поверх. Поднимаем сам активный слайд. */
+.testimonials-swiper .swiper-slide-active {
+    z-index: 10;
+}
+
 .testimonials-active {
     display: flex;
     justify-content: center;
 }
 
 @layer components {
+    .swiper-slide .testimonials-active,
+    .swiper-slide .testimonials-active img,
+    .swiper-slide .testimonials-active p {
+        transition: all var(--testimonials-speed) var(--testimonials-ease);
+    }
+
     .swiper-slide .testimonials-active {
-        @apply scale-90 opacity-60 transition-all duration-500;
+        @apply scale-90 opacity-60;
     }
 
     .swiper-slide-active .testimonials-active {
@@ -128,36 +152,35 @@
     }
 
     .swiper-slide-active .testimonials-active img {
-        @apply scale-120 transition-transform duration-500;
+        @apply scale-120;
     }
 
     .swiper-slide-active .testimonials-active p {
-        @apply text-lg md:text-xl transition-all duration-500;
+        @apply text-lg md:text-xl;
     }
 }
 
-@media (min-width: 768px) {
-    .swiper-slide-active .testimonials-active {
-        margin-top: -3.3rem;
-        transition: all 0.3s ease;
-        z-index: 99;
-        position: relative;
-        overflow: visible !important;
-        transform: scale(1.1);
-    }
-}
-
+/* Центральная карточка приподнята над соседними. Подъём — через bottom (0 → 90px), который анимируется
+   вместе с остальным. Раньше position: relative был только у активной карточки, и подъём на 90px
+   включался скачком в первом кадре перехода — отсюда рывок при смене карточки. */
 @media (min-width: 768px) {
     .swiper-slide .testimonials-active {
+        position: relative;
         margin-top: 60%;
+        bottom: 0;
+    }
+
+    .swiper-slide-active .testimonials-active {
         bottom: 90px;
+        z-index: 99;
+        overflow: visible !important;
+        transform: scale(1.1);
     }
 }
 
 @media (min-width: 1024px) {
     .swiper-slide .testimonials-active {
         margin-top: 40%;
-        bottom: 90px;
     }
 
     .testimonials-active .img {
@@ -236,6 +259,32 @@
     background-color: #B8485B;
 }
 
+/* Подчёркивание ссылки, которое при наведении «прорисовывается» слева направо,
+   а при уходе курсора уезжает дальше вправо — движение всегда в одну сторону.
+   Полоска — это фон, а не border: она переносится вместе с текстом на несколько строк. */
+.link-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: right bottom;
+    background-size: 0% 1px;
+    padding-bottom: 2px;
+    transition: background-size 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.link-underline:hover,
+.link-underline:focus-visible,
+.group:hover > .link-underline,
+.group:focus-visible > .link-underline {
+    background-position: left bottom;
+    background-size: 100% 1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .link-underline {
+        transition: none;
+    }
+}
+
 .main-border-color {
     border-color: #B8485B;
 }
@@ -256,23 +305,42 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 12px;
-    bottom: 20px !important;
+    gap: 8px;
+    bottom: 24px !important;
 }
 
+/* Полоски вместо точек: активная длиннее */
 .hero-swiper .swiper-pagination-bullet {
-    width: 8px;
-    height: 8px;
-    background-color: #d9a6aa;
+    width: 18px;
+    height: 4px;
+    margin: 0 !important;
+    background-color: rgba(255, 255, 255, 0.5);
     opacity: 1;
     border-radius: 9999px;
-    transition: all 0.3s ease;
+    transition: width 0.4s ease, background-color 0.4s ease;
 }
 
 .hero-swiper .swiper-pagination-bullet-active {
-    width: 14px;
-    height: 14px;
-    background-color: #7b2f36;
+    width: 40px;
+    background-color: #ffffff;
+}
+
+/* Медленное приближение активного слайда */
+.hero-swiper .hero-image {
+    transform: scale(1);
+    transition: transform 7s ease-out;
+}
+
+.hero-swiper .swiper-slide-active .hero-image {
+    transform: scale(1.06);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-swiper .hero-image,
+    .hero-swiper .swiper-slide-active .hero-image {
+        transform: none;
+        transition: none;
+    }
 }
 
 .active-category{
@@ -281,4 +349,206 @@
 
 .contact-color{
     background-color: #F6D6D5;
+}
+/* Выбор даты и времени (react-datepicker) в стиле сайта: белая карточка, круглые дни, фирменный цвет.
+   Подключается через calendarClassName="koshi-datepicker" и popperClassName="koshi-datepicker-popper".
+   Селекторы повторяют длину стандартных правил библиотеки, иначе её стили побеждают. */
+.koshi-datepicker-popper {
+    z-index: 50;
+}
+
+.koshi-datepicker-popper .react-datepicker__triangle {
+    display: none;
+}
+
+.koshi-datepicker.react-datepicker {
+    /* Шрифт сайта явно: стили библиотеки ставят Helvetica, а «font-family: inherit» сборщик CSS отбрасывает.
+       Имена — те, под которыми next/font подключает Manrope */
+    font-family: "Manrope", "Manrope Fallback", sans-serif;
+    border: none;
+    border-radius: 1rem;
+    padding: 0.75rem;
+    background: #fff;
+    color: #12100F;
+    box-shadow: 0 12px 32px rgba(131, 59, 70, 0.18), 0 0 0 1px rgba(184, 72, 91, 0.12);
+    font-size: 0.875rem;
+}
+
+.koshi-datepicker .react-datepicker__header {
+    background: #fff;
+    border-bottom: 1px solid rgba(184, 72, 91, 0.12);
+    padding: 0.25rem 0 0.5rem;
+}
+
+.koshi-datepicker .react-datepicker__current-month,
+.koshi-datepicker .react-datepicker-time__header {
+    color: #12100F;
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding-bottom: 0.5rem;
+}
+
+.koshi-datepicker .react-datepicker__day-name {
+    width: 2.25rem;
+    line-height: 2rem;
+    margin: 0.1rem;
+    color: #6F5E53;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.koshi-datepicker .react-datepicker__month {
+    margin: 0.5rem 0 0;
+}
+
+.koshi-datepicker .react-datepicker__day {
+    width: 2.25rem;
+    line-height: 2.25rem;
+    margin: 0.1rem;
+    border-radius: 9999px;
+    color: #12100F;
+    transition: background-color 0.15s, color 0.15s;
+}
+
+.koshi-datepicker .react-datepicker__day:not(.react-datepicker__day--disabled):hover {
+    border-radius: 9999px;
+    background: rgba(184, 72, 91, 0.12);
+    color: #B8485B;
+}
+
+.koshi-datepicker .react-datepicker__day--today {
+    font-weight: 700;
+    color: #B8485B;
+}
+
+.koshi-datepicker .react-datepicker__day--keyboard-selected {
+    background: rgba(184, 72, 91, 0.12);
+    color: #B8485B;
+}
+
+.koshi-datepicker .react-datepicker__day--selected,
+.koshi-datepicker .react-datepicker__day--selected:not(.react-datepicker__day--disabled):hover {
+    background: #B8485B;
+    color: #fff;
+    font-weight: 700;
+}
+
+.koshi-datepicker .react-datepicker__day--disabled,
+.koshi-datepicker .react-datepicker__day--outside-month {
+    color: #CDBFBB;
+}
+
+.koshi-datepicker .react-datepicker__navigation {
+    top: 0.85rem;
+}
+
+.koshi-datepicker .react-datepicker__navigation-icon::before {
+    border-color: #B8485B;
+    border-width: 2px 2px 0 0;
+    height: 8px;
+    width: 8px;
+}
+
+.koshi-datepicker .react-datepicker__navigation:hover .react-datepicker__navigation-icon::before {
+    border-color: #833B45;
+}
+
+/* Список времени */
+.koshi-datepicker .react-datepicker__time-container,
+.koshi-datepicker.react-datepicker--time-only .react-datepicker__time-container {
+    width: 7rem;
+    border-left: none;
+}
+
+.koshi-datepicker .react-datepicker__time-container .react-datepicker__time {
+    background: #fff;
+}
+
+.koshi-datepicker .react-datepicker__time-container .react-datepicker__time .react-datepicker__time-box {
+    width: 100%;
+}
+
+.koshi-datepicker .react-datepicker__time-container .react-datepicker__time .react-datepicker__time-box ul.react-datepicker__time-list {
+    padding: 0.25rem;
+}
+
+.koshi-datepicker .react-datepicker__time-container .react-datepicker__time .react-datepicker__time-box ul.react-datepicker__time-list li.react-datepicker__time-list-item {
+    height: auto;
+    padding: 0.5rem 0.75rem;
+    margin: 0.1rem 0;
+    border-radius: 0.6rem;
+    color: #12100F;
+    transition: background-color 0.15s, color 0.15s;
+}
+
+.koshi-datepicker .react-datepicker__time-container .react-datepicker__time .react-datepicker__time-box ul.react-datepicker__time-list li.react-datepicker__time-list-item:hover {
+    background: rgba(184, 72, 91, 0.12);
+    color: #B8485B;
+}
+
+.koshi-datepicker .react-datepicker__time-container .react-datepicker__time .react-datepicker__time-box ul.react-datepicker__time-list li.react-datepicker__time-list-item--selected,
+.koshi-datepicker .react-datepicker__time-container .react-datepicker__time .react-datepicker__time-box ul.react-datepicker__time-list li.react-datepicker__time-list-item--selected:hover {
+    background: #B8485B;
+    color: #fff;
+    font-weight: 700;
+}
+
+/* Скроллбар в фирменных цветах для прокручиваемых блоков (оглавление и т. п.):
+   тонкая розовая полоса без стрелок, ярче при наведении */
+/* Firefox понимает только стандартные свойства. В Chrome они отключили бы ::-webkit-стили ниже
+   и вернули стрелки, поэтому стандартные — только для Firefox */
+@supports (-moz-appearance: none) {
+    .koshi-scroll {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(184, 72, 91, 0.35) transparent;
+    }
+
+    .koshi-scroll:hover {
+        scrollbar-color: rgba(184, 72, 91, 0.6) transparent;
+    }
+}
+
+/* Chrome, Edge, Safari */
+.koshi-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.koshi-scroll::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 12px 0;
+}
+
+.koshi-scroll::-webkit-scrollbar-thumb {
+    background: rgba(184, 72, 91, 0.35);
+    border-radius: 999px;
+}
+
+.koshi-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(184, 72, 91, 0.6);
+}
+
+/* Скроллбар всей страницы: светлая полоса на тёмно-бордовом фоне сайта, без стрелок */
+@supports (-moz-appearance: none) {
+    html {
+        scrollbar-color: rgba(246, 238, 236, 0.55) #6F313A;
+    }
+}
+
+/* Chrome, Edge, Safari */
+html::-webkit-scrollbar {
+    width: 12px;
+}
+
+html::-webkit-scrollbar-track {
+    background: #6F313A;
+}
+
+html::-webkit-scrollbar-thumb {
+    background: rgba(246, 238, 236, 0.55);
+    border-radius: 999px;
+    border: 3px solid #6F313A;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+    background: rgba(246, 238, 236, 0.8);
 }
