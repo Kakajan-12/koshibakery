@@ -6,6 +6,8 @@ import {useCategory} from "@/app/context/CategoryContext";
 import {Navigation} from "swiper/modules";
 import {Swiper, SwiperSlide} from "swiper/react";
 import {IoIosArrowBack, IoIosArrowForward} from "react-icons/io";
+import {Skeleton} from "@/components/ui/skeleton";
+import LoadError from "@/components/LoadError";
 
 type Category = {
     id: number;
@@ -18,6 +20,14 @@ export default function Categories() {
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    // Увеличивается по кнопке «Try again» — запускает загрузку заново
+    const [attempt, setAttempt] = useState(0);
+
+    const retry = () => {
+        setError(null);
+        setLoading(true);
+        setAttempt((a) => a + 1);
+    };
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -43,14 +53,30 @@ export default function Categories() {
         };
 
         fetchCategories();
-    }, []);
+    }, [attempt]);
 
     if (loading) {
-        return <p className="text-center py-10">Loading...</p>;
+        return (
+            <div className="container mx-auto px-4 pt-14 pb-14 lg:pb-24" aria-busy="true" aria-label="Loading categories">
+                <div className="flex justify-center gap-[30px] lg:gap-10 overflow-hidden">
+                    {Array.from({length: 6}).map((_, i) => (
+                        <div key={i} className={`flex flex-col items-center pt-1 ${i >= 2 ? "hidden" : ""} ${i === 2 ? "min-[420px]:flex" : ""} ${i === 3 ? "min-[567px]:flex" : ""} ${i === 4 ? "lg:flex" : ""} ${i === 5 ? "min-[1540px]:flex" : ""}`}>
+                            <Skeleton tone="dark" className="w-24 h-24 sm:w-28 sm:h-28 lg:w-36 lg:h-36 rounded-full"/>
+                            <Skeleton tone="dark" className="mt-3 h-5 w-16"/>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
     }
 
+    // Блок стоит на бордовом фоне — тёмный вариант, с теми же отступами, что и у категорий
     if (error) {
-        return <p className="text-center text-red-500 py-10">{error}</p>;
+        return (
+            <div className="container mx-auto px-4 pt-14 pb-14 lg:pb-24">
+                <LoadError what="categories" onRetry={retry} tone="dark"/>
+            </div>
+        );
     }
 
     return (

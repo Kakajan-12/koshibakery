@@ -6,18 +6,41 @@ import {Navigation} from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import {useEffect, useState} from "react";
+import {FaStar} from "react-icons/fa";
+import {Skeleton} from "@/components/ui/skeleton";
+import LoadError from "@/components/LoadError";
 
 interface Testimonial {
     id: number;
     image: string;
     text: string;
     name: string;
+    // 1–5; null — без оценки
+    rating: number | null;
 }
+
+// Бесконечной карусели Swiper нужно не меньше slidesPerView (3) + шаг (1) + 1 для centeredSlides слайдов
+const MIN_LOOP_SLIDES = 5;
+
+// Если отзывов меньше, повторяем весь список по кругу — порядок сохраняется, а карусель становится бесконечной
+const loopSlides = (cards: Testimonial[]) => {
+    if (cards.length < 2) return cards;
+    const copies = Math.ceil(MIN_LOOP_SLIDES / cards.length);
+    return Array.from({length: copies}, () => cards).flat();
+};
 
 export default function Testimonials() {
     const [cards, setCards] = useState<Testimonial[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    // Увеличивается по кнопке «Try again» — запускает загрузку заново
+    const [attempt, setAttempt] = useState(0);
+
+    const retry = () => {
+        setError(null);
+        setLoading(true);
+        setAttempt((a) => a + 1);
+    };
 
     useEffect(() => {
         const fetchTestimonials = async () => {
@@ -47,14 +70,52 @@ export default function Testimonials() {
             }
         };
         fetchTestimonials();
-    }, []);
+    }, [attempt]);
 
     if (loading) {
-        return <p className="text-center py-10">Loading...</p>;
+        return (
+            <div className="py-18" aria-busy="true" aria-label="Loading testimonials">
+                <div className="container mx-auto px-4">
+                    <div className="main-block-color rounded-lg p-2">
+                        <div className="border-line rounded-lg p-8">
+                            <h6 className={`${raleway.className} main-text-color text-center font-bold pt-8 pb-10 text-lg sm:text-xl md:text-3xl lg:text-4xl`}>Testimonials</h6>
+                            <div className="flex justify-center items-center gap-[30px] pb-10 md:mt-16">
+                                {Array.from({length: 3}).map((_, i) => (
+                                    <div key={i} className={`py-5 px-7 w-56 xl:w-72 rounded-xl bg-white shadow-md space-y-6 ${i !== 1 ? "hidden md:block" : "md:scale-110"}`}>
+                                        <Skeleton className="mx-auto w-19 h-19 rounded-full"/>
+                                        <div className="space-y-2">
+                                            <Skeleton className="h-3 w-full"/>
+                                            <Skeleton className="h-3 w-full"/>
+                                            <Skeleton className="h-3 w-2/3"/>
+                                        </div>
+                                        <div className="space-y-1">
+                                            <Skeleton className="h-4 w-24"/>
+                                            <Skeleton className="h-3.5 w-20"/>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
+    // Рамка и заголовок блока остаются — вместо отзывов сообщение с повтором загрузки
     if (error) {
-        return <p className="text-center text-red-500 py-10">{error}</p>;
+        return (
+            <div className="py-18">
+                <div className="container mx-auto px-4">
+                    <div className="main-block-color rounded-lg p-2">
+                        <div className="border-line rounded-lg p-8">
+                            <h6 className={`${raleway.className} main-text-color text-center font-bold pt-8 pb-4 text-lg sm:text-xl md:text-3xl lg:text-4xl`}>Testimonials</h6>
+                            <LoadError what="reviews" onRetry={retry}/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     return (
@@ -97,11 +158,14 @@ export default function Testimonials() {
                             <div className="pb-10 relative md:mt-16 px-4 overflow-visible">
                                 <Swiper
                                     key={cards.length}
+                                    className="testimonials-swiper"
+                                    // Длительность — как --testimonials-speed в globals.css, чтобы лента и карточки шли вместе
+                                    speed={500}
                                     modules={[Navigation]}
                                     spaceBetween={10}
                                     slidesPerView={1}
                                     centeredSlides={true}
-                                    loop={cards.length >= 5}
+                                    loop={cards.length > 1}
                                     navigation={{
                                         nextEl: ".testimonials-next",
                                         prevEl: ".testimonials-prev",
@@ -113,8 +177,8 @@ export default function Testimonials() {
                                         }
                                     }}
                                 >
-                                    {cards.map((item, i) => (
-                                        <SwiperSlide key={i}>
+                                    {loopSlides(cards).map((item, i) => (
+                                        <SwiperSlide key={`${item.id}-${i}`}>
                                             <div className="flex justify-center">
                                                 <TestomonialCard {...item} />
                                             </div>
@@ -179,9 +243,20 @@ function stripHtmlTags(html: string) {
     return html.replace(/<[^>]*>?/gm, "");
 }
 
-function TestomonialCard({text, name, image}: { text: string; name: string; image: string }) {
+function Stars({rating}: { rating: number }) {
     return (
-        <div className="testimonials-active transition-all duration-300 my-4 ">
+        <div className="flex gap-0.5" aria-label={`${rating} out of 5 stars`}>
+            {[1, 2, 3, 4, 5].map((n) => (
+                <FaStar key={n} className={`w-3.5 h-3.5 ${n <= rating ? "text-amber-400" : "text-gray-200"}`} aria-hidden/>
+            ))}
+        </div>
+    );
+}
+
+function TestomonialCard({text, name, image, rating}: { text: string; name: string; image: string; rating: number | null }) {
+    return (
+        // Анимация карточки задаётся в globals.css (.testimonials-active) — синхронно с прокруткой ленты
+        <div className="testimonials-active my-4">
             <div
                 className="py-5 px-7 w-56 xl:w-72 rounded-xl bg-white shadow-md space-y-6">
                 <div className="w-full flex justify-center items-center">
@@ -193,9 +268,12 @@ function TestomonialCard({text, name, image}: { text: string; name: string; imag
                 <p className={`${manrope.className} text-xs md:text-md text-black`}>
                     {stripHtmlTags(text)}
                 </p>
-                <p className={`${manrope.className} text-sm md:text-md text-black`}>
-                    {name}
-                </p>
+                <div className="space-y-1">
+                    <p className={`${manrope.className} text-sm md:text-md text-black`}>
+                        {name}
+                    </p>
+                    {rating ? <Stars rating={rating}/> : null}
+                </div>
             </div>
         </div>
 

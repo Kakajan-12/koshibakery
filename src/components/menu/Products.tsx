@@ -1,11 +1,10 @@
 "use client";
-import React, {useEffect, useRef, useState} from "react";
-import Image from "next/image";
-import {manrope, raleway, workSans} from "@/app/fonts";
-import {FaPoundSign} from "react-icons/fa";
+import React, {useEffect, useMemo, useRef, useState} from "react";
+import {workSans} from "@/app/fonts";
 import {SortOption} from "@/lib/sorts"
-import {useRouter} from "next/navigation";
 import {useCart} from "@/app/context/CartContext";
+import LoadError from "@/components/LoadError";
+import ProductCard, {ProductCardSkeleton} from "@/components/menu/ProductCard";
 
 interface Allergen {
     id: number;
@@ -31,186 +30,146 @@ function stripHtml(html: string) {
     return html.replace(/<[^>]+>/g, "");
 }
 
-export default function Products({sort, search, selectedType, availability, priceRange, selectedCategory}: {
+const PRODUCTS_PER_PAGE = 12;
+// Поиск уходит на сервер после паузы в наборе, а не на каждую букву
+const SEARCH_DELAY_MS = 300;
+
+export default function Products({sort, search, selectedType, availability, priceRange, maxPrice, selectedCategory}: {
     sort: SortOption;
     search: string;
     selectedType: number | null;
     availability: "all" | "in-stock" | "pre-order";
     priceRange: [number, number];
+    // Верхняя граница ползунка: если диапазон не сужен, фильтр по цене не отправляем
+    maxPrice: number;
     selectedCategory: number | null
 }) {
     const [products, setProducts] = useState<Product[]>([]);
+    const [total, setTotal] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
     const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
+    const [debouncedSearch, setDebouncedSearch] = useState(search);
+    // Увеличивается по кнопке «Try again» — повторяет тот же запрос
+    const [attempt, setAttempt] = useState(0);
     const containerRef = useRef<HTMLDivElement>(null);
-    const firstProductRef = useRef<HTMLDivElement>(null);
-    const router = useRouter();
     const { cart} = useCart();
 
-    const productsPerPage = 12;
-
     useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/product`, {
-                    cache: "no-store",
-                });
-                if (!res.ok) throw new Error("Failed to load products");
-                const data: Product[] = await res.json();
-                const formatted = data.map((p: any) => {
-                    const variants: Variant[] = p.variants || [];
-                    const mainVariantPrice = variants.length > 0 ? variants[0].price : 0;
+        const timer = setTimeout(() => setDebouncedSearch(search.trim()), SEARCH_DELAY_MS);
+        return () => clearTimeout(timer);
+    }, [search]);
 
-                    return {
-                        ...p,
-                        main_image: `${process.env.NEXT_PUBLIC_API_URL}/${p.main_image.replace(/\\/g, "/")}`,
-                        product_name: stripHtml(p.product_name || ""),
-                        product_desc: stripHtml(p.product_desc || ""),
-                        variants,
-                        price: mainVariantPrice,
-                    };
-                });
-
-                setProducts(formatted);
-            } catch (err: any) {
-                console.error("Fetch error:", err);
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchProducts();
-    }, []);
-
+    // Новые условия — снова с первой страницы
     useEffect(() => {
         setCurrentPage(1);
-    }, [selectedCategory, selectedType, availability, priceRange, search]);
+    }, [selectedCategory, selectedType, availability, priceRange, debouncedSearch, sort]);
+
+    // Поиск, фильтры, сортировка и пагинация выполняются на сервере (/api/product/catalog)
+    const query = useMemo(() => {
+        const params = new URLSearchParams({page: String(currentPage), limit: String(PRODUCTS_PER_PAGE)});
+        if (debouncedSearch) params.set("q", debouncedSearch);
+        if (selectedCategory !== null) params.set("category", String(selectedCategory));
+        if (selectedType !== null) params.set("type", String(selectedType));
+        if (availability !== "all") params.set("availability", availability);
+        if (sort !== "all") params.set("sort", sort);
+        if (priceRange[0] > 0) params.set("minPrice", String(priceRange[0]));
+        if (priceRange[1] < maxPrice) params.set("maxPrice", String(priceRange[1]));
+        return params.toString();
+    }, [currentPage, debouncedSearch, selectedCategory, selectedType, availability, sort, priceRange, maxPrice]);
 
     useEffect(() => {
-        if (containerRef.current) {
-            containerRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-    }, [currentPage, selectedCategory, selectedType, sort]);
+        // Отменяем прошлый запрос: при быстрой смене фильтров не должен «победить» устаревший ответ
+        const controller = new AbortController();
+        setRefreshing(true);
 
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/product/catalog?${query}`, {
+            cache: "no-store",
+            signal: controller.signal,
+        })
+            .then((res) => {
+                if (!res.ok) throw new Error("Failed to load products");
+                return res.json();
+            })
+            .then((data: { items: any[]; total: number; pages: number }) => {
+                setProducts(data.items.map((p) => ({
+                    ...p,
+                    main_image: `${process.env.NEXT_PUBLIC_API_URL}/${String(p.main_image).replace(/\\/g, "/")}`,
+                    product_name: stripHtml(p.product_name || ""),
+                    variants: p.variants || [],
+                    price: Number(p.price) || 0,
+                })));
+                setTotal(data.total);
+                setTotalPages(data.total > 0 ? data.pages : 0);
+                setError(null);
+                setLoading(false);
+                setRefreshing(false);
+            })
+            .catch((err) => {
+                if (err.name === "AbortError") return;
+                console.error("Fetch error:", err);
+                setError(err.message);
+                setLoading(false);
+                setRefreshing(false);
+            });
 
+        return () => controller.abort();
+    }, [query, attempt]);
 
-    if (loading) return <p className="text-center py-10">Loading...</p>;
-    if (error) return <p className="text-center text-red-500 py-10">{error}</p>;
-
-    let filteredProducts = [...products];
-
-    if (selectedCategory) {
-        filteredProducts = filteredProducts.filter(
-            (p) => p.product_category === selectedCategory
+    if (loading) {
+        return (
+            <div className="container mx-auto px-4" aria-busy="true" aria-label="Loading products">
+                <div className="py-14 min-h-[500px] main-block-color rounded-xl p-6 mb-20">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 lg:gap-6">
+                        {Array.from({length: 8}).map((_, i) => <ProductCardSkeleton key={i}/>)}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+    // Ошибка показывается внутри обычной панели списка: высота блока сохраняется, вёрстка страницы не «проваливается»
+    if (error) {
+        return (
+            <div className="container mx-auto px-4">
+                <div className="py-14 min-h-[500px] main-block-color rounded-xl p-6 mb-20 flex items-center justify-center">
+                    <LoadError what="products" onRetry={() => setAttempt((a) => a + 1)}/>
+                </div>
+            </div>
         );
     }
 
-    if (selectedType) {
-        filteredProducts = filteredProducts.filter(
-            (p) => p.product_types === selectedType
-        );
-    }
 
-
-    if (search) {
-        filteredProducts = filteredProducts.filter(p =>
-            p.product_name.toLowerCase().includes(search.toLowerCase())
-        );
-    }
-
-    if (sort === "price-low") filteredProducts.sort((a, b) => a.price - b.price);
-    else if (sort === "price-high") filteredProducts.sort((a, b) => b.price - a.price);
-    else if (sort === "alphabetical") filteredProducts.sort((a, b) => a.product_name.localeCompare(b.product_name));
-
-    if (availability === "in-stock") {
-        filteredProducts = filteredProducts.filter((p) => p.product_availability === 1);
-    } else if (availability === "pre-order") {
-        filteredProducts = filteredProducts.filter((p) => p.product_availability === 0);
-    }
-
-    filteredProducts = filteredProducts.filter(p =>
-        p.price >= (priceRange?.[0] || 0) && p.price <= (priceRange?.[1] || Infinity)
-    );
-
-
-
-    const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
-    const startIndex = (currentPage - 1) * productsPerPage;
-    const currentProducts = filteredProducts.slice(startIndex, startIndex + productsPerPage);
-
-
+    // К началу списка прокручиваем только при переключении страницы — кнопки пагинации внизу,
+    // а новые товары начинаются сверху. Смена категории или фильтров страницу не двигает.
     const goToPage = (page: number) => {
         if (page >= 1 && page <= totalPages) {
             setCurrentPage(page);
+            containerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
         }
     };
 
     return (
         <div ref={containerRef} className="container mx-auto px-4">
-            <div className="py-14 min-h-[500px] main-block-color rounded-xl p-6 mb-20">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 justify-items-center">
-                    {currentProducts.map((item, i) => {
-                        const isInCart = cart.some((p) => p.id === item.id);
-
-                        return (
-                            <div
-                                key={item.id}
-                                ref={i === 0 ? firstProductRef : null}
-                                className="flex flex-col justify-between items-center text-center cursor-pointer border-2 rounded-xl w-full scroll-mt-24 bg-white p-4"
-                            >
-                                <div className="w-full flex-1" onClick={() => router.push(`/menu/${item.id}`)}>
-                                    <div className="w-full aspect-square relative">
-                                        <Image
-                                            src={item.main_image}
-                                            alt={item.product_name}
-                                            fill
-                                            className="object-cover"
-                                        />
-                                    </div>
-                                    <div className="space-y-3 w-full px-2 py-4">
-                                        <div className={`${raleway.className} font-semibold text-xs text-red-500`}>
-                                            {item.notice}
-                                        </div>
-                                        <div className="flex items-center justify-center">
-                                            <div className="flex items-center">
-                                                <FaPoundSign size={14}/>
-                                                <div
-                                                    className={`${manrope.className} text-md md:text-lg font-bold`}>{item.price}</div>
-                                            </div>
-                                        </div>
-                                        <div
-                                            className={`${manrope.className} text-md sm:text-lg lg:text-xl text-center`}
-                                        >
-                                            {item.product_name}
-                                        </div>
-                                        <div className="flex flex-wrap justify-center gap-2 max-w-full">
-                                            {item.allergens?.map((a) => (
-                                                <p
-                                                    key={a.id}
-                                                    className={`${manrope.className} bg-red-400 rounded-md px-2 py-1 text-white text-sm break-words max-w-[100px] text-center`}
-                                                >
-                                                    {a.name}
-                                                </p>
-                                            ))}
-                                        </div>
-
-                                    </div>
-                                </div>
-
-                                <div className="w-full mb-4 flex items-center justify-center">
-                                    <button
-                                        onClick={() => router.push(`/menu/${item.id}`)}
-                                        className={`${raleway.className} w-56 border-2 cursor-pointer main-border-color main-text-color font-bold rounded-full px-8 py-1 transition-all`}
-                                    >
-                                        PLACE AN ORDER
-                                    </button>
-                                </div>
-
-                            </div>
-                        );
-                    })}
+            {/* Пока грузится новая выдача, старые товары остаются на месте и слегка тускнеют — без мигания скелетоном */}
+            <div
+                aria-busy={refreshing}
+                className={`py-14 min-h-[500px] main-block-color rounded-xl p-6 mb-20 transition-opacity duration-200 ${
+                    refreshing ? "opacity-60" : ""
+                }`}
+            >
+                {/* Без этого при пустой выдаче оставался пустой блок, и было непонятно, что дело в фильтрах */}
+                {total === 0 && !refreshing && (
+                    <div className="flex flex-col items-center justify-center text-center py-20">
+                        <p className="text-xl font-bold text-[#12100F]">No treats match your search</p>
+                        <p className="mt-2 text-sm text-[#6F5E53]">Try another category or remove some filters.</p>
+                    </div>
+                )}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 lg:gap-6">
+                    {products.map((item) => (
+                        <ProductCard key={item.id} item={item} inCart={cart.some((p) => p.id === item.id)}/>
+                    ))}
                 </div>
                 {totalPages > 1 && (
                     <div className="flex justify-center mt-8 space-x-2">
