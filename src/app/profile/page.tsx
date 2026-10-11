@@ -14,7 +14,7 @@ import AddressPicker from "@/components/AddressPicker";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import OrderItemThumb from "@/components/OrderItemThumb";
 import {readyLabel} from "@/lib/readyDate";
-import {formatAddress, PickedPlace} from "@/lib/places";
+import {formatAddress, PickedPlace, withBuildingName} from "@/lib/places";
 import {useAuth} from "@/app/context/AuthContext";
 
 interface User {
@@ -223,6 +223,7 @@ function AddressForm({id, label, initial = "", submitLabel, onSubmit, onCancel}:
 }) {
     const [picked, setPicked] = useState<PickedPlace | null>(null);
     const [housenumber, setHouseNumber] = useState("");
+    const [buildingName, setBuildingName] = useState("");
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
 
@@ -236,7 +237,11 @@ function AddressForm({id, label, initial = "", submitLabel, onSubmit, onCancel}:
         setError("");
         try {
             // Номер дома, введённый вручную, тоже входит в адрес
-            await onSubmit({address: formatAddress(picked, housenumber), latitude: picked.latitude, longitude: picked.longitude});
+            await onSubmit({
+                address: withBuildingName(formatAddress(picked, housenumber), buildingName),
+                latitude: picked.latitude,
+                longitude: picked.longitude,
+            });
         } catch (err) {
             setError(err instanceof Error ? err.message : "Could not save the address.");
             setSaving(false);
@@ -252,9 +257,11 @@ function AddressForm({id, label, initial = "", submitLabel, onSubmit, onCancel}:
                 defaultValue={initial}
                 autoFocus
                 required
-                onChange={(place, house) => {
+                withBuildingName
+                onChange={(place, house, building) => {
                     setPicked(place);
                     setHouseNumber(house);
+                    setBuildingName(building);
                     setError("");
                 }}
             />

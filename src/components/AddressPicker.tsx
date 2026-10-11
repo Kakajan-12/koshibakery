@@ -14,19 +14,24 @@ const LABEL = `${manrope.className} block text-sm font-semibold text-[#12100F] m
  * если в подсказке нет номера дома — появляется поле для него.
  * onChange получает выбранное место (или null, если адрес правят) и номер дома.
  * defaultValue — текст в поле при открытии (например, при правке адреса); выбранным он не считается.
+ * withBuildingName — после выбора адреса показать необязательное поле «Building name»; его значение
+ * приходит третьим аргументом onChange.
  */
-export default function AddressPicker({id, label, hint, required, defaultValue = "", autoFocus, onChange}: {
+export default function AddressPicker({id, label, hint, required, defaultValue = "", autoFocus, withBuildingName, onChange}: {
     id: string;
     label: string;
     hint?: string;
     required?: boolean;
     defaultValue?: string;
     autoFocus?: boolean;
-    onChange: (place: PickedPlace | null, housenumber: string) => void;
+    withBuildingName?: boolean;
+    onChange: (place: PickedPlace | null, housenumber: string, buildingName: string) => void;
 }) {
     const [query, setQuery] = useState(defaultValue);
     const [picked, setPicked] = useState<PickedPlace | null>(null);
     const [housenumber, setHouseNumber] = useState("");
+    // Название здания не зависит от выбранной улицы — при смене адреса не сбрасываем
+    const [buildingName, setBuildingName] = useState("");
     const [suggestions, setSuggestions] = useState<PlaceFeature[]>([]);
     const [open, setOpen] = useState(false);
     const houseRef = useRef<HTMLInputElement | null>(null);
@@ -61,7 +66,7 @@ export default function AddressPicker({id, label, hint, required, defaultValue =
         setSuggestions([]);
         setOpen(false);
         setHouseNumber(place.housenumber);
-        onChangeRef.current(place, place.housenumber);
+        onChangeRef.current(place, place.housenumber, buildingName);
         if (!place.housenumber) setTimeout(() => houseRef.current?.focus(), 50);
     };
 
@@ -71,7 +76,7 @@ export default function AddressPicker({id, label, hint, required, defaultValue =
         if (picked) {
             setPicked(null);
             setHouseNumber("");
-            onChangeRef.current(null, "");
+            onChangeRef.current(null, "", buildingName);
         }
     };
 
@@ -142,9 +147,30 @@ export default function AddressPicker({id, label, hint, required, defaultValue =
                         value={housenumber}
                         onChange={(e) => {
                             setHouseNumber(e.target.value);
-                            onChangeRef.current(picked, e.target.value);
+                            onChangeRef.current(picked, e.target.value, buildingName);
                         }}
                         placeholder="e.g. 12 or Flat 3"
+                        className={INPUT}
+                    />
+                </div>
+            )}
+
+            {withBuildingName && picked && (
+                <div>
+                    <label htmlFor={`${id}-building`} className={LABEL}>
+                        Building name <span className="font-normal text-[#6F5E53]">(optional)</span>
+                    </label>
+                    <input
+                        id={`${id}-building`}
+                        type="text"
+                        maxLength={80}
+                        autoComplete="address-line2"
+                        value={buildingName}
+                        onChange={(e) => {
+                            setBuildingName(e.target.value);
+                            onChangeRef.current(picked, housenumber, e.target.value);
+                        }}
+                        placeholder="e.g. Rose Court"
                         className={INPUT}
                     />
                 </div>

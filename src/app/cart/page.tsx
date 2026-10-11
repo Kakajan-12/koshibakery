@@ -16,7 +16,7 @@ import MapEmbed from "@/components/MapEmbed";
 import AddressPicker from "@/components/AddressPicker";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import ReadyTimePicker, {shortDate} from "@/components/ReadyTimePicker";
-import {formatAddress, PickedPlace} from "@/lib/places";
+import {formatAddress, PickedPlace, withBuildingName} from "@/lib/places";
 
 interface ContactData {
     id: number;
@@ -202,12 +202,14 @@ const Cart = () => {
     const [addingAddress, setAddingAddress] = useState(false);
     const [newPlace, setNewPlace] = useState<PickedPlace | null>(null);
     const [newHouse, setNewHouse] = useState("");
+    const [newBuilding, setNewBuilding] = useState("");
     const [savingAddress, setSavingAddress] = useState(false);
     const [addressError, setAddressError] = useState("");
 
     const [guest, setGuest] = useState({name: "", email: "", phone: ""});
     const [guestPlace, setGuestPlace] = useState<PickedPlace | null>(null);
     const [guestHouse, setGuestHouse] = useState("");
+    const [guestBuilding, setGuestBuilding] = useState("");
 
     const [quote, setQuote] = useState<Quote>({state: "idle", fee: 0});
     // Когда заказ должен быть готов (components/ReadyTimePicker.tsx)
@@ -293,6 +295,8 @@ const Cart = () => {
 
     const isUser = auth === "user";
     const guestAddress = guestPlace ? formatAddress(guestPlace, guestHouse) : "";
+    // Название здания — только в адресе заказа: для расчёта доставки оно не нужно и может сбить поиск адреса
+    const guestFullAddress = withBuildingName(guestAddress, guestBuilding);
     // Пока открыта форма нового адреса, доставку не считаем — адрес ещё не выбран
     const deliveryAddress = isUser ? (addingAddress ? "" : selectedAddress) : guestAddress;
 
@@ -351,7 +355,7 @@ const Cart = () => {
         }
         setSavingAddress(true);
         setAddressError("");
-        const address = formatAddress(newPlace, newHouse);
+        const address = withBuildingName(formatAddress(newPlace, newHouse), newBuilding);
         try {
             const res = await fetch(api("/api/user-addresses"), {
                 method: "POST",
@@ -394,7 +398,7 @@ const Cart = () => {
                 : await fetch(api("/api/create-checkout-session/guest"), {
                     method: "POST",
                     headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify({...common, guest: {...guest, address: orderType === "delivery" ? guestAddress : ""}}),
+                    body: JSON.stringify({...common, guest: {...guest, address: orderType === "delivery" ? guestFullAddress : ""}}),
                 });
 
             if (isUser && res.status === 401) {
@@ -589,9 +593,11 @@ const Cart = () => {
                                             id="cart-new-address"
                                             label={addresses.length ? "New address" : "Add a delivery address"}
                                             hint="It will be saved to your account. We deliver within London."
-                                            onChange={(place, house) => {
+                                            withBuildingName
+                                            onChange={(place, house, building) => {
                                                 setNewPlace(place);
                                                 setNewHouse(house);
+                                                setNewBuilding(building);
                                                 setAddressError("");
                                             }}
                                         />
@@ -623,9 +629,11 @@ const Cart = () => {
                                     label="Delivery address"
                                     hint="We deliver within London. Choose your address from the list."
                                     required
-                                    onChange={(place, house) => {
+                                    withBuildingName
+                                    onChange={(place, house, building) => {
                                         setGuestPlace(place);
                                         setGuestHouse(house);
+                                        setGuestBuilding(building);
                                     }}
                                 />
                             </div>
