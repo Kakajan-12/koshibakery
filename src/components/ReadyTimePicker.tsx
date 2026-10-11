@@ -3,7 +3,7 @@
 import {useEffect, useMemo, useState} from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import {CalendarDays, Info, Loader2} from "lucide-react";
+import {CalendarDays, Clock, Info, Loader2} from "lucide-react";
 import {manrope} from "@/app/fonts";
 import {shortDate} from "@/lib/readyDate";
 
@@ -19,6 +19,15 @@ const fromLocalDate = (value: string) => {
 };
 
 export {shortDate} from "@/lib/readyDate";
+
+// «14:30» ⇄ Date (для выбора времени в react-datepicker важны только часы и минуты)
+const toTimeDate = (hhmm: string) => {
+    const [h, m] = hhmm.split(":").map(Number);
+    const d = new Date();
+    d.setHours(h, m, 0, 0);
+    return d;
+};
+const toHHMM = (d: Date) => `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 
 /**
  * Выбор даты и времени, когда заказ должен быть готов. Доступные дни и слоты считает сервер
@@ -62,7 +71,6 @@ export default function ReadyTimePicker({productIds, orderType, date, time, onCh
         else if (date && time && !slots[date].includes(time)) onChange(date, "");
     }, [slots, date, time, onChange]);
 
-    const verb = orderType === "delivery" ? "delivered" : "ready for collection";
 
     if (failed) {
         return (
@@ -92,55 +100,62 @@ export default function ReadyTimePicker({productIds, orderType, date, time, onCh
                 </p>
             )}
 
-            <div>
-                <label htmlFor="ready-date" className={LABEL}>Date</label>
-                <div className="relative">
-                    <DatePicker
-                        id="ready-date"
-                        selected={date ? fromLocalDate(date) : null}
-                        onChange={(d: Date | null) => onChange(d ? toLocalDate(d) : "", "")}
-                        filterDate={(d: Date) => !!slots[toLocalDate(d)]}
-                        minDate={days[0] ? fromLocalDate(days[0]) : undefined}
-                        maxDate={days.length ? fromLocalDate(days[days.length - 1]) : undefined}
-                        dateFormat="EEEE, d MMMM"
-                        calendarStartDay={1}
-                        placeholderText={`When should it be ${verb}?`}
-                        wrapperClassName="w-full"
-                        calendarClassName="koshi-datepicker"
-                        popperClassName={`koshi-datepicker-popper ${manrope.className}`}
-                        popperPlacement="bottom-start"
-                        className={INPUT}
-                        autoComplete="off"
-                        required
-                    />
-                    <CalendarDays aria-hidden="true" className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#B8485B]/70"/>
+            {/* Дата и время рядом, как на странице индивидуального заказа */}
+            <div className="grid sm:grid-cols-2 gap-4">
+                <div>
+                    <label htmlFor="ready-date" className={LABEL}>Date</label>
+                    <div className="relative">
+                        <DatePicker
+                            id="ready-date"
+                            selected={date ? fromLocalDate(date) : null}
+                            onChange={(d: Date | null) => onChange(d ? toLocalDate(d) : "", "")}
+                            filterDate={(d: Date) => !!slots[toLocalDate(d)]}
+                            minDate={days[0] ? fromLocalDate(days[0]) : undefined}
+                            maxDate={days.length ? fromLocalDate(days[days.length - 1]) : undefined}
+                            dateFormat="EEE, d MMMM"
+                            calendarStartDay={1}
+                            placeholderText="Choose a date"
+                            wrapperClassName="w-full"
+                            calendarClassName="koshi-datepicker"
+                            popperClassName={`koshi-datepicker-popper ${manrope.className}`}
+                            popperPlacement="bottom-start"
+                            className={INPUT}
+                            autoComplete="off"
+                            required
+                        />
+                        <CalendarDays aria-hidden="true" className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#B8485B]/70"/>
+                    </div>
+                </div>
+
+                <div>
+                    <label htmlFor="ready-time" className={LABEL}>Time</label>
+                    <div className="relative">
+                        <DatePicker
+                            id="ready-time"
+                            selected={time ? toTimeDate(time) : null}
+                            onChange={(d: Date | null) => date && onChange(date, d ? toHHMM(d) : "")}
+                            showTimeSelect
+                            showTimeSelectOnly
+                            timeIntervals={30}
+                            // Только свободное время выбранного дня (часы работы, срок выпечки)
+                            includeTimes={daySlots.map(toTimeDate)}
+                            timeCaption="Time"
+                            dateFormat="HH:mm"
+                            timeFormat="HH:mm"
+                            disabled={!date}
+                            placeholderText={date ? "Choose a time" : "Choose a date first"}
+                            wrapperClassName="w-full"
+                            calendarClassName="koshi-datepicker"
+                            popperClassName={`koshi-datepicker-popper ${manrope.className}`}
+                            popperPlacement="bottom-start"
+                            className={`${INPUT} disabled:cursor-not-allowed disabled:opacity-60`}
+                            autoComplete="off"
+                            required
+                        />
+                        <Clock aria-hidden="true" className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#B8485B]/70"/>
+                    </div>
                 </div>
             </div>
-
-            {date && (
-                <fieldset>
-                    <legend className={LABEL}>Time</legend>
-                    <div role="radiogroup" aria-label="Time" className="grid grid-cols-4 sm:grid-cols-6 gap-2">
-                        {daySlots.map((t) => {
-                            const active = t === time;
-                            return (
-                                <button
-                                    key={t}
-                                    type="button"
-                                    role="radio"
-                                    aria-checked={active}
-                                    onClick={() => onChange(date, t)}
-                                    className={`${manrope.className} h-10 rounded-xl text-sm font-semibold tabular-nums cursor-pointer transition ${
-                                        active ? "main-button-color text-white shadow-sm" : "bg-white text-[#3B302B] ring-1 ring-[#B8485B]/20 hover:ring-[#B8485B]/60"
-                                    }`}
-                                >
-                                    {t}
-                                </button>
-                            );
-                        })}
-                    </div>
-                </fieldset>
-            )}
         </div>
     );
 }

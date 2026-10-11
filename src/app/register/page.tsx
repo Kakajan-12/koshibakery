@@ -9,7 +9,7 @@ import {manrope, raleway} from "@/app/fonts";
 import GoogleSignInButton from "@/components/GoogleSignInButton";
 import {useAuth} from "@/app/context/AuthContext";
 import AddressPicker from "@/components/AddressPicker";
-import {formatAddress, PickedPlace} from "@/lib/places";
+import {formatAddress, PickedPlace, withBuildingName} from "@/lib/places";
 
 const INPUT = `${manrope.className} w-full h-12 px-4 rounded-xl bg-white text-[15px] text-[#12100F] placeholder:text-gray-400
     ring-1 ring-[#B8485B]/20 outline-none transition focus:ring-2 focus:ring-[#B8485B]/50`;
@@ -33,6 +33,7 @@ export default function RegisterPage() {
     // Адрес выбирается из подсказок (components/AddressPicker.tsx)
     const [picked, setPicked] = useState<PickedPlace | null>(null);
     const [housenumber, setHouseNumber] = useState("");
+    const [buildingName, setBuildingName] = useState("");
 
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState("");
@@ -56,7 +57,7 @@ export default function RegisterPage() {
             return;
         }
 
-        const address = formatAddress(picked, housenumber);
+        const address = withBuildingName(formatAddress(picked, housenumber), buildingName);
         setSubmitting(true);
 
         try {
@@ -243,9 +244,11 @@ export default function RegisterPage() {
                                         label="Delivery address"
                                         hint="We deliver within London. Choose your address from the list."
                                         required
-                                        onChange={(place, house) => {
+                                        withBuildingName
+                                        onChange={(place, house, building) => {
                                             setPicked(place);
                                             setHouseNumber(house);
+                                            setBuildingName(building);
                                         }}
                                     />
 

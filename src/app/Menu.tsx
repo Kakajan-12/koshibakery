@@ -1,18 +1,30 @@
 "use client";
 
-import {manrope, raleway} from "@/app/fonts";
-
+import {useEffect, useState} from "react";
+import {useRouter} from "next/navigation";
 import {Swiper, SwiperSlide} from "swiper/react";
 import {Navigation} from "swiper/modules";
-import {IoIosArrowBack, IoIosArrowForward} from "react-icons/io";
-import {useEffect, useState} from "react";
+import {ChevronLeft, ChevronRight} from "lucide-react";
+import {raleway} from "@/app/fonts";
 import {useCategory} from "@/app/context/CategoryContext";
-import {useRouter} from "next/navigation";
 import {Skeleton} from "@/components/ui/skeleton";
 import LoadError from "@/components/LoadError";
+import {SECTION, SECTION_CARD, SectionHeading} from "@/app/homeSection";
 
+type Category = { id: number; name: string; image: string };
+
+const TITLE = {
+    id: "home-menu",
+    eyebrow: "Our menu",
+    title: "Menu",
+    text: "From soft layered cakes to delicate tarts — each treat is made to brighten your day.",
+};
+
+const ARROW = "flex h-11 w-11 items-center justify-center rounded-full bg-white text-[#B8485B] shadow-sm ring-1 ring-[#B8485B]/20 cursor-pointer transition hover:bg-[#B8485B] hover:text-white [&.swiper-button-disabled]:opacity-40 [&.swiper-button-disabled]:cursor-default";
+
+// Блок «Menu» на главной: категории в порядке из админки, клик ведёт в меню с выбранной категорией
 export default function MainMenu() {
-    const [menuItems, setMenuItems] = useState<{ name: string; image: string; id: number; }[]>([]);
+    const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     // Увеличивается по кнопке «Try again» — запускает загрузку заново
@@ -25,172 +37,112 @@ export default function MainMenu() {
     };
 
     useEffect(() => {
-        const fetchMenu = async () => {
+        const load = async () => {
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/product-category`, {
-                    cache: "no-store",
-                });
-                if (!res.ok) throw new Error("Ошибка загрузки меню");
-                const data = await res.json();
-
-                const formatted = data.map((item: any) => ({
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/product-category`, {cache: "no-store"});
+                if (!res.ok) throw new Error("Could not load the menu");
+                const data: Category[] = await res.json();
+                setCategories(data.map((item) => ({
                     ...item,
-                    image: `${process.env.NEXT_PUBLIC_API_URL}/${item.image
-                        .replace(/\\/g, "/")
-                        .replace(/^\/+/, "")
-                    }`,
-                }));
-
-                setMenuItems(formatted);
-            } catch (err: any) {
-                setError(err.message);
+                    image: `${process.env.NEXT_PUBLIC_API_URL}/${String(item.image ?? "").replace(/\\/g, "/").replace(/^\/+/, "")}`,
+                })));
+            } catch (err) {
+                setError(err instanceof Error ? err.message : "Could not load the menu");
             } finally {
                 setLoading(false);
             }
         };
-        fetchMenu();
+        load();
     }, [attempt]);
 
-
-    if (loading) {
-        return (
-            <div className="container mx-auto px-6" aria-busy="true" aria-label="Loading menu">
-                <div className="main-block-color rounded-lg p-2">
-                    <div className="rounded-lg p-8">
-                        <div className="py-5">
-                            <h6 className={`${raleway.className} main-text-color font-bold text-center text-xl sm:text-2xl md:text-3xl lg:text-4xl`}>Menu</h6>
-                            <Skeleton className="mx-auto mt-3 h-4 w-3/4 max-w-xl"/>
-                        </div>
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-[30px] lg:grid-cols-4 lg:gap-10 xl:grid-cols-5 xl:gap-[50px]">
-                            {Array.from({length: 5}).map((_, i) => (
-                                <Skeleton
-                                    key={i}
-                                    className={`h-44 rounded-none ${i >= 3 ? "hidden" : ""} ${i === 3 ? "lg:block" : ""} ${i === 4 ? "xl:block" : ""}`}
-                                />
-                            ))}
-                        </div>
-                        <div className="h-20"/>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    // Рамка и заголовок блока остаются — без них главная «проваливалась» до голого бордового фона
-    if (error) {
-        return (
-            <div className="container mx-auto px-6">
-                <div className="main-block-color rounded-lg p-2">
-                    <div className="rounded-lg p-8">
-                        <h6 className={`${raleway.className} main-text-color font-bold text-center text-xl sm:text-2xl md:text-3xl lg:text-4xl py-5`}>Menu</h6>
-                        <LoadError what="the menu" onRetry={retry}/>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
     return (
-        <div className="container mx-auto px-6">
-            <div className="main-block-color rounded-lg p-2">
-                <div className="rounded-lg p-8">
-                    <div className="py-5">
-                        <h6 className={`${raleway.className} main-text-color font-bold text-center text-xl sm:text-2xl md:text-3xl lg:text-4xl`}>Menu</h6>
-                        <p className={`${manrope.className} main-text-color text-center text-sm sm:text-md lg:text-lg pt-2`}>
-                            From soft layered cakes to delicate tarts — each treat is made to brighten your day.
-                        </p>
-                    </div>
+        <section className={SECTION} aria-labelledby={TITLE.id} aria-busy={loading || undefined}>
+            <div className="container mx-auto px-4">
+                <div className={SECTION_CARD}>
+                    <SectionHeading {...TITLE}/>
 
-                    <div className="flex flex-col space-y-4 md:hidden">
-                        {menuItems.map((item, i) => (
-                            <MenuCard key={i} {...item}/>
-                        ))}
-                    </div>
-
-                    <div className="hidden md:block">
-                        <Swiper
-                            modules={[Navigation]}
-                            spaceBetween={20}
-                            slidesPerView={1}
-                            navigation={{
-                                nextEl: ".category-next",
-                                prevEl: ".category-prev",
-                            }}
-                            pagination={{clickable: true}}
-                            centerInsufficientSlides={true}
-                            breakpoints={{
-                                768: {
-                                    slidesPerView: 3,
-                                    spaceBetween: 30,
-                                },
-                                1024: {
-                                    slidesPerView: 4,
-                                    spaceBetween: 40,
-                                },
-                                1280: {
-                                    slidesPerView: 5,
-                                    spaceBetween: 50,
-                                },
-                            }}
-                        >
-                            {menuItems.map((item, i) => (
-                                <SwiperSlide key={i}>
-                                    <MenuCard {...item} />
-                                </SwiperSlide>
-                            ))}
-                            <div className="relative bottom-0 w-full h-20 z-20">
-                                <div
-                                    className="category-prev absolute bottom-0 z-30 w-12 h-12 bg-[#833B45] text-white rounded-full flex items-center justify-center cursor-pointer transition right-20">
-                                    <IoIosArrowBack/>
-                                </div>
-                                <div
-                                    className="category-next absolute bottom-0 z-30 w-12 h-12 bg-[#833B45] text-white rounded-full flex items-center justify-center cursor-pointer transition right-0">
-                                    <IoIosArrowForward/>
-                                </div>
+                    <div className="mt-10">
+                        {loading ? (
+                            <div className="grid gap-5 md:grid-cols-3 lg:grid-cols-4 lg:gap-8">
+                                {Array.from({length: 4}).map((_, i) => (
+                                    <Skeleton key={i} className={`h-44 rounded-2xl ${i >= 1 ? "hidden md:block" : ""} ${i === 3 ? "md:hidden lg:block" : ""}`}/>
+                                ))}
                             </div>
+                        ) : error ? (
+                            // Карточка и заголовок остаются — без них главная «проваливалась» до голого бордового фона
+                            <LoadError what="the menu" onRetry={retry}/>
+                        ) : (
+                            <>
+                                {/* Телефон: категории списком */}
+                                <ul className="flex flex-col gap-4 md:hidden">
+                                    {categories.map((item) => (
+                                        <li key={item.id}><MenuCard {...item}/></li>
+                                    ))}
+                                </ul>
 
-                        </Swiper>
+                                {/* Планшет и компьютер: карусель */}
+                                <div className="hidden md:block">
+                                    <Swiper
+                                        modules={[Navigation]}
+                                        navigation={{nextEl: ".home-menu-next", prevEl: ".home-menu-prev"}}
+                                        centerInsufficientSlides
+                                        spaceBetween={20}
+                                        slidesPerView={3}
+                                        breakpoints={{
+                                            1024: {slidesPerView: 4, spaceBetween: 32},
+                                            1280: {slidesPerView: 5, spaceBetween: 32},
+                                        }}
+                                    >
+                                        {categories.map((item) => (
+                                            <SwiperSlide key={item.id}>
+                                                <MenuCard {...item}/>
+                                            </SwiperSlide>
+                                        ))}
+                                    </Swiper>
+                                    <div className="mt-6 flex justify-end gap-3">
+                                        <button type="button" aria-label="Previous categories" className={`home-menu-prev ${ARROW}`}>
+                                            <ChevronLeft className="h-5 w-5" aria-hidden="true"/>
+                                        </button>
+                                        <button type="button" aria-label="Next categories" className={`home-menu-next ${ARROW}`}>
+                                            <ChevronRight className="h-5 w-5" aria-hidden="true"/>
+                                        </button>
+                                    </div>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>
-
-        </div>
+        </section>
     );
 }
 
-function MenuCard({name, image, id}: { name: string; image: string; id: number; }) {
+function MenuCard({id, name, image}: Category) {
     const {setSelectedCategory} = useCategory();
     const router = useRouter();
 
-    const handleClick = () => {
-        setSelectedCategory(id);
-        router.push("/menu");
-    };
     return (
-
-        <div
-            onClick={handleClick}
-            className="group relative overflow-hidden py-5 px-3 h-44 md:w-full rounded-sm cursor-pointer
-                       transition-shadow duration-500 hover:shadow-lg"
+        <button
+            type="button"
+            onClick={() => {
+                setSelectedCategory(id);
+                router.push("/menu");
+            }}
+            className="group relative block h-44 w-full overflow-hidden rounded-2xl px-4 py-5 text-left cursor-pointer shadow-sm
+                       transition-shadow duration-500 hover:shadow-[0_12px_30px_rgba(184,72,91,0.2)]
+                       focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8485B]/60 focus-visible:ring-offset-2"
         >
             {/* Картинка — отдельным слоем: при наведении приближается внутри карточки, а сама карточка
                 остаётся на месте и не наползает на соседние (края обрезает overflow-hidden) */}
-            <div
+            <span
                 aria-hidden="true"
-                className="absolute inset-0 transition-transform duration-500 ease-out motion-safe:group-hover:scale-105"
-                style={{
-                    backgroundImage: `url(${image})`,
-                    backgroundRepeat: "no-repeat",
-                    backgroundSize: "cover",
-                    backgroundPosition: "center center",
-                }}
+                className="absolute inset-0 bg-cover bg-center transition-transform duration-500 ease-out motion-safe:group-hover:scale-105"
+                style={{backgroundImage: `url(${image})`}}
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-transparent rounded-sm"/>
-            <div
-                className={`${raleway.className} border-b-2 border-white w-fit z-20 relative text-white text-md md:text-2xl`}
-            >
+            <span className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-transparent" aria-hidden="true"/>
+            <span className={`${raleway.className} relative z-10 inline-block border-b-2 border-white text-xl md:text-2xl font-bold text-white`}>
                 {name}
-            </div>
-        </div>
+            </span>
+        </button>
     );
 }

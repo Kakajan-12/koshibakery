@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import {ArrowRight, ChevronLeft, ChevronRight, HandHeart, Truck, Wheat} from "lucide-react"
+import {ArrowRight, ChevronLeft, ChevronRight} from "lucide-react"
 
 import {Swiper, SwiperSlide} from "swiper/react"
 import {A11y, Autoplay, EffectFade, Navigation, Pagination} from "swiper/modules"
@@ -33,24 +33,6 @@ const FALLBACK_SLIDE: Slider = {
     link: "/menu",
     link_text: "Our Menu",
 }
-
-const FEATURES = [
-    {
-        icon: Truck,
-        title: "Reliable Delivery",
-        text: "Get your cakes and pastries delivered fresh to your door — carefully packed and always on time.",
-    },
-    {
-        icon: Wheat,
-        title: "Honest Ingredients",
-        text: "No mixes, no shortcuts. Just real butter, fresh cream, and simple ingredients that speak for themselves.",
-    },
-    {
-        icon: HandHeart,
-        title: "Beautiful in Every Detail",
-        text: "Each item is carefully finished by hand — because we believe great taste deserves great presentation.",
-    },
-]
 
 // Высота в svh (см. .hero-height в globals.css): vh на iPhone меняется, когда прячется адресная строка,
 // и Swiper пересчитывал размеры посреди перелистывания — карусель застревала между слайдами
@@ -123,7 +105,6 @@ export default function Hero() {
 
     const several = slides.length > 1
 
-    // Блок «More Than Just Cakes» ниже показываем всегда — и пока грузятся слайды, и если их нет
     return (
         <div>
             {loading ? (
@@ -187,32 +168,6 @@ export default function Hero() {
                     <HeroSlide slide={FALLBACK_SLIDE} imageSrc="/images/main_hero.webp" priority/>
                 </div>
             )}
-
-            {/* Почему Koşi */}
-            <section className="py-16 lg:py-20" aria-labelledby="why-koshi">
-                <div className="container mx-auto px-4">
-                    <div className="main-block-color rounded-3xl px-6 py-10 sm:px-10 lg:py-14">
-                        <div className="text-center">
-                            <p className={`${manrope.className} text-xs uppercase tracking-[0.18em] text-[#B8485B]`}>Why Koşi</p>
-                            <h2 id="why-koshi" className={`${raleway.className} mt-2 text-3xl sm:text-4xl font-bold text-[#12100F]`}>
-                                More Than Just Cakes
-                            </h2>
-                        </div>
-                        <ul className="mt-10 grid gap-5 md:grid-cols-3 lg:gap-8">
-                            {FEATURES.map(({icon: Icon, title, text}) => (
-                                <li key={title}
-                                    className="group rounded-2xl bg-white p-6 lg:p-8 shadow-sm ring-1 ring-[#B8485B]/10 transition duration-300 hover:-translate-y-1 hover:shadow-[0_12px_30px_rgba(184,72,91,0.15)]">
-                                    <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#B8485B]/10 text-[#B8485B] transition-colors group-hover:bg-[#B8485B] group-hover:text-white">
-                                        <Icon className="h-6 w-6" aria-hidden="true"/>
-                                    </span>
-                                    <h3 className={`${raleway.className} mt-5 text-xl font-bold text-[#12100F]`}>{title}</h3>
-                                    <p className={`${manrope.className} mt-2 text-[15px] leading-relaxed text-[#6F5E53]`}>{text}</p>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                </div>
-            </section>
         </div>
     )
 }
