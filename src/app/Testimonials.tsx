@@ -9,7 +9,7 @@ import {useEffect, useState} from "react";
 import {FaStar} from "react-icons/fa";
 import {Skeleton} from "@/components/ui/skeleton";
 import LoadError from "@/components/LoadError";
-import {SECTION, SECTION_CARD, SectionHeading} from "@/app/homeSection";
+import {SECTION, SECTION_CARD} from "@/app/homeSection";
 
 interface Testimonial {
     id: number;
@@ -20,8 +20,14 @@ interface Testimonial {
     rating: number | null;
 }
 
-// Заголовок в том же стиле, что у блоков Menu и Why Koşi
-const TITLE = {id: "testimonials", eyebrow: "Reviews", title: "Testimonials"};
+// Заголовок блока — одно слово «Reviews» в стиле подписи над заголовками Menu и Why Koşi, только крупнее
+function ReviewsHeading() {
+    return (
+        <h2 id="testimonials" className={`${manrope.className} text-center text-3xl sm:text-4xl font-semibold uppercase tracking-[0.2em] text-[#B8485B]`}>
+            Reviews
+        </h2>
+    );
+}
 
 // Бесконечной карусели Swiper нужно не меньше slidesPerView (3) + шаг (1) + 1 для centeredSlides слайдов
 const MIN_LOOP_SLIDES = 5;
@@ -37,7 +43,7 @@ const loopSlides = (cards: Testimonial[]) => {
 function Block({children, busy}: { children: React.ReactNode; busy?: boolean }) {
     return (
         // Последний блок главной — нижний отступ перед подвалом
-        <section className={`${SECTION} pb-16 lg:pb-20`} aria-labelledby={TITLE.id} aria-busy={busy || undefined}>
+        <section className={`${SECTION} pb-16 lg:pb-20`} aria-labelledby="testimonials" aria-busy={busy || undefined}>
             <div className="container mx-auto px-4">
                 <div className={SECTION_CARD}>{children}</div>
             </div>
@@ -89,7 +95,7 @@ export default function Testimonials() {
     if (loading) {
         return (
             <Block busy>
-                <SectionHeading {...TITLE}/>
+                <ReviewsHeading/>
                 <div className="flex justify-center items-center gap-[30px] pt-10 md:mt-16">
                     {Array.from({length: 3}).map((_, i) => (
                         <div key={i} className={`py-5 px-7 w-56 xl:w-72 rounded-xl bg-white shadow-md space-y-6 ${i !== 1 ? "hidden md:block" : "md:scale-110"}`}>
@@ -114,7 +120,7 @@ export default function Testimonials() {
     if (error) {
         return (
             <Block>
-                <SectionHeading {...TITLE}/>
+                <ReviewsHeading/>
                 <div className="pt-6">
                     <LoadError what="reviews" onRetry={retry}/>
                 </div>
@@ -154,7 +160,7 @@ export default function Testimonials() {
                 </div>
 
                 <div className="relative w-full pt-8 pb-10">
-                    <SectionHeading {...TITLE}/>
+                    <ReviewsHeading/>
                 </div>
                 <div className="pb-10 relative md:mt-16 px-4 overflow-visible">
                     <Swiper
