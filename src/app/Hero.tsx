@@ -5,10 +5,11 @@ import Link from "next/link"
 import {ArrowRight, ChevronLeft, ChevronRight, HandHeart, Truck, Wheat} from "lucide-react"
 
 import {Swiper, SwiperSlide} from "swiper/react"
-import {A11y, Autoplay, Navigation, Pagination} from "swiper/modules"
+import {A11y, Autoplay, EffectFade, Navigation, Pagination} from "swiper/modules"
 
 import "swiper/css"
 import "swiper/css/pagination"
+import "swiper/css/effect-fade"
 
 import {manrope, raleway} from "@/app/fonts"
 import {useEffect, useState} from "react";
@@ -51,7 +52,9 @@ const FEATURES = [
     },
 ]
 
-const HERO_HEIGHT = "min-h-[78vh] lg:min-h-[92vh]"
+// Высота в svh (см. .hero-height в globals.css): vh на iPhone меняется, когда прячется адресная строка,
+// и Swiper пересчитывал размеры посреди перелистывания — карусель застревала между слайдами
+const HERO_HEIGHT = "hero-height"
 
 function HeroSlide({slide, imageSrc, priority}: { slide: Slider; imageSrc: string; priority?: boolean }) {
     const href = safeHref(slide.link)
@@ -142,7 +145,10 @@ export default function Hero() {
             ) : slides.length > 0 ? (
                 <div className="my-container mx-auto relative">
                     <Swiper
-                        modules={[Pagination, Autoplay, Navigation, A11y]}
+                        modules={[Pagination, Autoplay, Navigation, A11y, EffectFade]}
+                        // Плавная смена вместо сдвига: даже прерванная анимация не оставит на экране две половинки слайдов
+                        effect="fade"
+                        fadeEffect={{crossFade: true}}
                         pagination={{clickable: true}}
                         navigation={several ? {prevEl: ".hero-prev", nextEl: ".hero-next"} : false}
                         // 6 секунд — успеть прочитать текст; при наведении слайды не листаются

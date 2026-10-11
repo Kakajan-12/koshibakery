@@ -77,7 +77,7 @@ export default function Testimonials() {
             <div className="py-18" aria-busy="true" aria-label="Loading testimonials">
                 <div className="container mx-auto px-4">
                     <div className="main-block-color rounded-lg p-2">
-                        <div className="border-line rounded-lg p-8">
+                        <div className="rounded-lg p-8">
                             <h6 className={`${raleway.className} main-text-color text-center font-bold pt-8 pb-10 text-lg sm:text-xl md:text-3xl lg:text-4xl`}>Testimonials</h6>
                             <div className="flex justify-center items-center gap-[30px] pb-10 md:mt-16">
                                 {Array.from({length: 3}).map((_, i) => (
@@ -108,7 +108,7 @@ export default function Testimonials() {
             <div className="py-18">
                 <div className="container mx-auto px-4">
                     <div className="main-block-color rounded-lg p-2">
-                        <div className="border-line rounded-lg p-8">
+                        <div className="rounded-lg p-8">
                             <h6 className={`${raleway.className} main-text-color text-center font-bold pt-8 pb-4 text-lg sm:text-xl md:text-3xl lg:text-4xl`}>Testimonials</h6>
                             <LoadError what="reviews" onRetry={retry}/>
                         </div>
@@ -122,7 +122,7 @@ export default function Testimonials() {
         <div className="py-18">
             <div className="container mx-auto px-4">
                 <div className="main-block-color rounded-lg p-2">
-                    <div className="border-line rounded-lg p-8">
+                    <div className="rounded-lg p-8">
                         <div className="w-full relative">
                             <div className="absolute left-0">
                                 <Image

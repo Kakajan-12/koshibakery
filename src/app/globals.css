@@ -309,6 +309,20 @@
     bottom: 24px !important;
 }
 
+/* Высота первого экрана. svh не меняется, когда на iPhone прячется адресная строка;
+   vh — запасной вариант для старых браузеров */
+.hero-height {
+    min-height: 78vh;
+    min-height: 78svh;
+}
+
+@media (min-width: 1024px) {
+    .hero-height {
+        min-height: 92vh;
+        min-height: 92svh;
+    }
+}
+
 /* Полоски вместо точек: активная длиннее */
 .hero-swiper .swiper-pagination-bullet {
     width: 18px;

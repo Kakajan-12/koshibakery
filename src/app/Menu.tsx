@@ -56,7 +56,7 @@ export default function MainMenu() {
         return (
             <div className="container mx-auto px-6" aria-busy="true" aria-label="Loading menu">
                 <div className="main-block-color rounded-lg p-2">
-                    <div className="border-line rounded-lg p-8">
+                    <div className="rounded-lg p-8">
                         <div className="py-5">
                             <h6 className={`${raleway.className} main-text-color font-bold text-center text-xl sm:text-2xl md:text-3xl lg:text-4xl`}>Menu</h6>
                             <Skeleton className="mx-auto mt-3 h-4 w-3/4 max-w-xl"/>
@@ -81,7 +81,7 @@ export default function MainMenu() {
         return (
             <div className="container mx-auto px-6">
                 <div className="main-block-color rounded-lg p-2">
-                    <div className="border-line rounded-lg p-8">
+                    <div className="rounded-lg p-8">
                         <h6 className={`${raleway.className} main-text-color font-bold text-center text-xl sm:text-2xl md:text-3xl lg:text-4xl py-5`}>Menu</h6>
                         <LoadError what="the menu" onRetry={retry}/>
                     </div>
@@ -93,7 +93,7 @@ export default function MainMenu() {
     return (
         <div className="container mx-auto px-6">
             <div className="main-block-color rounded-lg p-2">
-                <div className="border-line rounded-lg p-8">
+                <div className="rounded-lg p-8">
                     <div className="py-5">
                         <h6 className={`${raleway.className} main-text-color font-bold text-center text-xl sm:text-2xl md:text-3xl lg:text-4xl`}>Menu</h6>
                         <p className={`${manrope.className} main-text-color text-center text-sm sm:text-md lg:text-lg pt-2`}>

@@ -372,12 +372,6 @@ const MenuItem = () => {
                                     </p>
                                 )}
 
-                                {!isEmptyHtml(product.product_desc) && (
-                                    <div
-                                        className={`${manrope.className} text-base sm:text-lg lg:text-base xl:text-lg text-[#6F5E53] leading-relaxed`}
-                                        dangerouslySetInnerHTML={{__html: safeHtml(product.product_desc)}}
-                                    />
-                                )}
                             </div>
 
                             {!isEmptyHtml(product.notice) && (
@@ -467,6 +461,14 @@ const MenuItem = () => {
                                     Add to cart
                                     {selectedVariant && <span className="opacity-80">· £{formatPrice(selectedVariant.price)}</span>}
                                 </button>
+                            )}
+
+                            {/* Описание — под кнопкой заказа: на телефоне выбрать размер и добавить в корзину можно без прокрутки */}
+                            {!isEmptyHtml(product.product_desc) && (
+                                <div
+                                    className={`${manrope.className} border-t border-[#B8485B]/10 pt-6 text-base sm:text-lg lg:text-base xl:text-lg text-[#6F5E53] leading-relaxed`}
+                                    dangerouslySetInnerHTML={{__html: safeHtml(product.product_desc)}}
+                                />
                             )}
 
                             {(hasIngredients || hasAllergens || hasDelivery) && (
