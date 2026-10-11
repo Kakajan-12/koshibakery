@@ -20,10 +20,11 @@ interface Testimonial {
     rating: number | null;
 }
 
-// Заголовок блока — одно слово «Reviews» в стиле подписи над заголовками Menu и Why Koşi, только крупнее
+// Заголовок блока — одно слово «Reviews» в стиле подписи над заголовками Menu и Why Koşi.
+// На телефоне небольшой: крупный не помещался между кавычками и наезжал на них
 function ReviewsHeading() {
     return (
-        <h2 id="testimonials" className={`${manrope.className} text-center text-3xl sm:text-4xl font-semibold uppercase tracking-[0.2em] text-[#B8485B]`}>
+        <h2 id="testimonials" className={`${manrope.className} text-center text-lg md:text-3xl lg:text-4xl font-semibold uppercase tracking-[0.2em] text-[#B8485B]`}>
             Reviews
         </h2>
     );
