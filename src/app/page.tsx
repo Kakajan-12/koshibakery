@@ -1,5 +1,6 @@
 import Hero from "@/app/Hero";
 import Menu from "@/app/Menu";
+import WhyKoshi from "@/app/WhyKoshi";
 import Testimonials from "@/app/Testimonials";
 
 export default function Home() {
@@ -7,6 +8,7 @@ export default function Home() {
         <>
             <Hero/>
             <Menu/>
+            <WhyKoshi/>
             <Testimonials/>
         </>
     );

@@ -1,6 +1,6 @@
 "use client";
 
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {usePathname} from "next/navigation";
@@ -52,6 +52,16 @@ export default function Header() {
     // Гость сразу идёт на вход — без захода на /profile и перенаправления оттуда
     const {status: authStatus} = useAuth();
     const profileHref = authStatus === "guest" ? "/login" : "/profile";
+    const closeMenu = () => setMenuOpen(false);
+
+    // Меню закрывается при любом переходе (и по ссылкам вне меню: логотип, профиль, корзина) и по Esc
+    useEffect(() => setMenuOpen(false), [pathname]);
+    useEffect(() => {
+        if (!menuOpen) return;
+        const onKey = (e: KeyboardEvent) => e.key === "Escape" && setMenuOpen(false);
+        window.addEventListener("keydown", onKey);
+        return () => window.removeEventListener("keydown", onKey);
+    }, [menuOpen]);
 
     return (
         <header
@@ -61,6 +71,7 @@ export default function Header() {
                 className="container mx-auto px-4 py-2 flex items-center justify-between border-b border-black md:border-none">
                 <Link
                     href="/"
+                    onClick={closeMenu}
                     className="flex items-center gap-2 font-bold text-gray-900"
                 >
                     <Image src="/icon.svg" alt="Logo" width={50} height={50}
@@ -85,11 +96,12 @@ export default function Header() {
                 </nav>
 
                 <div className="flex items-center gap-1">
-                    <Link href={profileHref} aria-label={authStatus === "guest" ? "Log in" : "Profile"} aria-current={isActive(pathname, "/profile") ? "page" : undefined}
+                    <Link href={profileHref} onClick={closeMenu} aria-label={authStatus === "guest" ? "Log in" : "Profile"} aria-current={isActive(pathname, "/profile") ? "page" : undefined}
                           className={iconButtonClass(isActive(pathname, "/profile"))}>
                         <User className={ICON_CLASS} strokeWidth={1.75}/>
                     </Link>
                     <Link href="/cart"
+                          onClick={closeMenu}
                           aria-label={cart.length > 0 ? `Cart, ${cart.length} item${cart.length === 1 ? "" : "s"}` : "Cart"}
                           aria-current={isActive(pathname, "/cart") ? "page" : undefined}
                           className={`relative ${iconButtonClass(isActive(pathname, "/cart"))}`}>
@@ -129,7 +141,7 @@ export default function Header() {
                                 <Link
                                     key={href}
                                     href={href}
-                                    onClick={() => setMenuOpen(false)}
+                                    onClick={closeMenu}
                                     aria-current={active ? "page" : undefined}
                                     data-label={label}
                                     className={linkClass(active, "mobile")}
