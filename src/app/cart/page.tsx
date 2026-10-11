@@ -77,7 +77,8 @@ function OrderTypeSwitch({value, onChange}: { value: OrderType; onChange: (v: Or
                         role="radio"
                         aria-checked={active}
                         onClick={() => onChange(v)}
-                        className={`flex items-center gap-3 rounded-xl p-4 text-left cursor-pointer transition ${
+                        // На телефоне иконка над текстом: в половине ширины «Collection» рядом с иконкой не помещается
+                        className={`flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-3 rounded-xl p-3 sm:p-4 text-left cursor-pointer transition ${
                             active ? "bg-[#B8485B]/[0.06] ring-2 ring-[#B8485B]" : "ring-1 ring-[#B8485B]/20 hover:ring-[#B8485B]/50"
                         }`}
                     >
