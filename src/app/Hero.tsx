@@ -60,7 +60,7 @@ function HeroSlide({slide, imageSrc, priority}: { slide: Slider; imageSrc: strin
                     <p className={`${manrope.className} inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs uppercase tracking-[0.18em] text-white/90 backdrop-blur-sm ring-1 ring-white/20`}>
                         Koşi Bakery · London
                     </p>
-                    <h1 className={`${raleway.className} mt-5 text-white text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.05] drop-shadow-sm`}>
+                    <h1 className={`${raleway.className} mt-5 text-white text-4xl sm:text-5xl xl:text-6xl font-bold leading-[1.05] drop-shadow-sm`}>
                         {slide.title}
                     </h1>
                     {slide.text && (
@@ -149,15 +149,19 @@ export default function Hero() {
                         ))}
                     </Swiper>
                     {several && (
-                        <div className="pointer-events-none absolute inset-y-0 inset-x-0 z-10 hidden lg:flex items-center justify-between px-6">
-                            <button type="button" aria-label="Previous slide"
-                                    className="hero-prev pointer-events-auto flex h-12 w-12 items-center justify-center rounded-full bg-white/15 text-white ring-1 ring-white/30 backdrop-blur-sm cursor-pointer transition hover:bg-white hover:text-[#B8485B]">
-                                <ChevronLeft className="h-6 w-6"/>
-                            </button>
-                            <button type="button" aria-label="Next slide"
-                                    className="hero-next pointer-events-auto flex h-12 w-12 items-center justify-center rounded-full bg-white/15 text-white ring-1 ring-white/30 backdrop-blur-sm cursor-pointer transition hover:bg-white hover:text-[#B8485B]">
-                                <ChevronRight className="h-6 w-6"/>
-                            </button>
+                        // Стрелки внизу справа, по краю колонки контента (как корзина в шапке):
+                        // по бокам слайда они наезжали на заголовок, а у края окна терялись на широких экранах
+                        <div className="pointer-events-none absolute inset-x-0 bottom-6 z-10 hidden lg:block">
+                            <div className="container mx-auto px-4 flex justify-end gap-3">
+                                <button type="button" aria-label="Previous slide"
+                                        className="hero-prev pointer-events-auto flex h-12 w-12 items-center justify-center rounded-full bg-white/15 text-white ring-1 ring-white/30 backdrop-blur-sm cursor-pointer transition hover:bg-white hover:text-[#B8485B]">
+                                    <ChevronLeft className="h-6 w-6"/>
+                                </button>
+                                <button type="button" aria-label="Next slide"
+                                        className="hero-next pointer-events-auto flex h-12 w-12 items-center justify-center rounded-full bg-white/15 text-white ring-1 ring-white/30 backdrop-blur-sm cursor-pointer transition hover:bg-white hover:text-[#B8485B]">
+                                    <ChevronRight className="h-6 w-6"/>
+                                </button>
+                            </div>
                         </div>
                     )}
                 </div>
