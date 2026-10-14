@@ -707,8 +707,8 @@ const Profile = () => {
     return shell(
         <>
             {/* Шапка профиля */}
-            <div className="main-block-color rounded-3xl p-6 sm:p-8 flex flex-wrap items-center gap-4">
-                <span className={`${raleway.className} h-16 w-16 shrink-0 rounded-full bg-[#B8485B] text-white text-xl font-bold flex items-center justify-center shadow-md`}>
+            <div className="main-block-color rounded-3xl p-5 sm:p-8 flex items-center gap-3 sm:gap-4">
+                <span className={`${raleway.className} h-14 w-14 sm:h-16 sm:w-16 shrink-0 rounded-full bg-[#B8485B] text-white text-xl font-bold flex items-center justify-center shadow-md`}>
                     {initials}
                 </span>
                 <div className="min-w-0 flex-1">
@@ -718,9 +718,11 @@ const Profile = () => {
                     </h1>
                     <p className={`${manrope.className} text-sm text-[#6F5E53] truncate`}>{user.email}</p>
                 </div>
-                <button type="button" onClick={logout} disabled={loggingOut} className={SECONDARY_BTN}>
+                {/* На телефоне — только иконка: с текстом кнопка обрезала приветствие и email */}
+                <button type="button" onClick={logout} disabled={loggingOut} aria-label="Log out"
+                        className={`${SECONDARY_BTN} max-sm:!w-11 max-sm:!px-0 shrink-0`}>
                     {loggingOut ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true"/> : <LogOut className="w-4 h-4" aria-hidden="true"/>}
-                    Log out
+                    <span className="hidden sm:inline">Log out</span>
                 </button>
             </div>
 
@@ -754,7 +756,7 @@ const Profile = () => {
                         >
                             <Icon className="w-4 h-4" aria-hidden="true"/>
                             <span className="hidden sm:inline">{label}</span>
-                            <span className="sm:hidden">{label.replace("My ", "")}</span>
+                            <span className="sm:hidden">{label.replace("My details", "Details")}</span>
                         </button>
                     );
                 })}

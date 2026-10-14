@@ -124,8 +124,9 @@ function CartRow({item, message, onMessage, onQuantity, onRemove}: {
                             </p>
                         </div>
                         <button type="button" onClick={onRemove} aria-label={`Remove ${item.product_name} from cart`}
-                                className="h-9 w-9 shrink-0 -mr-2 -mt-1 rounded-full flex items-center justify-center text-[#6F5E53] cursor-pointer transition hover:bg-[#FEF3F2] hover:text-[#B42318]">
-                            <Trash2 className="w-4 h-4"/>
+                                // Видна как кнопка сразу (кружок с обводкой), при наведении — красная заливка
+                                className="h-9 w-9 shrink-0 rounded-full flex items-center justify-center bg-[#FEF3F2] text-[#B42318] ring-1 ring-[#B42318]/20 cursor-pointer transition hover:bg-[#B42318] hover:text-white hover:ring-[#B42318] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B42318]/50">
+                            <Trash2 className="w-4 h-4" aria-hidden="true"/>
                         </button>
                     </div>
 
@@ -161,7 +162,7 @@ function CartRow({item, message, onMessage, onQuantity, onRemove}: {
                           className="relative h-6 w-11 shrink-0 rounded-full bg-[#E7DAD6] transition-colors peer-checked:bg-[#B8485B] peer-focus-visible:ring-2 peer-focus-visible:ring-[#B8485B]/50 peer-focus-visible:ring-offset-2 after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-5"/>
                     <span className={`${manrope.className} text-sm text-[#3B302B]`}>
                         <MessageSquareText className="inline w-4 h-4 mr-1 -mt-0.5 text-[#B8485B]" aria-hidden="true"/>
-                        Add a message on the cake <span className="text-[#6F5E53]">(+£{CUSTOM_MESSAGE_FEE})</span>
+                        Add a message on the cake <span className="whitespace-nowrap text-[#6F5E53]">(+£{CUSTOM_MESSAGE_FEE})</span>
                     </span>
                 </label>
                 {message.on && (
@@ -472,15 +473,16 @@ const Cart = () => {
                     <h1 className={`${raleway.className} mt-1 text-3xl sm:text-4xl font-bold text-[#12100F]`}>Your cart</h1>
                     <p className={`${manrope.className} mt-1 text-[#6F5E53]`}>{itemCount} {itemCount === 1 ? "item" : "items"}</p>
                 </div>
-                <div className="flex flex-wrap items-center gap-2">
+                {/* На телефоне в одну строку: «Continue shopping» растягивается, «Clear cart» — только иконка */}
+                <div className="flex items-center gap-2">
                     <Link href="/menu"
-                          className={`${manrope.className} group h-10 px-4 inline-flex items-center gap-2 rounded-full bg-white text-sm font-semibold text-[#B8485B] shadow-sm ring-1 ring-[#B8485B]/30 transition hover:ring-[#B8485B] hover:bg-[#B8485B] hover:text-white`}>
+                          className={`${manrope.className} group flex-1 sm:flex-none justify-center h-10 px-4 inline-flex items-center gap-2 rounded-full bg-white text-sm font-semibold text-[#B8485B] shadow-sm ring-1 ring-[#B8485B]/30 transition hover:ring-[#B8485B] hover:bg-[#B8485B] hover:text-white`}>
                         <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" aria-hidden="true"/>
                         Continue shopping
                     </Link>
-                    <button type="button" onClick={() => setClearOpen(true)}
-                            className={`${manrope.className} h-10 px-4 inline-flex items-center gap-2 rounded-full bg-white text-sm font-semibold text-[#6F5E53] shadow-sm ring-1 ring-[#6F5E53]/20 cursor-pointer transition hover:ring-[#B42318]/40 hover:bg-[#FEF3F2] hover:text-[#B42318]`}>
-                        <Trash2 className="w-4 h-4" aria-hidden="true"/> Clear cart
+                    <button type="button" onClick={() => setClearOpen(true)} aria-label="Clear cart"
+                            className={`${manrope.className} shrink-0 h-10 w-10 sm:w-auto justify-center sm:px-4 inline-flex items-center gap-2 rounded-full bg-white text-sm font-semibold text-[#6F5E53] shadow-sm ring-1 ring-[#6F5E53]/20 cursor-pointer transition hover:ring-[#B42318]/40 hover:bg-[#FEF3F2] hover:text-[#B42318]`}>
+                        <Trash2 className="w-4 h-4" aria-hidden="true"/> <span className="hidden sm:inline">Clear cart</span>
                     </button>
                 </div>
             </div>

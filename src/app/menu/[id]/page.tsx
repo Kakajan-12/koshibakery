@@ -423,7 +423,7 @@ const MenuItem = () => {
                                     <div className="flex flex-col sm:flex-row gap-3">
                                         <div
                                             role="status"
-                                            className={`${manrope.className} flex-1 inline-flex items-center justify-center gap-2 h-12 xl:h-14 rounded-full
+                                            className={`${manrope.className} sm:flex-1 inline-flex items-center justify-center gap-2 h-12 xl:h-14 rounded-full
                                                         bg-[#EAF5EC] text-[#2F6B3F] font-semibold`}
                                         >
                                             <Check className="w-5 h-5" aria-hidden="true"/>
@@ -431,7 +431,7 @@ const MenuItem = () => {
                                         </div>
                                         <Link
                                             href="/cart"
-                                            className={`${manrope.className} flex-1 inline-flex items-center justify-center gap-2 h-12 xl:h-14 rounded-full
+                                            className={`${manrope.className} sm:flex-1 inline-flex items-center justify-center gap-2 h-12 xl:h-14 rounded-full
                                                         main-button-color text-white font-semibold shadow-md transition hover:brightness-110
                                                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8485B]/50 focus-visible:ring-offset-2`}
                                         >

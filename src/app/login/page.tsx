@@ -192,15 +192,17 @@ function LoginForm() {
                                 </div>
                             </div>
 
-                            <label className={`${manrope.className} flex items-center gap-2.5 w-fit cursor-pointer select-none text-sm text-[#3B302B]`}>
+                            {/* Текст — одним блоком рядом с галочкой: иначе flex делал из него две колонки на телефоне */}
+                            <label className={`${manrope.className} flex items-start gap-2.5 w-fit cursor-pointer select-none text-sm text-[#3B302B]`}>
                                 <input
                                     type="checkbox"
                                     checked={remember}
                                     onChange={(e) => setRemember(e.target.checked)}
-                                    className="size-4 accent-[#B8485B] cursor-pointer"
+                                    className="size-4 mt-0.5 shrink-0 accent-[#B8485B] cursor-pointer"
                                 />
-                                Remember me
-                                <span className="text-[#6F5E53]">— stay logged in for 30 days</span>
+                                <span>
+                                    Remember me <span className="text-[#6F5E53]">— stay logged in for 30 days</span>
+                                </span>
                             </label>
 
                             {error && (

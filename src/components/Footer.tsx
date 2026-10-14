@@ -10,6 +10,7 @@ import {Skeleton} from "@/components/ui/skeleton";
 import {safeHref} from "@/lib/html";
 import Link from "next/link";
 import Image from "next/image";
+import CreamWave from "@/components/CreamWave";
 
 interface Contact {
     id: number;
@@ -78,8 +79,7 @@ export default function Footer() {
 
     return (
         <footer className="my-container mx-auto pt-10">
-            <Image src="/footer.png" alt="" width={900} height={300} className="w-full hidden sm:block" aria-hidden="true"/>
-            <Image src="/mob-footer.png" alt="" width={900} height={300} className="w-full h-24 sm:hidden" aria-hidden="true"/>
+            <CreamWave/>
 
             <div className="container mx-auto px-4">
                 <div className="grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1.3fr_1.1fr] lg:gap-12">
