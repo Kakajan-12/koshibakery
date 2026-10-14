@@ -97,8 +97,10 @@ function OrderTypeSwitch({value, onChange}: { value: OrderType; onChange: (v: Or
 }
 
 // Строка товара: количество, удаление и надпись на торте
-function CartRow({item, message, onMessage, onQuantity, onRemove}: {
+function CartRow({item, allowMessage, message, onMessage, onQuantity, onRemove}: {
     item: CartItem;
+    // false — категория без надписей (например, печенье): переключатель не показываем
+    allowMessage: boolean;
     message: { on: boolean; text: string };
     onMessage: (m: { on: boolean; text: string }) => void;
     onQuantity: (q: number) => void;
@@ -149,8 +151,8 @@ function CartRow({item, message, onMessage, onQuantity, onRemove}: {
                 </div>
             </div>
 
-            {/* Надпись на торте */}
-            <div className="mt-4">
+            {/* Надпись на торте — только для категорий, где она бывает */}
+            {allowMessage && <div className="mt-4">
                 <label className="inline-flex items-center gap-3 cursor-pointer select-none">
                     <input
                         type="checkbox"
@@ -183,7 +185,7 @@ function CartRow({item, message, onMessage, onQuantity, onRemove}: {
                         </p>
                     </div>
                 )}
-            </div>
+            </div>}
         </li>
     );
 }
@@ -194,6 +196,8 @@ const Cart = () => {
 
     // Надписи на тортах переживают переход на вход и обратно
     const [messages, setMessages] = useState<Record<string, { on: boolean; text: string }>>({});
+    // Товары без надписи (флаг категории в админке); null — ещё не узнали, переключатели пока скрыты
+    const [noMessage, setNoMessage] = useState<Set<number> | null>(null);
     const [messagesLoaded, setMessagesLoaded] = useState(false);
 
     const [orderType, setOrderType] = useState<OrderType>("delivery");
@@ -333,8 +337,25 @@ const Cart = () => {
     }, [orderType, deliveryAddress]);
 
 
+    // Какие товары корзины без надписи на изделии — спрашиваем у сервера при изменении состава корзины
+    const productIdsKey = [...new Set(cart.map((i) => i.id))].sort((a, b) => a - b).join(",");
+    useEffect(() => {
+        if (!productIdsKey) return;
+        let cancelled = false;
+        fetch(api(`/api/order/message-rules?ids=${productIdsKey}`))
+            .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+            .then((d: { noMessage?: number[] }) => !cancelled && setNoMessage(new Set(d.noMessage ?? [])))
+            // Не узнали — показываем переключатели; сервер всё равно не возьмёт надпись там, где она не положена
+            .catch(() => !cancelled && setNoMessage(new Set()));
+        return () => {
+            cancelled = true;
+        };
+    }, [productIdsKey]);
+    const allowsMessage = (item: CartItem) => noMessage !== null && !noMessage.has(item.id);
+
     // Надпись платная, только если переключатель включён и текст не пустой — так же считает сервер
     const messageFor = (item: CartItem) => {
+        if (!allowsMessage(item)) return null;
         const m = messages[itemKey(item)];
         return m?.on ? m.text.trim() || null : null;
     };
@@ -498,6 +519,7 @@ const Cart = () => {
                                     <CartRow
                                         key={key}
                                         item={item}
+                                        allowMessage={allowsMessage(item)}
                                         message={messages[key] ?? {on: false, text: ""}}
                                         onMessage={(m) => setMessages((prev) => ({...prev, [key]: m}))}
                                         onQuantity={(q) => updateQuantity(item.id, item.variantName, q)}
