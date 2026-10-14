@@ -55,21 +55,21 @@ function HeroSlide({slide, imageSrc, priority}: { slide: Slider; imageSrc: strin
             {/* Затемнение слева и снизу: текст читается на любой фотографии, а правая часть остаётся яркой */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-black/10 lg:bg-gradient-to-r lg:from-black/70 lg:via-black/35 lg:to-transparent" aria-hidden="true"/>
 
-            <div className="relative z-20 container mx-auto px-4 pb-20 pt-32 lg:py-0">
+            <div className="relative z-20 container mx-auto px-4 pb-20 pt-24 lg:py-0">
                 <div className="max-w-2xl">
                     <p className={`${manrope.className} inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs uppercase tracking-[0.18em] text-white/90 backdrop-blur-sm ring-1 ring-white/20`}>
                         Koşi Bakery · London
                     </p>
-                    <h1 className={`${raleway.className} mt-5 text-white text-4xl sm:text-5xl xl:text-6xl font-bold leading-[1.05] drop-shadow-sm`}>
+                    <h1 className={`${raleway.className} mt-4 sm:mt-5 text-white text-[32px] sm:text-5xl xl:text-6xl font-bold leading-[1.05] drop-shadow-sm line-clamp-3`}>
                         {slide.title}
                     </h1>
                     {slide.text && (
-                        <p className={`${manrope.className} mt-5 text-white/90 text-base sm:text-lg lg:text-xl leading-relaxed max-w-xl`}>
+                        <p className={`${manrope.className} mt-4 sm:mt-5 text-white/90 text-base sm:text-lg lg:text-xl leading-relaxed max-w-xl line-clamp-3 lg:line-clamp-4`}>
                             {slide.text}
                         </p>
                     )}
 
-                    <div className="mt-8 flex flex-wrap gap-3">
+                    <div className="mt-6 sm:mt-8 flex flex-wrap gap-3">
                         {/* Ссылка у слайда необязательна — без неё (или с небезопасной, вроде javascript:) ведём в меню */}
                         <Link
                             href={href ?? "/menu"}
@@ -77,12 +77,6 @@ function HeroSlide({slide, imageSrc, priority}: { slide: Slider; imageSrc: strin
                         >
                             {href ? slide.link_text || "Learn more" : "Our Menu"}
                             <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" aria-hidden="true"/>
-                        </Link>
-                        <Link
-                            href="/custom"
-                            className={`${manrope.className} inline-flex items-center h-12 px-6 rounded-full bg-white/10 text-white text-base font-semibold ring-1 ring-white/40 backdrop-blur-sm transition hover:bg-white hover:text-[#B8485B]`}
-                        >
-                            Order a custom cake
                         </Link>
                     </div>
                 </div>
@@ -115,10 +109,7 @@ export default function Hero() {
                                 <Skeleton tone="dark" className="h-7 w-48 rounded-full"/>
                                 <Skeleton tone="dark" className="h-12 sm:h-16 lg:h-20 w-3/4"/>
                                 <Skeleton tone="dark" className="h-5 sm:h-6 w-full max-w-[560px]"/>
-                                <div className="flex gap-3">
-                                    <Skeleton tone="dark" className="h-12 w-40 rounded-full"/>
-                                    <Skeleton tone="dark" className="h-12 w-52 rounded-full"/>
-                                </div>
+                                <Skeleton tone="dark" className="h-12 w-40 rounded-full"/>
                             </div>
                         </div>
                     </div>

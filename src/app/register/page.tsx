@@ -53,7 +53,7 @@ export default function RegisterPage() {
         setError("");
 
         if (!picked) {
-            setError("Please choose your address from the suggestions.");
+            setError("Please find your address by postcode and select it from the list.");
             return;
         }
 
@@ -241,8 +241,8 @@ export default function RegisterPage() {
 
                                     <AddressPicker
                                         id="reg-address"
-                                        label="Delivery address"
-                                        hint="We deliver within London. Choose your address from the list."
+                                        label="Postcode"
+                                        hint="We deliver within London. Enter your postcode and press Find address."
                                         required
                                         withBuildingName
                                         onChange={(place, house, building) => {
