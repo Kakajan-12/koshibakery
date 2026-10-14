@@ -160,10 +160,10 @@ export default function Testimonials() {
                     />
                 </div>
 
-                <div className="relative w-full pt-8 pb-10">
+                <div className="relative w-full pt-6 pb-6 md:pt-8 md:pb-10">
                     <ReviewsHeading/>
                 </div>
-                <div className="pb-10 relative md:mt-16 px-4 overflow-visible">
+                <div className="pb-4 md:pb-10 relative md:mt-16 px-4 overflow-visible">
                     <Swiper
                         key={cards.length}
                         className="testimonials-swiper"
@@ -186,8 +186,10 @@ export default function Testimonials() {
                         }}
                     >
                         {loopSlides(cards).map((item, i) => (
-                            <SwiperSlide key={`${item.id}-${i}`}>
-                                <div className="flex justify-center">
+                            // На телефоне слайды равны самому длинному отзыву — короткую карточку ставим по центру,
+                            // иначе под ней пустота до стрелок
+                            <SwiperSlide key={`${item.id}-${i}`} className="max-md:!h-auto max-md:self-stretch">
+                                <div className="flex justify-center max-md:h-full max-md:items-center">
                                     <TestomonialCard {...item} />
                                 </div>
                             </SwiperSlide>

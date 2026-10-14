@@ -1,6 +1,7 @@
 "use client";
 
 import {useEffect, useMemo, useState} from "react";
+import Link from "next/link";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import {CalendarDays, Clock, Info, Loader2} from "lucide-react";
@@ -95,7 +96,11 @@ export default function ReadyTimePicker({productIds, orderType, date, time, onCh
                     <Info className="w-4 h-4 shrink-0 mt-0.5" aria-hidden="true"/>
                     <span>
                         Some items in your cart are baked to order, so the earliest date is <strong>{shortDate(days[0])}</strong>.
-                        Need it sooner? Get in touch and we&apos;ll see what we can do.
+                        Need it sooner?{" "}
+                        <Link href="/contact" className="font-semibold underline underline-offset-2 hover:text-[#B8485B]">
+                            Get in touch
+                        </Link>{" "}
+                        and we&apos;ll see what we can do.
                     </span>
                 </p>
             )}

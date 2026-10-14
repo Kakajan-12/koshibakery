@@ -117,8 +117,9 @@ export default function AddressPicker({id, label, hint, required, defaultValue =
         <div className="space-y-4">
             <div>
                 <label htmlFor={id} className={LABEL}>{label}</label>
-                <div className="flex gap-2">
-                    <div className="relative flex-1 min-w-0">
+                {/* На телефоне поле на всю ширину, кнопка под ним (рядом поле сжималось до ~145px) */}
+                <div className="flex flex-col sm:flex-row gap-2">
+                    <div className="relative sm:flex-1 min-w-0">
                         <MapPin className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#B8485B]/70" aria-hidden="true"/>
                         <input
                             id={id}
@@ -153,7 +154,7 @@ export default function AddressPicker({id, label, hint, required, defaultValue =
                         type="button"
                         onClick={find}
                         disabled={searching}
-                        className={`${manrope.className} shrink-0 inline-flex items-center justify-center gap-2 h-12 px-4 sm:px-5 rounded-xl main-button-color text-white text-sm font-semibold cursor-pointer transition hover:brightness-110 disabled:opacity-70 disabled:cursor-wait`}
+                        className={`${manrope.className} shrink-0 w-full sm:w-auto inline-flex items-center justify-center gap-2 h-12 px-5 rounded-xl main-button-color text-white text-sm font-semibold cursor-pointer transition hover:brightness-110 disabled:opacity-70 disabled:cursor-wait`}
                     >
                         {searching ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true"/> : <Search className="w-4 h-4" aria-hidden="true"/>}
                         Find address
@@ -275,7 +276,9 @@ function AddressSelect({id, buttonRef, addresses, value, onChange}: {
     // Список под полем; если снизу мало места — над ним. Следует за полем при прокрутке и изменении окна
     useLayoutEffect(() => {
         if (!open) return;
-        const place = () => {
+        const place = (e?: Event) => {
+            // Прокручивают сам список — его положение на экране не меняется
+            if (e && listRef.current && e.target instanceof Node && listRef.current.contains(e.target)) return;
             const rect = buttonRef.current?.getBoundingClientRect();
             if (!rect) return;
             const gap = 8;
@@ -291,11 +294,13 @@ function AddressSelect({id, buttonRef, addresses, value, onChange}: {
             });
         };
         place();
-        window.addEventListener("scroll", place, true);
-        window.addEventListener("resize", place);
+        const onScroll = (e: Event) => place(e);
+        const onResize = () => place();
+        window.addEventListener("scroll", onScroll, true);
+        window.addEventListener("resize", onResize);
         return () => {
-            window.removeEventListener("scroll", place, true);
-            window.removeEventListener("resize", place);
+            window.removeEventListener("scroll", onScroll, true);
+            window.removeEventListener("resize", onResize);
         };
     }, [open, buttonRef]);
 
@@ -308,7 +313,9 @@ function AddressSelect({id, buttonRef, addresses, value, onChange}: {
         else if (item.offsetTop + item.offsetHeight > list.scrollTop + list.clientHeight) {
             list.scrollTop = item.offsetTop + item.offsetHeight - list.clientHeight + 8;
         }
-    }, [open, active, pos]);
+        // pos — только чтобы дождаться первого показа списка; дальше прокрутку списка не перебиваем
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [open, active, !!pos]);
 
     const show = () => {
         const index = options.findIndex((o) => o.value === value);

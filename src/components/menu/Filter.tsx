@@ -1,6 +1,6 @@
 "use client";
 import {useEffect, useState} from "react";
-import {ArrowUpDown, Check, ChevronDown, Search, SlidersHorizontal, X} from "lucide-react";
+import {ArrowUpDown, Check, ChevronDown, RotateCcw, Search, SlidersHorizontal, X} from "lucide-react";
 
 import {
     DropdownMenu,
@@ -58,7 +58,7 @@ const AVAILABILITY_OPTIONS: { value: AvailabilityOption; label: string }[] = [
 ];
 
 // Общий вид кнопок панели: белая «пилюля» той же высоты, что и поиск
-const PILL = `${manrope.className} group inline-flex items-center justify-center gap-2 h-12 px-5 rounded-full bg-white
+const PILL = `${manrope.className} group inline-flex items-center justify-center gap-1.5 sm:gap-2 h-12 px-3 sm:px-5 rounded-full bg-white
     text-sm font-medium text-[#12100F] ring-1 ring-[#B8485B]/15 shadow-sm cursor-pointer transition
     hover:ring-[#B8485B]/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8485B]/50
     data-[state=open]:ring-[#B8485B]/50`;
@@ -138,18 +138,20 @@ export default function FilterBar({
 
     // Выбранные фильтры — чипами под панелью; крестик на чипе снимает только его
     const activeFilters = [
-        selectedType !== null && {key: "type", label: typeName ?? "Occasion", clear: () => setSelectedType(null)},
+        selectedType !== null && {key: "type", name: "Occasion", label: typeName ?? "Occasion", clear: () => setSelectedType(null)},
         availability !== "all" && {
             key: "availability",
+            name: "Availability",
             label: AVAILABILITY_OPTIONS.find((o) => o.value === availability)?.label ?? availability,
             clear: () => setAvailability("all"),
         },
         priceFiltered && {
             key: "price",
+            name: "Price",
             label: `£${priceRange[0]} – £${priceRange[1]}`,
             clear: () => setPriceRange([0, maxPrice]),
         },
-    ].filter(Boolean) as { key: string; label: string; clear: () => void }[];
+    ].filter(Boolean) as { key: string; name: string; label: string; clear: () => void }[];
 
     return (
         <div className="container mx-auto px-4 py-6 space-y-3">
@@ -188,7 +190,7 @@ export default function FilterBar({
                         <DropdownMenuTrigger asChild>
                             {/* min-w: подписи сортировки разной длины — без него поле поиска «прыгало» при смене */}
                             <button type="button" className={`${PILL} md:min-w-52 lg:min-w-60`} aria-label={`Sort: ${currentSort.label}`}>
-                                <ArrowUpDown className="w-4 h-4 text-[#B8485B]" aria-hidden="true"/>
+                                <ArrowUpDown className="hidden min-[400px]:block w-4 h-4 shrink-0 text-[#B8485B]" aria-hidden="true"/>
                                 <span className="hidden lg:inline text-gray-500">Sort:</span>
                                 <span className="truncate">{currentSort.short}</span>
                                 <ChevronDown
@@ -366,29 +368,36 @@ export default function FilterBar({
             </div>
 
             {activeFilters.length > 0 && (
-                <div className="flex flex-wrap items-center gap-2">
+                // Панель лежит на бордовом фоне: чипы белые, у каждого — какой это фильтр и круглый крестик
+                <div className="flex flex-wrap items-center gap-2 pt-1">
                     {activeFilters.map((f) => (
                         <button
                             key={f.key}
                             type="button"
                             onClick={f.clear}
-                            aria-label={`Remove filter ${f.label}`}
-                            // Панель лежит на бордовом фоне — чипы белые, чтобы читались
-                            className={`${manrope.className} inline-flex items-center gap-1.5 h-8 pl-3 pr-2 rounded-full
-                                        bg-white text-[#B8485B] text-sm font-medium shadow-sm cursor-pointer transition-colors
-                                        hover:bg-[#F6EEEC]`}
+                            aria-label={`Remove filter ${f.name}: ${f.label}`}
+                            className={`${manrope.className} group inline-flex items-center gap-2 h-9 pl-3.5 pr-1.5 rounded-full
+                                        bg-white text-sm shadow-sm cursor-pointer transition hover:shadow-md`}
                         >
-                            {f.label}
-                            <X className="w-3.5 h-3.5" aria-hidden="true"/>
+                            <span className="text-[#6F5E53]">{f.name}:</span>
+                            <span className="font-semibold text-[#12100F]">{f.label}</span>
+                            <span className="flex w-6 h-6 items-center justify-center rounded-full bg-[#F6EEEC] text-[#B8485B]
+                                             transition-colors group-hover:bg-[#B8485B] group-hover:text-white">
+                                <X className="w-3.5 h-3.5" aria-hidden="true"/>
+                            </span>
                         </button>
                     ))}
-                    <button
-                        type="button"
-                        onClick={resetFilters}
-                        className={`${manrope.className} link-underline ml-1 text-sm text-white/80 cursor-pointer hover:text-white`}
-                    >
-                        Clear all
-                    </button>
+                    {activeFilters.length > 1 && (
+                        <button
+                            type="button"
+                            onClick={resetFilters}
+                            className={`${manrope.className} inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full text-sm font-semibold
+                                        text-white ring-1 ring-white/40 cursor-pointer transition hover:bg-white hover:text-[#B8485B] hover:ring-white`}
+                        >
+                            <RotateCcw className="w-3.5 h-3.5" aria-hidden="true"/>
+                            Clear all
+                        </button>
+                    )}
                 </div>
             )}
         </div>

@@ -187,7 +187,7 @@ const About = async () => {
                                 <div className="flex flex-wrap gap-3 pt-3">
                                     <Link
                                         href="/menu"
-                                        className={`${manrope.className} group inline-flex items-center gap-2 h-12 px-6 rounded-full main-button-color text-white font-semibold shadow-md transition hover:brightness-110`}
+                                        className={`${manrope.className} group inline-flex items-center justify-center gap-2 h-12 px-6 w-full sm:w-auto rounded-full main-button-color text-white font-semibold shadow-md transition hover:brightness-110`}
                                     >
                                         <Store className="w-5 h-5" aria-hidden="true"/>
                                         View menu
@@ -195,7 +195,7 @@ const About = async () => {
                                     </Link>
                                     <Link
                                         href="/custom"
-                                        className={`${manrope.className} inline-flex items-center gap-2 h-12 px-6 rounded-full bg-white text-[#B8485B] font-semibold ring-1 ring-[#B8485B]/30 transition hover:ring-[#B8485B]`}
+                                        className={`${manrope.className} inline-flex items-center justify-center gap-2 h-12 px-6 w-full sm:w-auto rounded-full bg-white text-[#B8485B] font-semibold ring-1 ring-[#B8485B]/30 transition hover:ring-[#B8485B]`}
                                     >
                                         Order a custom cake
                                     </Link>
@@ -204,7 +204,7 @@ const About = async () => {
                                             href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className={`${manrope.className} inline-flex items-center gap-2 h-12 px-6 rounded-full text-[#12100F] font-semibold transition hover:bg-white/60`}
+                                            className={`${manrope.className} inline-flex items-center justify-center gap-2 h-12 px-6 w-full sm:w-auto rounded-full text-[#12100F] font-semibold transition hover:bg-white/60`}
                                         >
                                             <Navigation className="w-4 h-4 text-[#B8485B]" aria-hidden="true"/>
                                             Get directions
@@ -221,9 +221,9 @@ const About = async () => {
                                 {openTimes && openTimes.length > 0 ? (
                                     <dl className={`${manrope.className} mt-5 divide-y divide-[#F0E6E3]`}>
                                         {openTimes.map((item) => (
-                                            <div key={item.id} className="flex items-center justify-between gap-4 py-3">
+                                            <div key={item.id} className="flex items-center justify-between gap-3 py-3 text-sm sm:text-base">
                                                 <dt className="text-[#3B302B]">{item.days}</dt>
-                                                <dd className="font-semibold text-[#12100F] tabular-nums lining-nums">{item.times}</dd>
+                                                <dd className="shrink-0 whitespace-nowrap font-semibold text-[#12100F] tabular-nums lining-nums">{item.times}</dd>
                                             </div>
                                         ))}
                                     </dl>

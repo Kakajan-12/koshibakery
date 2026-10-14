@@ -228,7 +228,7 @@ const Menu = () => {
                 </div>
             </div>
 
-            <div className="my-container relative z-20 mt-20 main-background-color">
+            <div className="my-container relative z-20 mt-10 lg:mt-20 main-background-color">
                 <Categories/>
                 <FilterBar sort={sort} setSort={setSort} search={search} setSearch={setSearch}
                            selectedType={selectedType}

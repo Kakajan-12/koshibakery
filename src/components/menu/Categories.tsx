@@ -57,7 +57,7 @@ export default function Categories() {
 
     if (loading) {
         return (
-            <div className="container mx-auto px-4 pt-14 pb-14 lg:pb-24" aria-busy="true" aria-label="Loading categories">
+            <div className="container mx-auto px-4 pt-8 pb-4 sm:pt-14 sm:pb-14 lg:pb-24" aria-busy="true" aria-label="Loading categories">
                 <div className="flex justify-center gap-[30px] lg:gap-10 overflow-hidden">
                     {Array.from({length: 6}).map((_, i) => (
                         <div key={i} className={`flex flex-col items-center pt-1 ${i >= 2 ? "hidden" : ""} ${i === 2 ? "min-[420px]:flex" : ""} ${i === 3 ? "min-[567px]:flex" : ""} ${i === 4 ? "lg:flex" : ""} ${i === 5 ? "min-[1540px]:flex" : ""}`}>
@@ -73,18 +73,19 @@ export default function Categories() {
     // Блок стоит на бордовом фоне — тёмный вариант, с теми же отступами, что и у категорий
     if (error) {
         return (
-            <div className="container mx-auto px-4 pt-14 pb-14 lg:pb-24">
+            <div className="container mx-auto px-4 pt-8 pb-4 sm:pt-14 sm:pb-14 lg:pb-24">
                 <LoadError what="categories" onRetry={retry} tone="dark"/>
             </div>
         );
     }
 
     return (
-        <div className="container mx-auto px-4 pt-14 pb-14 lg:pb-24 relative">
+        <div className="container mx-auto px-4 pt-8 pb-4 sm:pt-14 sm:pb-14 lg:pb-24 relative">
             <Swiper
                 modules={[Navigation]}
-                spaceBetween={20}
-                slidesPerView={2}
+                // 2.5 на телефоне: третья категория видна наполовину — понятно, что ленту можно листать
+                spaceBetween={12}
+                slidesPerView={2.5}
                 navigation={{
                     nextEl: ".category-next",
                     prevEl: ".category-prev",
