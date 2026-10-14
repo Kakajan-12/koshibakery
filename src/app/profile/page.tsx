@@ -230,7 +230,7 @@ function AddressForm({id, label, initial = "", submitLabel, onSubmit, onCancel}:
     const submit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!picked) {
-            setError("Please choose an address from the suggestions.");
+            setError("Please find your address by postcode and select it from the list.");
             return;
         }
         setSaving(true);
@@ -253,7 +253,7 @@ function AddressForm({id, label, initial = "", submitLabel, onSubmit, onCancel}:
             <AddressPicker
                 id={id}
                 label={label}
-                hint={initial ? "Choose the updated address from the suggestions." : undefined}
+                hint="Enter the postcode and press Find address."
                 defaultValue={initial}
                 autoFocus
                 required
@@ -629,22 +629,22 @@ const Profile = () => {
             router.replace("/login");
             return;
         }
-        // Авторизация — httpOnly-cookie; без входа сервер ответит 401
+        // Авторизация — httpOnly-cookie; без входа сервер вернёт user: null
         let cancelled = false;
-        fetch(apiUrl("/api/auth/check/me"), {credentials: "include"})
+        fetch(apiUrl("/api/auth/check/session"), {credentials: "include"})
             .then((res) => {
-                if (res.status === 401) {
+                if (!res.ok) throw new Error(`Profile responded ${res.status}`);
+                return res.json();
+            })
+            .then(({user: data}) => {
+                if (cancelled) return;
+                if (!data) {
                     // replace, а не push: в истории не остаётся /profile, «назад» не возвращает сюда.
                     // Скелетон остаётся до перехода — содержимое профиля не мелькает
                     setStatus("guest");
                     router.replace("/login");
-                    return null;
+                    return;
                 }
-                if (!res.ok) throw new Error(`Profile responded ${res.status}`);
-                return res.json();
-            })
-            .then((data) => {
-                if (cancelled || !data) return;
                 setStatus("user");
                 setUser(data);
                 setLoading(false);

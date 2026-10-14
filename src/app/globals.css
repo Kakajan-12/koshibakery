@@ -311,15 +311,17 @@
 
 /* Высота первого экрана. svh не меняется, когда на iPhone прячется адресная строка;
    vh — запасной вариант для старых браузеров */
+/* Высота фиксированная (не min-height): иначе слайд с длинным текстом выше остальных и карусель прыгает.
+   Длинный заголовок и текст обрезаются в Hero.tsx (line-clamp). Не ниже 480px — на совсем низких экранах */
 .hero-height {
-    min-height: 78vh;
-    min-height: 78svh;
+    height: max(480px, 78vh);
+    height: max(480px, 78svh);
 }
 
 @media (min-width: 1024px) {
     .hero-height {
-        min-height: 92vh;
-        min-height: 92svh;
+        height: max(560px, 92vh);
+        height: max(560px, 92svh);
     }
 }
 

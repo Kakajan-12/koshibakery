@@ -260,13 +260,13 @@ const Cart = () => {
         let cancelled = false;
         (async () => {
             try {
-                const meRes = await fetch(api("/api/auth/check/me"), {credentials: "include"});
-                if (!meRes.ok) {
+                const meRes = await fetch(api("/api/auth/check/session"), {credentials: "include"});
+                const me = meRes.ok ? (await meRes.json()).user : null;
+                if (!me) {
                     if (!cancelled) setAuth("guest");
-                    if (meRes.status === 401) setStatus("guest");
+                    if (meRes.ok) setStatus("guest");
                     return;
                 }
-                const me = await meRes.json();
                 let extra: string[] = [];
                 try {
                     const r = await fetch(api("/api/user-addresses"), {credentials: "include"});
@@ -331,6 +331,7 @@ const Cart = () => {
         };
     }, [orderType, deliveryAddress]);
 
+
     // Надпись платная, только если переключатель включён и текст не пустой — так же считает сервер
     const messageFor = (item: CartItem) => {
         const m = messages[itemKey(item)];
@@ -350,7 +351,7 @@ const Cart = () => {
 
     const saveNewAddress = async () => {
         if (!newPlace) {
-            setAddressError("Please choose an address from the suggestions.");
+            setAddressError("Please find your address by postcode and select it from the list.");
             return;
         }
         setSavingAddress(true);
@@ -592,7 +593,7 @@ const Cart = () => {
                                         <AddressPicker
                                             id="cart-new-address"
                                             label={addresses.length ? "New address" : "Add a delivery address"}
-                                            hint="It will be saved to your account. We deliver within London."
+                                            hint="Enter your postcode and press Find address. It will be saved to your account."
                                             withBuildingName
                                             onChange={(place, house, building) => {
                                                 setNewPlace(place);
@@ -626,8 +627,8 @@ const Cart = () => {
                             <div className="mt-6">
                                 <AddressPicker
                                     id="cart-guest-address"
-                                    label="Delivery address"
-                                    hint="We deliver within London. Choose your address from the list."
+                                    label="Postcode"
+                                    hint="We deliver within London. Enter your postcode and press Find address."
                                     required
                                     withBuildingName
                                     onChange={(place, house, building) => {

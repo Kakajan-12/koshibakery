@@ -21,8 +21,9 @@ export const AuthProvider = ({children}: { children: ReactNode }) => {
 
     const refresh = useCallback(async (): Promise<AuthStatus> => {
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/check/me`, {credentials: "include"});
-            const next: AuthStatus = res.ok ? "user" : res.status === 401 ? "guest" : "unknown";
+            // /session отвечает гостю 200 с user: null — без ошибки 401 в консоли браузера
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/check/session`, {credentials: "include"});
+            const next: AuthStatus = res.ok ? ((await res.json()).user ? "user" : "guest") : "unknown";
             setStatus(next);
             return next;
         } catch {

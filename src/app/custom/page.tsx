@@ -5,6 +5,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import {AlertCircle, CalendarDays, CheckCircle2, Clock, ImagePlus, Loader2, MessageCircle, Send, X} from "lucide-react";
 import {manrope, raleway} from "@/app/fonts";
+import {compressImage} from "@/lib/compressImage";
 
 // Сервер принимает те же типы и размер (middleware/upload.js) — проверяем заранее, чтобы не ждать отказа
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
@@ -135,13 +136,18 @@ export default function CustomOrderPage() {
             formData.append("time", time);
             formData.append("size", size.trim());
             formData.append("details", details.trim());
-            if (referenceFile) formData.append("referenceFile", referenceFile);
+            // Фото сжимаем в браузере: сервер принимает запросы до 1 МБ (lib/compressImage.ts)
+            if (referenceFile) {
+                const file = await compressImage(referenceFile);
+                formData.append("referenceFile", file, file.name);
+            }
 
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/custom-order`, {
                 method: "POST",
                 body: formData,
             });
 
+            if (res.status === 413) throw new Error("The image is too large. Please choose a smaller photo.");
             const data = await res.json().catch(() => ({}));
             // Ошибки загрузки файла сервер отдаёт в поле error, остальные — в message
             if (!res.ok) throw new Error(data.error || data.message || "We couldn't send your request. Please try again.");
