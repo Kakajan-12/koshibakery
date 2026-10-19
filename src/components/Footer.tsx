@@ -78,7 +78,7 @@ export default function Footer() {
     const email = contact?.mail?.trim();
 
     return (
-        <footer className="my-container mx-auto pt-10">
+        <footer className="w-full pt-10">
             <CreamWave/>
 
             <div className="container mx-auto px-4">

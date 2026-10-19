@@ -51,7 +51,7 @@ const About = async () => {
     return (
         <div className="flex flex-col">
             {/* 1. Первый экран */}
-            <section className="my-container main-block-color pt-24 pb-8 lg:pt-14 lg:pb-0">
+            <section className="w-full main-block-color pt-24 pb-8 lg:pt-14 lg:pb-0">
                 <div className="container mx-auto px-4">
                     <div className="grid items-center gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-16">
                         <div className="hidden lg:flex justify-center">
@@ -96,7 +96,7 @@ const About = async () => {
             </section>
 
             {/* 2. Откуда название + 3. что мы печём */}
-            <section className="my-container main-background-color py-14 lg:py-20">
+            <section className="w-full main-background-color py-14 lg:py-20">
                 <div className="container mx-auto px-4">
                     <div className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-stretch">
                         <div className="relative min-h-[360px] overflow-hidden rounded-3xl shadow-xl">
@@ -150,7 +150,7 @@ const About = async () => {
             </section>
 
             {/* 4. Приходите в гости */}
-            <section className="my-container main-background-color pb-16 lg:pb-24">
+            <section className="w-full main-background-color pb-16 lg:pb-24">
                 <div className="container mx-auto px-4">
                     <div className="rounded-3xl main-block-color p-8 lg:p-12">
                         <div className="grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
