@@ -134,7 +134,7 @@ const Menu = () => {
 
 
     return (
-        <div className="my-container mx-auto mt-[64px]">
+        <div className="w-full mt-[64px]">
             <div className="container mx-auto px-4">
                 <div
                     className="mt-24 lg:mt-32 flex flex-col items-center h-50 lg:h-96"
@@ -228,7 +228,7 @@ const Menu = () => {
                 </div>
             </div>
 
-            <div className="my-container relative z-20 mt-10 lg:mt-20 main-background-color">
+            <div className="w-full relative z-20 mt-10 lg:mt-20 main-background-color">
                 <Categories/>
                 <FilterBar sort={sort} setSort={setSort} search={search} setSearch={setSearch}
                            selectedType={selectedType}

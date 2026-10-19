@@ -102,7 +102,7 @@ export default function Hero() {
     return (
         <div>
             {loading ? (
-                <div className="my-container mx-auto" aria-busy="true" aria-label="Loading slides">
+                <div className="w-full" aria-busy="true" aria-label="Loading slides">
                     <div className={`relative ${HERO_HEIGHT} main-background-color flex items-end lg:items-center`}>
                         <div className="container mx-auto px-4 pb-20 pt-32 lg:py-0">
                             <div className="flex flex-col space-y-6 w-full max-w-2xl">
@@ -115,7 +115,8 @@ export default function Hero() {
                     </div>
                 </div>
             ) : slides.length > 0 ? (
-                <div className="my-container mx-auto relative">
+                // Во всю ширину окна, без .my-container (max 2500px): на больших мониторах по бокам оставались полосы
+                <div className="w-full relative">
                     <Swiper
                         modules={[Pagination, Autoplay, Navigation, A11y, EffectFade]}
                         // Плавная смена вместо сдвига: даже прерванная анимация не оставит на экране две половинки слайдов
@@ -159,7 +160,7 @@ export default function Hero() {
             ) : (
                 // Слайды не загрузились (сервер недоступен) или их не добавили — статичный слайд,
                 // чтобы главная не начиналась с пустого места под шапкой
-                <div className="my-container mx-auto main-background-color">
+                <div className="w-full main-background-color">
                     <HeroSlide slide={FALLBACK_SLIDE} imageSrc="/images/main_hero.webp" priority/>
                 </div>
             )}
