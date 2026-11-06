@@ -13,6 +13,8 @@ export type ProductCardData = {
     category_name?: string | null;
     notice?: string | null;
     product_availability: number | string;
+    // null — остаток не считаем
+    stock_quantity?: number | null;
     allergens?: { id: number; name: string }[];
     variants?: { id: number; variant_name: string; price: number }[];
     price: number;
@@ -21,6 +23,7 @@ export type ProductCardData = {
 // Карточка товара в меню: вся кликабельна (одна ссылка), наличие и «в корзине» — бейджами на фото
 export default function ProductCard({item, inCart}: { item: ProductCardData; inCart: boolean }) {
     const inStock = Number(item.product_availability) === 1;
+    const soldOut = item.stock_quantity === 0;
     const prices = (item.variants ?? []).map((v) => Number(v.price)).filter(Number.isFinite);
     const minPrice = prices.length ? Math.min(...prices) : item.price;
     const notice = isEmptyHtml(item.notice) ? "" : htmlToText(item.notice);
@@ -45,11 +48,11 @@ export default function ProductCard({item, inCart}: { item: ProductCardData; inC
                 <span
                     className={`${manrope.className} absolute top-3 left-3 inline-flex items-center gap-1.5 h-7 px-3 rounded-full
                                 text-xs font-semibold backdrop-blur-sm shadow-sm ${
-                        inStock ? "bg-white/90 text-[#2F6B3F]" : "bg-white/90 text-[#9A5B13]"
+                        soldOut ? "bg-white/90 text-[#B42318]" : inStock ? "bg-white/90 text-[#2F6B3F]" : "bg-white/90 text-[#9A5B13]"
                     }`}
                 >
-                    <span className={`w-1.5 h-1.5 rounded-full ${inStock ? "bg-[#3C9A57]" : "bg-[#D18A2C]"}`} aria-hidden="true"/>
-                    {inStock ? "In stock" : "Pre-order"}
+                    <span className={`w-1.5 h-1.5 rounded-full ${soldOut ? "bg-[#B42318]" : inStock ? "bg-[#3C9A57]" : "bg-[#D18A2C]"}`} aria-hidden="true"/>
+                    {soldOut ? "Sold out" : inStock ? "In stock" : "Pre-order"}
                 </span>
 
                 {inCart && (
@@ -107,7 +110,7 @@ export default function ProductCard({item, inCart}: { item: ProductCardData; inC
                                 text-sm font-semibold ring-1 ring-[#B8485B]/40 text-[#B8485B] transition-colors duration-300
                                 group-hover:bg-[#B8485B] group-hover:text-white group-hover:ring-[#B8485B]`}
                 >
-                    Order now
+                    {soldOut ? "View details" : "Order now"}
                     <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true"/>
                 </span>
             </div>

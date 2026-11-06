@@ -19,6 +19,7 @@ type Product = {
     product_desc: string;
     notice: string;
     product_availability: number | string;
+    stock_quantity?: number | null;
     product_types: number;
     product_category: number;
     allergens: Allergen[];
