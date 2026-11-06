@@ -97,8 +97,10 @@ function OrderTypeSwitch({value, onChange}: { value: OrderType; onChange: (v: Or
 }
 
 // Строка товара: количество, удаление и надпись на торте
-function CartRow({item, allowMessage, message, onMessage, onQuantity, onRemove}: {
+function CartRow({item, stockLeft, allowMessage, message, onMessage, onQuantity, onRemove}: {
     item: CartItem;
+    // Сколько штук можно взять в этой строке; undefined — остаток не считаем
+    stockLeft?: number;
     // false — категория без надписей (например, печенье): переключатель не показываем
     allowMessage: boolean;
     message: { on: boolean; text: string };
@@ -107,6 +109,7 @@ function CartRow({item, allowMessage, message, onMessage, onQuantity, onRemove}:
     onRemove: () => void;
 }) {
     const key = itemKey(item);
+    const maxQuantity = Math.min(MAX_QUANTITY, stockLeft ?? MAX_QUANTITY);
     return (
         <li className="py-5 first:pt-0 last:pb-0">
             <div className="flex gap-3 sm:gap-4">
@@ -140,7 +143,7 @@ function CartRow({item, allowMessage, message, onMessage, onQuantity, onRemove}:
                                 <Minus className="w-4 h-4"/>
                             </button>
                             <span className={`${manrope.className} w-8 text-center font-semibold tabular-nums`} aria-live="polite">{item.quantity}</span>
-                            <button type="button" onClick={() => onQuantity(item.quantity + 1)} disabled={item.quantity >= MAX_QUANTITY}
+                            <button type="button" onClick={() => onQuantity(item.quantity + 1)} disabled={item.quantity >= maxQuantity}
                                     aria-label="Increase quantity"
                                     className="h-9 w-9 rounded-full flex items-center justify-center text-[#B8485B] cursor-pointer transition hover:bg-[#F6EEEC] disabled:text-[#B8485B]/30 disabled:cursor-not-allowed disabled:hover:bg-transparent">
                                 <Plus className="w-4 h-4"/>
@@ -148,6 +151,11 @@ function CartRow({item, allowMessage, message, onMessage, onQuantity, onRemove}:
                         </div>
                         <p className={`${manrope.className} font-bold text-[#12100F] tabular-nums`}>£{formatPrice(item.price * item.quantity)}</p>
                     </div>
+                    {stockLeft !== undefined && (stockLeft <= 0 || item.quantity > stockLeft) && (
+                        <p role="alert" className={`${manrope.className} mt-2 text-sm text-[#B42318]`}>
+                            {stockLeft <= 0 ? "Sold out — please remove this item." : `Only ${stockLeft} left — please reduce the quantity.`}
+                        </p>
+                    )}
                 </div>
             </div>
 
@@ -353,6 +361,27 @@ const Cart = () => {
     }, [productIdsKey]);
     const allowsMessage = (item: CartItem) => noMessage !== null && !noMessage.has(item.id);
 
+    // Остатки товаров корзины; при ошибке ограничений нет — оформление всё равно проверит сервер
+    const [stock, setStock] = useState<Record<number, number>>({});
+    useEffect(() => {
+        if (!productIdsKey) return;
+        let cancelled = false;
+        fetch(api(`/api/order/stock?ids=${productIdsKey}`))
+            .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+            .then((d: { stock?: Record<number, number> }) => !cancelled && setStock(d.stock ?? {}))
+            .catch(() => {});
+        return () => {
+            cancelled = true;
+        };
+    }, [productIdsKey]);
+    // Остаток общий на товар: вычитаем то, что уже лежит в других размерах этого товара
+    const stockLeftFor = (item: CartItem) => {
+        const total = stock[item.id];
+        if (total === undefined) return undefined;
+        const otherSizes = cart.reduce((n, i) => (i.id === item.id && i.variantName !== item.variantName ? n + i.quantity : n), 0);
+        return total - otherSizes;
+    };
+
     // Надпись платная, только если переключатель включён и текст не пустой — так же считает сервер
     const messageFor = (item: CartItem) => {
         if (!allowsMessage(item)) return null;
@@ -519,6 +548,7 @@ const Cart = () => {
                                     <CartRow
                                         key={key}
                                         item={item}
+                                        stockLeft={stockLeftFor(item)}
                                         allowMessage={allowsMessage(item)}
                                         message={messages[key] ?? {on: false, text: ""}}
                                         onMessage={(m) => setMessages((prev) => ({...prev, [key]: m}))}

@@ -10,7 +10,7 @@ const isDate = (value?: string | null): value is string => !!value && /^\d{4}-\d
 export const shortDate = (value: string) =>
     parse(value).toLocaleDateString("en-GB", {weekday: "short", day: "numeric", month: "short"});
 
-// «Sat 12 Oct, 14:00» или «Saturday, 12 October, 14:00»; null — у старых заказов без даты
+// «Sat 12 Oct, 2-4 pm» или «Saturday, 12 October, 2-4 pm»; null — у старых заказов без даты
 export const readyLabel = (date?: string | null, time?: string | null, style: "short" | "long" = "short"): string | null => {
     if (!isDate(date)) return null;
     const day = style === "long"

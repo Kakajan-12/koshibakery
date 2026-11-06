@@ -31,6 +31,8 @@ interface Product {
     product_serves: string;
     product_ingredients: string;
     product_availability: number | string;
+    // null — остаток не считаем
+    stock_quantity?: number | null;
     category_name?: string | null;
     notice: string;
     delivery: string;
@@ -108,7 +110,7 @@ const MenuItem = () => {
             : false;
 
     const handleAddToCart = () => {
-        if (!product || !selectedVariant || isInCart) return;
+        if (!product || !selectedVariant || isInCart || product.stock_quantity === 0) return;
 
         addToCart({
             id: product.id,
@@ -257,6 +259,9 @@ const MenuItem = () => {
     }
 
     const inStock = Number(product.product_availability) === 1;
+    const soldOut = product.stock_quantity === 0;
+    // Предупреждаем, только когда осталось немного
+    const fewLeft = !soldOut && product.stock_quantity != null && product.stock_quantity <= 5 ? product.stock_quantity : null;
     const productName = htmlToText(product.product_name);
     const hasIngredients = !isEmptyHtml(product.product_ingredients);
     const hasAllergens = product.allergens && product.allergens.length > 0;
@@ -353,12 +358,15 @@ const MenuItem = () => {
                                     )}
                                     <span
                                         className={`${manrope.className} inline-flex items-center gap-1.5 h-7 px-3 rounded-full bg-white text-xs font-semibold shadow-sm ${
-                                            inStock ? "text-[#2F6B3F]" : "text-[#9A5B13]"
+                                            soldOut ? "text-[#B42318]" : inStock ? "text-[#2F6B3F]" : "text-[#9A5B13]"
                                         }`}
                                     >
-                                        <span className={`w-1.5 h-1.5 rounded-full ${inStock ? "bg-[#3C9A57]" : "bg-[#D18A2C]"}`} aria-hidden="true"/>
-                                        {inStock ? "In stock" : "Pre-order"}
+                                        <span className={`w-1.5 h-1.5 rounded-full ${soldOut ? "bg-[#B42318]" : inStock ? "bg-[#3C9A57]" : "bg-[#D18A2C]"}`} aria-hidden="true"/>
+                                        {soldOut ? "Sold out" : inStock ? "In stock" : "Pre-order"}
                                     </span>
+                                    {fewLeft !== null && (
+                                        <span className={`${manrope.className} text-xs font-semibold text-[#9A5B13]`}>Only {fewLeft} left</span>
+                                    )}
                                 </div>
 
                                 <h1
@@ -451,15 +459,15 @@ const MenuItem = () => {
                                 <button
                                     type="button"
                                     onClick={handleAddToCart}
-                                    disabled={!selectedVariant}
+                                    disabled={!selectedVariant || soldOut}
                                     className={`${manrope.className} w-full inline-flex items-center justify-center gap-2 h-12 xl:h-14 rounded-full
                                                 main-button-color text-white text-base font-semibold shadow-md cursor-pointer transition
                                                 hover:brightness-110 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed
                                                 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8485B]/50 focus-visible:ring-offset-2`}
                                 >
                                     <ShoppingBag className="w-5 h-5" aria-hidden="true"/>
-                                    Add to cart
-                                    {selectedVariant && <span className="opacity-80">· £{formatPrice(selectedVariant.price)}</span>}
+                                    {soldOut ? "Sold out" : "Add to cart"}
+                                    {selectedVariant && !soldOut && <span className="opacity-80">· £{formatPrice(selectedVariant.price)}</span>}
                                 </button>
                             )}
 

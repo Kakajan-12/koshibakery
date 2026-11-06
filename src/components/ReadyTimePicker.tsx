@@ -4,7 +4,7 @@ import {useEffect, useMemo, useState} from "react";
 import Link from "next/link";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import {CalendarDays, Clock, Info, Loader2} from "lucide-react";
+import {CalendarDays, Info, Loader2} from "lucide-react";
 import {manrope} from "@/app/fonts";
 import {shortDate} from "@/lib/readyDate";
 
@@ -21,18 +21,9 @@ const fromLocalDate = (value: string) => {
 
 export {shortDate} from "@/lib/readyDate";
 
-// «14:30» ⇄ Date (для выбора времени в react-datepicker важны только часы и минуты)
-const toTimeDate = (hhmm: string) => {
-    const [h, m] = hhmm.split(":").map(Number);
-    const d = new Date();
-    d.setHours(h, m, 0, 0);
-    return d;
-};
-const toHHMM = (d: Date) => `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
-
 /**
  * Выбор даты и времени, когда заказ должен быть готов. Доступные дни и слоты считает сервер
- * (GET /api/order/schedule — часы работы, срок выпечки для товаров «под заказ»).
+ * (GET /api/order/schedule — интервалы времени, срок выпечки для товаров «под заказ»).
  */
 export default function ReadyTimePicker({productIds, orderType, date, time, onChange}: {
     productIds: number[];
@@ -105,8 +96,7 @@ export default function ReadyTimePicker({productIds, orderType, date, time, onCh
                 </p>
             )}
 
-            {/* Дата и время рядом, как на странице индивидуального заказа */}
-            <div className="grid sm:grid-cols-2 gap-4">
+            <div className="space-y-4">
                 <div>
                     <label htmlFor="ready-date" className={LABEL}>Date</label>
                     <div className="relative">
@@ -133,32 +123,35 @@ export default function ReadyTimePicker({productIds, orderType, date, time, onCh
                 </div>
 
                 <div>
-                    <label htmlFor="ready-time" className={LABEL}>Time</label>
-                    <div className="relative">
-                        <DatePicker
-                            id="ready-time"
-                            selected={time ? toTimeDate(time) : null}
-                            onChange={(d: Date | null) => date && onChange(date, d ? toHHMM(d) : "")}
-                            showTimeSelect
-                            showTimeSelectOnly
-                            timeIntervals={30}
-                            // Только свободное время выбранного дня (часы работы, срок выпечки)
-                            includeTimes={daySlots.map(toTimeDate)}
-                            timeCaption="Time"
-                            dateFormat="HH:mm"
-                            timeFormat="HH:mm"
-                            disabled={!date}
-                            placeholderText={date ? "Choose a time" : "Choose a date first"}
-                            wrapperClassName="w-full"
-                            calendarClassName="koshi-datepicker"
-                            popperClassName={`koshi-datepicker-popper ${manrope.className}`}
-                            popperPlacement="bottom-start"
-                            className={`${INPUT} disabled:cursor-not-allowed disabled:opacity-60`}
-                            autoComplete="off"
-                            required
-                        />
-                        <Clock aria-hidden="true" className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#B8485B]/70"/>
-                    </div>
+                    <p id="ready-time-label" className={LABEL}>Select time slot</p>
+                    {!date ? (
+                        <p className={`${manrope.className} text-sm text-[#6F5E53]`}>Choose a date first.</p>
+                    ) : (
+                        // Интервалы выбранного дня присылает сервер
+                        <div role="radiogroup" aria-labelledby="ready-time-label"
+                             className={`grid gap-2 sm:gap-3 ${daySlots.length === 4 ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-3"}`}>
+                            {daySlots.map((slot) => {
+                                const active = time === slot;
+                                return (
+                                    <button
+                                        key={slot}
+                                        type="button"
+                                        role="radio"
+                                        aria-checked={active}
+                                        onClick={() => onChange(date, slot)}
+                                        className={`${manrope.className} h-12 rounded-xl text-sm sm:text-[15px] font-semibold whitespace-nowrap cursor-pointer transition
+                                                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8485B]/50 focus-visible:ring-offset-2 ${
+                                            active
+                                                ? "bg-[#B8485B] text-white shadow-md"
+                                                : "bg-white text-[#12100F] ring-1 ring-[#B8485B]/20 hover:ring-[#B8485B]/50"
+                                        }`}
+                                    >
+                                        {slot}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
