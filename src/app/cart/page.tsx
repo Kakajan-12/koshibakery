@@ -37,6 +37,45 @@ type Quote = { state: "idle" | "loading" | "ok" | "error"; fee: number; error?: 
 
 // Те же значения, что на сервере (controllers/order/pricing.js)
 const CUSTOM_MESSAGE_FEE = 10;
+// Столько же добавляет сервер (CONGESTION_CHARGE в controllers/order/pricing.js)
+const CONGESTION_CHARGE = 15;
+const TFL_ZONE_URL = "https://tfl.gov.uk/modes/driving/congestion-charge/congestion-charge-zone";
+
+// Адрес в Congestion Charge zone или нет — отмечает покупатель; в зоне к оплате добавляется доплата
+function CongestionChoice({value, onChange}: { value: "" | "inside" | "outside"; onChange: (v: "inside" | "outside") => void }) {
+    const options = [
+        {value: "outside" as const, title: "Outside the Congestion Charge zone", note: "No extra charge"},
+        {value: "inside" as const, title: "Inside the Congestion Charge zone", note: `+£${CONGESTION_CHARGE}`},
+    ];
+    return (
+        <fieldset className="mt-6">
+            <legend className={`${manrope.className} text-sm font-semibold text-[#12100F]`}>Is this address in the Congestion Charge zone?</legend>
+            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                {options.map((o) => {
+                    const active = value === o.value;
+                    return (
+                        <label key={o.value}
+                               className={`${manrope.className} flex items-start gap-3 rounded-xl p-4 cursor-pointer transition ring-1 ${
+                                   active ? "bg-[#FBF2F3] ring-2 ring-[#B8485B]" : "bg-white ring-[#B8485B]/20 hover:ring-[#B8485B]/50"
+                               }`}>
+                            <input type="radio" name="congestion-zone" value={o.value} checked={active} required
+                                   onChange={() => onChange(o.value)}
+                                   className="mt-0.5 size-4 shrink-0 accent-[#B8485B] cursor-pointer"/>
+                            <span>
+                                <span className="block text-[15px] font-semibold text-[#12100F]">{o.title}</span>
+                                <span className="block text-sm text-[#6F5E53]">{o.note}</span>
+                            </span>
+                        </label>
+                    );
+                })}
+            </div>
+            <p className={`${manrope.className} mt-2 text-xs text-[#6F5E53]`}>
+                Not sure? <a href={TFL_ZONE_URL} target="_blank" rel="noopener noreferrer"
+                             className="font-semibold underline underline-offset-2 hover:text-[#B8485B]">Check the zone map on the TfL website</a>.
+            </p>
+        </fieldset>
+    );
+}
 const MAX_MESSAGE_LENGTH = 60;
 const MESSAGES_KEY = "cart-messages";
 
@@ -228,6 +267,8 @@ const Cart = () => {
     // Когда заказ должен быть готов (components/ReadyTimePicker.tsx)
     const [neededDate, setNeededDate] = useState("");
     const [neededTime, setNeededTime] = useState("");
+    // Адрес доставки в Congestion Charge zone: "" — ещё не выбрано
+    const [congestion, setCongestion] = useState<"" | "inside" | "outside">("");
     const onReadyChange = useCallback((date: string, time: string) => {
         setNeededDate(date);
         setNeededTime(time);
@@ -394,11 +435,13 @@ const Cart = () => {
     const messageCount = cart.filter((i) => messageFor(i)).length;
     const messageFee = messageCount * CUSTOM_MESSAGE_FEE;
     const deliveryFee = orderType === "delivery" && quote.state === "ok" ? quote.fee : 0;
-    const total = subtotal + messageFee + deliveryFee;
+    const congestionCharge = orderType === "delivery" && congestion === "inside" ? CONGESTION_CHARGE : 0;
+    const total = subtotal + messageFee + deliveryFee + congestionCharge;
 
     const deliveryReady = orderType === "collect" || quote.state === "ok";
     const timeReady = !!neededDate && !!neededTime;
-    const canPay = cart.length > 0 && auth !== "loading" && deliveryReady && timeReady && !submitting;
+    const congestionReady = orderType === "collect" || congestion !== "";
+    const canPay = cart.length > 0 && auth !== "loading" && deliveryReady && congestionReady && timeReady && !submitting;
 
     const saveNewAddress = async () => {
         if (!newPlace) {
@@ -436,7 +479,10 @@ const Cart = () => {
         setCheckoutError("");
 
         const items = cart.map((item) => ({...item, custom_message: messageFor(item)}));
-        const common = {cart: items, orderType, deliveryFee, customMessageFee: messageFee, total, neededDate, neededTime};
+        const common = {
+            cart: items, orderType, deliveryFee, customMessageFee: messageFee, total, neededDate, neededTime,
+            congestionZone: orderType === "delivery" && congestion === "inside",
+        };
 
         setSubmitting(true);
         try {
@@ -694,6 +740,11 @@ const Cart = () => {
                             </div>
                         )}
 
+                        {/* Congestion Charge zone — под адресом, и для гостя, и для покупателя с аккаунтом */}
+                        {orderType === "delivery" && auth !== "loading" && (
+                            <CongestionChoice value={congestion} onChange={setCongestion}/>
+                        )}
+
                         {orderType === "delivery" && quote.state === "error" && (
                             <div className="mt-4"><ErrorNote>{quote.error}</ErrorNote></div>
                         )}
@@ -786,6 +837,12 @@ const Cart = () => {
                                             : <span className="text-[#6F5E53]">{quote.state === "error" ? "Unavailable" : "Add address"}</span>}
                             </dd>
                         </div>
+                        {congestionCharge > 0 && (
+                            <div className="flex justify-between gap-4">
+                                <dt className="text-[#6F5E53]">Congestion Charge</dt>
+                                <dd className="tabular-nums text-[#12100F]">£{formatPrice(congestionCharge)}</dd>
+                            </div>
+                        )}
                         {timeReady && (
                             <div className="flex justify-between gap-4">
                                 <dt className="text-[#6F5E53]">{orderType === "delivery" ? "Delivery on" : "Collect on"}</dt>
@@ -807,6 +864,10 @@ const Cart = () => {
                     {!deliveryReady && quote.state !== "loading" ? (
                         <p className={`${manrope.className} mt-3 text-center text-xs text-[#6F5E53]`}>
                             {isUser && addingAddress ? "Save the new address to continue." : "Choose a delivery address to continue, or switch to collection."}
+                        </p>
+                    ) : !congestionReady ? (
+                        <p className={`${manrope.className} mt-3 text-center text-xs text-[#6F5E53]`}>
+                            Tell us whether the address is in the Congestion Charge zone.
                         </p>
                     ) : !timeReady && (
                         <p className={`${manrope.className} mt-3 text-center text-xs text-[#6F5E53]`}>

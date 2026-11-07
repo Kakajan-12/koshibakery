@@ -29,6 +29,7 @@ interface OrderSummary {
     }[];
     deliveryFee: number;
     customMessageFee: number;
+    congestionCharge?: number;
     total: number;
     email: string | null;
     is_guest: boolean;
@@ -183,6 +184,9 @@ function SuccessContent() {
                         ))}
                     </ul>
                     <dl className={`${manrope.className} mt-2 space-y-1.5 border-t border-[#F0E6E3] pt-4 text-sm`}>
+                        {Number(order.congestionCharge) > 0 && (
+                            <div className="flex justify-between text-[#6F5E53]"><dt>Congestion Charge</dt><dd className="tabular-nums">£{formatPrice(Number(order.congestionCharge))}</dd></div>
+                        )}
                         {order.customMessageFee > 0 && (
                             <div className="flex justify-between text-[#6F5E53]"><dt>Cake messages</dt><dd className="tabular-nums">£{formatPrice(order.customMessageFee)}</dd></div>
                         )}
