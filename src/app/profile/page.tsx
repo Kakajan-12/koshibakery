@@ -48,7 +48,7 @@ interface Order {
     payment_status: string;
     created_at: string;
     order_data: {
-        cart?: OrderItem[]; orderType?: string; deliveryFee?: number; customMessageFee?: number;
+        cart?: OrderItem[]; orderType?: string; deliveryFee?: number; customMessageFee?: number; congestionCharge?: number;
         neededDate?: string; neededTime?: string;
     } | null;
 }
@@ -590,6 +590,9 @@ function OrdersTab() {
                         <dl className={`${manrope.className} mt-3 space-y-1 border-t border-[#F0E6E3] pt-4 text-sm`}>
                             {Number(data.deliveryFee) > 0 && (
                                 <div className="flex justify-between text-[#6F5E53]"><dt>Delivery</dt><dd>£{formatPrice(data.deliveryFee)}</dd></div>
+                            )}
+                            {Number(data.congestionCharge) > 0 && (
+                                <div className="flex justify-between text-[#6F5E53]"><dt>Congestion Charge</dt><dd>£{formatPrice(Number(data.congestionCharge))}</dd></div>
                             )}
                             {Number(data.customMessageFee) > 0 && (
                                 <div className="flex justify-between text-[#6F5E53]"><dt>Cake messages</dt><dd>£{formatPrice(data.customMessageFee)}</dd></div>
