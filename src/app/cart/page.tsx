@@ -38,7 +38,7 @@ type Quote = { state: "idle" | "loading" | "ok" | "error"; fee: number; error?: 
 // Те же значения, что на сервере (controllers/order/pricing.js)
 const CUSTOM_MESSAGE_FEE = 10;
 // Столько же добавляет сервер (CONGESTION_CHARGE в controllers/order/pricing.js)
-const CONGESTION_CHARGE = 15;
+const CONGESTION_CHARGE = 18;
 const TFL_ZONE_URL = "https://tfl.gov.uk/modes/driving/congestion-charge/congestion-charge-zone";
 
 // Адрес в Congestion Charge zone или нет — отмечает покупатель; в зоне к оплате добавляется доплата
